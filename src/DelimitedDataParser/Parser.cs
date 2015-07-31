@@ -165,8 +165,10 @@ namespace DelimitedDataParser
 
             if (_columnNamesAsText != null && _columnNamesAsText.Any())
             {
-                ParseColumnsAsText(output);
+                ResolveColumnsAsText(output);
             }
+
+            output.AcceptChanges();
 
             return output;
         }
@@ -243,13 +245,8 @@ namespace DelimitedDataParser
             return value.Substring(2, value.Length - 3);
         }
 
-        private void ParseColumnsAsText(DataTable dataTable)
+        private void ResolveColumnsAsText(DataTable dataTable)
         {
-            if (_columnNamesAsText == null || !_columnNamesAsText.Any())
-            {
-                return;
-            }
-
             foreach (DataColumn column in dataTable.Columns)
             {
                 if (_columnNamesAsText.Contains(column.ColumnName))

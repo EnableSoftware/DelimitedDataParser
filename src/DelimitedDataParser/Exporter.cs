@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
+using System.Globalization;
+using System.IO;
 
 namespace DelimitedDataParser
 {
@@ -80,21 +81,34 @@ namespace DelimitedDataParser
             _columnNamesAsText = null;
         }
 
+        [Obsolete("Exporting to string is deprecated, please use TextWriter instead.")]
         public string Export()
         {
+            using (var sw = new StringWriter(CultureInfo.InvariantCulture))
+            {
+                this.Export(sw);
+                return sw.ToString();
+            }
+        }
+
+        public void Export(TextWriter writer)
+        {
+            if (writer == null)
+            {
+                throw new ArgumentNullException("writer");
+            }
+
             // Ensure escape characters are included unless we are exporting tab separated values
             if (!_includeEscapeCharacters && _fieldSeparator != TabSeparator)
             {
                 throw new InvalidOperationException();
             }
 
-            var output = new StringBuilder();
-
             if (_dataTable.Columns.Count > 0)
             {
                 if (_outputColumnHeaders)
                 {
-                    RenderHeaderRow(output);
+                    RenderHeaderRow(writer);
                 }
 
                 if (_dataTable.Rows.Count > 0)
@@ -105,15 +119,13 @@ namespace DelimitedDataParser
 
                         if (rowIndex != 0 || _outputColumnHeaders)
                         {
-                            output.Append(Environment.NewLine);
+                            writer.Write(Environment.NewLine);
                         }
 
-                        RenderRow(output, row);
+                        RenderRow(writer, row);
                     }
                 }
             }
-
-            return output.ToString();
         }
 
         public void Dispose()
@@ -133,7 +145,7 @@ namespace DelimitedDataParser
             }
         }
 
-        private void RenderHeaderRow(StringBuilder output)
+        private void RenderHeaderRow(TextWriter writer)
         {
             for (int colIndex = 0; colIndex < _dataTable.Columns.Count; colIndex++)
             {
@@ -141,14 +153,14 @@ namespace DelimitedDataParser
 
                 if (colIndex != 0)
                 {
-                    output.Append(_fieldSeparator);
+                    writer.Write(_fieldSeparator);
                 }
 
-                output.Append(CsvEscape(col.ColumnName, false));
+                writer.Write(CsvEscape(col.ColumnName, false));
             }
         }
 
-        private void RenderRow(StringBuilder output, DataRow row)
+        private void RenderRow(TextWriter writer, DataRow row)
         {
             for (int colIndex = 0; colIndex < _dataTable.Columns.Count; colIndex++)
             {
@@ -156,14 +168,14 @@ namespace DelimitedDataParser
 
                 if (colIndex != 0)
                 {
-                    output.Append(_fieldSeparator);
+                    writer.Write(_fieldSeparator);
                 }
 
                 var valueAsText = GetIsColumnAsText(col);
 
                 var value = row[col].ToString();
 
-                output.Append(CsvEscape(value, valueAsText));
+                writer.Write(CsvEscape(value, valueAsText));
             }
         }
 
