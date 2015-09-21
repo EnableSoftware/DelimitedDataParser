@@ -1,6 +1,8 @@
-﻿# DelimitedDataParser
+# DelimitedDataParser
 
 C# library for parsing and exporting tabular data in delimited format (e.g. CSV).
+
+[![NuGet Version](https://img.shields.io/nuget/v/DelimitedDataParser.svg)](https://www.nuget.org/packages/DelimitedDataParser/) [![NuGet Downloads](https://img.shields.io/nuget/dt/DelimitedDataParser.svg)](https://www.nuget.org/packages/DelimitedDataParser/)
 
 ## Parser
 
