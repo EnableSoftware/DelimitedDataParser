@@ -5,7 +5,7 @@
         <version>2.5</version>
         <authors>Enable</authors>
         <owners>Enable</owners>
-        <licenseUrl>https://github.com/EnableSoftware/DelimitedDataParser/blob/master/LICENSE</licenseUrl>
+        <licenseUrl>https://raw.githubusercontent.com/EnableSoftware/DelimitedDataParser/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/EnableSoftware/DelimitedDataParser</projectUrl>
         <iconUrl>https://github.com/EnableSoftware.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
