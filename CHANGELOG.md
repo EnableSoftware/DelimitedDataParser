@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+### Added
+
+- Contributing guidelines.
+
 ### Changed
 	
 - Public members marked as `virtual` to support use with mocking frameworks.
