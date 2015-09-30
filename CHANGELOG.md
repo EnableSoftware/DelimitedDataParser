@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [2.6.0] — 2015-09-30
+
 ### Added
 
 - Contributing guidelines.
@@ -28,5 +30,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Initial public release.
 
-[unreleased]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v2.5.0...HEAD
+[unreleased]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v2.6.0...HEAD
+[2.6.0]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v2.5.0...v2.6.0
 [2.5.0]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v2.4.0...v2.5.0
