@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace DelimitedDataParser
 {
+    /// <summary>
+    /// Implements a parser of delimited data.
+    /// </summary>
     public class Parser : IDisposable
     {
         private const char CarriageReturn = '\r';
@@ -20,6 +23,16 @@ namespace DelimitedDataParser
         private char _fieldSeparator = ',';
         private ISet<string> _columnNamesAsText;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Parser"/> class with
+        /// the specified <see cref="TextReader"/>.
+        /// </summary>
+        /// <param name="input">
+        /// The <see cref="TextReader"/> containing the delimited data to read.
+        /// </param>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="input"/> is null.
+        /// </exception>
         public Parser(TextReader input)
         {
             if (input == null)
@@ -30,6 +43,10 @@ namespace DelimitedDataParser
             _textReader = input;
         }
 
+        /// <summary>
+        /// Specifies whether the first row of the text file should be treated
+        /// as a header row. The default value is <c>true</c>.
+        /// </summary>
         public virtual bool UseFirstRowAsColumnHeaders
         {
             get
@@ -43,6 +60,10 @@ namespace DelimitedDataParser
             }
         }
 
+        /// <summary>
+        /// The character used as the field delimiter in the text file. The
+        /// default value is <c>,</c>, i.e. CSV input.
+        /// </summary>
         public virtual char FieldSeparator
         {
             get
@@ -56,6 +77,13 @@ namespace DelimitedDataParser
             }
         }
 
+        /// <summary>
+        /// Specifies which column values are wrapped in quotes and preceded
+        /// with an equals sign in the input.
+        /// </summary>
+        /// <param name="columnNames">
+        /// The names of the columns whose values are quoted in the input.
+        /// </param>
         public virtual void SetColumnsAsText(IEnumerable<string> columnNames)
         {
             ClearColumnsAsText();
@@ -66,11 +94,24 @@ namespace DelimitedDataParser
             }
         }
 
+        /// <summary>
+        /// Clear all "columns as text" settings.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method clears any "columns as text" settings set via
+        /// the <see cref="SetColumnsAsText(IEnumerable{string})"/> method.
+        /// </remarks>
         public virtual void ClearColumnsAsText()
         {
             _columnNamesAsText = null;
         }
 
+        /// <summary>
+        /// Parse the input <see cref="TextReader"/> as a <see cref="DataTable"/>.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="DataTable"/> containing the parsed data.
+        /// </returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public virtual DataTable Parse()
         {
@@ -173,12 +214,24 @@ namespace DelimitedDataParser
             return output;
         }
 
+        /// <summary>
+        /// Releases all resources used by the current instance of the
+        /// <see cref="Parser"/> class.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Releases the unmanaged resources used by the <see cref="Parser"/>
+        /// and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing">
+        /// <c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.
+        /// </param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)

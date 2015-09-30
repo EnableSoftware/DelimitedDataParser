@@ -6,8 +6,14 @@ using System.IO;
 
 namespace DelimitedDataParser
 {
+    /// <summary>
+    /// Implements an exporter of delimited data.
+    /// </summary>
     public class Exporter : IDisposable
     {
+        /// <summary>
+        /// Represent the tab character. This field is read-only.
+        /// </summary>
         public static readonly char TabSeparator = '\t';
 
         private readonly DataTable _dataTable;
@@ -17,6 +23,16 @@ namespace DelimitedDataParser
         private bool _includeEscapeCharacters = true;
         private ISet<string> _columnNamesAsText;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Exporter"/> class with
+        /// the specified <see cref="DataTable"/>.
+        /// </summary>
+        /// <param name="input">
+        /// The <see cref="DataTable"/> containing the data to export.
+        /// </param>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="input"/> is null.
+        /// </exception>
         public Exporter(DataTable input)
         {
             if (input == null)
@@ -27,6 +43,10 @@ namespace DelimitedDataParser
             _dataTable = input;
         }
 
+        /// <summary>
+        /// Specifies whether an initial row containing column names should be
+        /// written to the output. The default value is <c>true</c>.
+        /// </summary>
         public virtual bool OutputColumnHeaders
         {
             get
@@ -40,6 +60,10 @@ namespace DelimitedDataParser
             }
         }
 
+        /// <summary>
+        /// The character used as the field delimiter in the output. The
+        /// default value is <c>,</c>, i.e. CSV output.
+        /// </summary>
         public virtual char FieldSeparator
         {
             get
@@ -53,6 +77,14 @@ namespace DelimitedDataParser
             }
         }
 
+        /// <summary>
+        /// Specifies whether each value should be escaped by wrapping in
+        /// quotation marks. The default value is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// This must be set to <c>true</c> if <see cref="FieldSeparator"/>
+        /// is a tab character.
+        /// </remarks>
         public virtual bool IncludeEscapeCharacters
         {
             get
@@ -66,6 +98,13 @@ namespace DelimitedDataParser
             }
         }
 
+        /// <summary>
+        /// Set which columns should have their values quoted and preceded
+        /// with an equals sign in the output.
+        /// </summary>
+        /// <param name="columnNames">
+        /// The names of the columns whose values should quoted in the output.
+        /// </param>
         public virtual void SetColumnsAsText(IEnumerable<string> columnNames)
         {
             ClearColumnsAsText();
@@ -76,6 +115,13 @@ namespace DelimitedDataParser
             }
         }
 
+        /// <summary>
+        /// Clear all "columns as text" settings.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method clears any "columns as text" settings set via
+        /// the <see cref="SetColumnsAsText(IEnumerable{string})"/> method.
+        /// </remarks>
         public virtual void ClearColumnsAsText()
         {
             _columnNamesAsText = null;
@@ -91,6 +137,20 @@ namespace DelimitedDataParser
             }
         }
 
+        /// <summary>
+        /// Write the input <see cref="DataTable"/> to the specified
+        /// <see cref="TextWriter"/>.
+        /// </summary>
+        /// <param name="writer">
+        /// The <see cref="TextWriter"/> to be written to.
+        /// </param>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="writer"/> is null.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// <see cref="IncludeEscapeCharacters"/> is <c>false</c> and
+        /// <see cref="FieldSeparator"/> is not a tab character.
+        /// </exception>
         public virtual void Export(TextWriter writer)
         {
             if (writer == null)
@@ -128,12 +188,24 @@ namespace DelimitedDataParser
             }
         }
 
+        /// <summary>
+        /// Releases all resources used by the current instance of the
+        /// <see cref="Exporter"/> class.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Releases the unmanaged resources used by the <see cref="Exporter"/>
+        /// and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing">
+        /// <c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.
+        /// </param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
