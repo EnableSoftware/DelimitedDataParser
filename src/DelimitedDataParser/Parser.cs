@@ -30,7 +30,7 @@ namespace DelimitedDataParser
             _textReader = input;
         }
 
-        public bool UseFirstRowAsColumnHeaders
+        public virtual bool UseFirstRowAsColumnHeaders
         {
             get
             {
@@ -43,7 +43,7 @@ namespace DelimitedDataParser
             }
         }
 
-        public char FieldSeparator
+        public virtual char FieldSeparator
         {
             get
             {
@@ -56,7 +56,7 @@ namespace DelimitedDataParser
             }
         }
 
-        public void SetColumnsAsText(IEnumerable<string> columnNames)
+        public virtual void SetColumnsAsText(IEnumerable<string> columnNames)
         {
             ClearColumnsAsText();
 
@@ -66,13 +66,13 @@ namespace DelimitedDataParser
             }
         }
 
-        public void ClearColumnsAsText()
+        public virtual void ClearColumnsAsText()
         {
             _columnNamesAsText = null;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        public DataTable Parse()
+        public virtual DataTable Parse()
         {
             if (_textReader.Peek() == -1)
             {

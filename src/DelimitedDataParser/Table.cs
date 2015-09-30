@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq;
@@ -11,40 +10,47 @@ namespace DelimitedDataParser
     {
         private readonly IList<string[]> _rows = new List<string[]>();
 
+        private bool _useFirstRowAsColumnHeaders = true;
         private StringBuilder _currentCell = new StringBuilder();
         private IList<string> _currentRow = new List<string>();
 
-        public Table()
+        public virtual bool UseFirstRowAsColumnHeaders
         {
-            UseFirstRowAsColumnHeaders = true;
+            get
+            {
+                return _useFirstRowAsColumnHeaders;
+            }
+
+            set
+            {
+                _useFirstRowAsColumnHeaders = value;
+            }
         }
 
-        public bool UseFirstRowAsColumnHeaders { get; set; }
-
-        public void AddToCurrentCell(char c)
+        public virtual void AddToCurrentCell(char c)
         {
             _currentCell.Append(c);
         }
 
-        public void AddToCurrentCell(char value, int repeatCount)
+        public virtual void AddToCurrentCell(char value, int repeatCount)
         {
             _currentCell.Append(value, repeatCount);
         }
 
-        public void FlushCell()
+        public virtual void FlushCell()
         {
             _currentRow.Add(_currentCell.ToString());
             _currentCell = new StringBuilder();
         }
 
-        public void FlushRow()
+        public virtual void FlushRow()
         {
             _rows.Add(_currentRow.ToArray());
             _currentRow = new List<string>();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        public DataTable ToDataTable()
+        public virtual DataTable ToDataTable()
         {
             FlushCell();
             FlushRow();
@@ -65,7 +71,7 @@ namespace DelimitedDataParser
 
             for (int i = 0; i < colCount; i++)
             {
-                if (UseFirstRowAsColumnHeaders && i < _rows[0].Length && !usedColumnHeaders.Any(h => h == _rows[0][i]))
+                if (_useFirstRowAsColumnHeaders && i < _rows[0].Length && !usedColumnHeaders.Any(h => h == _rows[0][i]))
                 {
                     table.Columns.Add(_rows[0][i]);
                     usedColumnHeaders.Add(_rows[0][i]);
@@ -76,12 +82,12 @@ namespace DelimitedDataParser
                 }
             }
 
-            if (UseFirstRowAsColumnHeaders && _rows.Count == 1)
+            if (_useFirstRowAsColumnHeaders && _rows.Count == 1)
             {
                 return table;
             }
 
-            if (UseFirstRowAsColumnHeaders)
+            if (_useFirstRowAsColumnHeaders)
             {
                 _rows.RemoveAt(0);
             }

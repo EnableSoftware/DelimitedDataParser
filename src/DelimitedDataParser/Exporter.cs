@@ -27,7 +27,7 @@ namespace DelimitedDataParser
             _dataTable = input;
         }
 
-        public bool OutputColumnHeaders
+        public virtual bool OutputColumnHeaders
         {
             get
             {
@@ -40,7 +40,7 @@ namespace DelimitedDataParser
             }
         }
 
-        public char FieldSeparator
+        public virtual char FieldSeparator
         {
             get
             {
@@ -53,7 +53,7 @@ namespace DelimitedDataParser
             }
         }
 
-        public bool IncludeEscapeCharacters
+        public virtual bool IncludeEscapeCharacters
         {
             get
             {
@@ -66,7 +66,7 @@ namespace DelimitedDataParser
             }
         }
 
-        public void SetColumnsAsText(IEnumerable<string> columnNames)
+        public virtual void SetColumnsAsText(IEnumerable<string> columnNames)
         {
             ClearColumnsAsText();
 
@@ -76,13 +76,13 @@ namespace DelimitedDataParser
             }
         }
 
-        public void ClearColumnsAsText()
+        public virtual void ClearColumnsAsText()
         {
             _columnNamesAsText = null;
         }
 
         [Obsolete("Exporting to string is deprecated, please use TextWriter instead.")]
-        public string Export()
+        public virtual string Export()
         {
             using (var sw = new StringWriter(CultureInfo.InvariantCulture))
             {
@@ -91,7 +91,7 @@ namespace DelimitedDataParser
             }
         }
 
-        public void Export(TextWriter writer)
+        public virtual void Export(TextWriter writer)
         {
             if (writer == null)
             {
