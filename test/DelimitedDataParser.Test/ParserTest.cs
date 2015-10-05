@@ -11,17 +11,17 @@ namespace DelimitedDataParser
         [TestMethod]
         public void Can_Load_Input()
         {
-            var parser = new Parser(GetTextReader("Test"));
-            var output = parser.Parse();
-
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader("Test"));
+            
             Assert.IsNotNull(output, "Parser did not generate any output.");
         }
 
         [TestMethod]
         public void Can_Parse_Empty_Stream()
         {
-            var parser = new Parser(GetTextReader(string.Empty));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(string.Empty));
 
             Assert.AreEqual(0, output.Rows.Count, "Should have zero rows.");
             Assert.AreEqual(0, output.Columns.Count, "Should have zero columns.");
@@ -31,7 +31,7 @@ namespace DelimitedDataParser
         [ExpectedException(typeof(ArgumentNullException))]
         public void Fails_Without_Valid_Input()
         {
-            var output = new Parser(null).Parse();
+            var output = new Parser().Parse(null);
         }
 
         [TestMethod]
@@ -39,8 +39,8 @@ namespace DelimitedDataParser
         {
             string input = @"Col 1,Col 2,Col 3";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Col 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -53,8 +53,8 @@ namespace DelimitedDataParser
         {
             string input = @"""Col 1"",Col 2,Col 3";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Col 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -67,8 +67,8 @@ namespace DelimitedDataParser
         {
             string input = @"Col 1,""Col 2"",Col 3";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Col 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -81,8 +81,8 @@ namespace DelimitedDataParser
         {
             string input = @"Col 1,Col 2,""Col 3""";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Col 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -95,8 +95,8 @@ namespace DelimitedDataParser
         {
             string input = @"Col 1,""Col """"2"""""",Col 3";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Col 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -109,8 +109,8 @@ namespace DelimitedDataParser
         {
             string input = @"""Col,1"",Col 2,Col 3";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Col,1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -125,8 +125,8 @@ namespace DelimitedDataParser
                 + Environment.NewLine
                 + @"3""";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Col 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -139,8 +139,8 @@ namespace DelimitedDataParser
         {
             string input = @"Col 1,Col 2,""Col" + '\n' + '\r' + @"3""";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Col 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -153,8 +153,8 @@ namespace DelimitedDataParser
         {
             string input = @"Col 1,Col 2,""Col" + '\r' + @"3""";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Col 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -167,8 +167,8 @@ namespace DelimitedDataParser
         {
             string input = @"Col 1,Col 2,""Col" + '\n' + @"3""";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Col 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -181,8 +181,8 @@ namespace DelimitedDataParser
         {
             string input = @"Col 1,Col 2,""Col 3";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Col 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -195,9 +195,9 @@ namespace DelimitedDataParser
         {
             string input = "\"Test1\",\"\",\"Test2\"";
 
-            var parser = new Parser(GetTextReader(input));
+            var parser = new Parser();
             parser.UseFirstRowAsColumnHeaders = false;
-            var output = parser.Parse();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Test1", output.Rows[0][0], "Field data incorrect.");
@@ -210,9 +210,9 @@ namespace DelimitedDataParser
         {
             string input = "\"Test1\",\"\"\"\",\"Test2\"";
 
-            var parser = new Parser(GetTextReader(input));
+            var parser = new Parser();
             parser.UseFirstRowAsColumnHeaders = false;
-            var output = parser.Parse();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Test1", output.Rows[0][0], "Field data incorrect.");
@@ -225,9 +225,9 @@ namespace DelimitedDataParser
         {
             string input = "Test1,Test\"2,Test3";
 
-            var parser = new Parser(GetTextReader(input));
+            var parser = new Parser();
             parser.UseFirstRowAsColumnHeaders = false;
-            var output = parser.Parse();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Test1", output.Rows[0][0], "Field data incorrect.");
@@ -240,9 +240,9 @@ namespace DelimitedDataParser
         {
             string input = "\"Test1\",\"Test\"2\",\"Test3\"";
 
-            var parser = new Parser(GetTextReader(input));
+            var parser = new Parser();
             parser.UseFirstRowAsColumnHeaders = false;
-            var output = parser.Parse();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Test1", output.Rows[0][0], "Field data incorrect.");
@@ -255,9 +255,9 @@ namespace DelimitedDataParser
         {
             string input = "\"Test1\",\"Test\"2\"test,\"Test3\"";
 
-            var parser = new Parser(GetTextReader(input));
+            var parser = new Parser();
             parser.UseFirstRowAsColumnHeaders = false;
-            var output = parser.Parse();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Test1", output.Rows[0][0], "Field data incorrect.");
@@ -270,9 +270,9 @@ namespace DelimitedDataParser
         {
             string input = "\"Test1\",\",\",\"Test2\"";
 
-            var parser = new Parser(GetTextReader(input));
+            var parser = new Parser();
             parser.UseFirstRowAsColumnHeaders = false;
-            var output = parser.Parse();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Test1", output.Rows[0][0], "Field data incorrect.");
@@ -285,8 +285,8 @@ namespace DelimitedDataParser
         {
             string input = @"Col 1, Col 2";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(" Col 2", output.Columns[1].ColumnName);
         }
@@ -296,8 +296,8 @@ namespace DelimitedDataParser
         {
             string input = @",";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(2, output.Columns.Count, "Expected 2 columns.");
             Assert.AreEqual(0, output.Rows.Count, "Expected 0 rows.");
@@ -312,8 +312,8 @@ namespace DelimitedDataParser
                 + @"," + Environment.NewLine
                 + @"PreventBlankRow,BeingRemoved";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(2, output.Rows.Count, "Expected 2 rows.");
             Assert.AreEqual(2, output.Columns.Count, "Expected 2 columns.");
@@ -330,8 +330,8 @@ namespace DelimitedDataParser
                 + Environment.NewLine
                 + @"Data 1,Data 2,Data 3,Data 4";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(4, output.Columns.Count, "Expected 4 columns.");
             Assert.AreEqual("Col 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -352,8 +352,8 @@ namespace DelimitedDataParser
                 + @"Data 1" + Environment.NewLine
                 + @"Data 1,Data 2,Data 3,Data 4,Data 5";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(5, output.Columns.Count, "Expected 5 columns.");
             Assert.AreEqual("Col 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -385,8 +385,8 @@ namespace DelimitedDataParser
                 + Environment.NewLine
                 + @"""Test 1"",Test 2,Test 3";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Test 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -404,8 +404,8 @@ namespace DelimitedDataParser
                 + Environment.NewLine
                 + @"Test 1,Test 2,Test 3";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Test 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -423,8 +423,8 @@ namespace DelimitedDataParser
                 + '\n' + '\r'
                 + @"Test 1,Test 2,Test 3";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Test 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -442,8 +442,8 @@ namespace DelimitedDataParser
                 + '\r'
                 + @"Test 1,Test 2,Test 3";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Test 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -461,8 +461,8 @@ namespace DelimitedDataParser
                 + '\n'
                 + @"Test 1,Test 2,Test 3";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Test 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -480,8 +480,8 @@ namespace DelimitedDataParser
                 + Environment.NewLine
                 + @"Test 1,Test 2,Test 3";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual(2, output.Rows.Count, "Expected 2 rows.");
@@ -503,8 +503,8 @@ namespace DelimitedDataParser
                 + Environment.NewLine
                 + @"Test 1,Test 2,*+{|}][";
 
-            var parser = new Parser(GetTextReader(input, Encoding.ASCII));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input, Encoding.ASCII));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Test 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -522,8 +522,8 @@ namespace DelimitedDataParser
                 + Environment.NewLine
                 + @"Test 1,Test 2,Test 葉";
 
-            var parser = new Parser(GetTextReader(input, Encoding.BigEndianUnicode));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input, Encoding.BigEndianUnicode));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Test 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -541,8 +541,8 @@ namespace DelimitedDataParser
                 + Environment.NewLine
                 + @"Test 1,Test 2,Test 葉";
 
-            var parser = new Parser(GetTextReader(input, Encoding.Unicode));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input, Encoding.Unicode));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Test 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -560,8 +560,8 @@ namespace DelimitedDataParser
                 + Environment.NewLine
                 + @"Test 1,Test 2,Test 葉";
 
-            var parser = new Parser(GetTextReader(input, Encoding.UTF32));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input, Encoding.UTF32));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Test 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -579,8 +579,8 @@ namespace DelimitedDataParser
                 + Environment.NewLine
                 + @"Test 1,Test 2,Test 葉";
 
-            var parser = new Parser(GetTextReader(input, Encoding.UTF7));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input, Encoding.UTF7));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Test 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -598,8 +598,8 @@ namespace DelimitedDataParser
                 + Environment.NewLine
                 + @"Test 1,Test 2,Test 葉";
 
-            var parser = new Parser(GetTextReader(input, Encoding.UTF8));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input, Encoding.UTF8));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Test 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -619,8 +619,8 @@ namespace DelimitedDataParser
 
             Encoding windows1252 = Encoding.GetEncoding(1252);
 
-            var parser = new Parser(GetTextReader(input, windows1252));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input, windows1252));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Test 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -638,8 +638,8 @@ namespace DelimitedDataParser
                 + Environment.NewLine
                 + @"Test 1,Test 2,Test 葉";
 
-            var parser = new Parser(GetTextReader(input, Encoding.UTF8));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input, Encoding.UTF8));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual("Test 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -657,8 +657,8 @@ namespace DelimitedDataParser
                 + Environment.NewLine
                 + @"Test 1,Test 2,Test 1";
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(6, output.Columns.Count, "Expected 6 columns.");
             Assert.AreEqual("Test 1", output.Columns[0].ColumnName, "Column name incorrect.");
@@ -684,8 +684,8 @@ namespace DelimitedDataParser
                 + @"Test 1,Test 2,Test 3" + Environment.NewLine
                 + Environment.NewLine;
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual(3, output.Rows.Count, "Expected 3 rows.");
@@ -710,9 +710,9 @@ namespace DelimitedDataParser
                 + @"Test 1,Test 2,Test 3" + Environment.NewLine
                 + @"Test 1,Test 2,Test 3" + Environment.NewLine;
 
-            var parser = new Parser(GetTextReader(input));
+            var parser = new Parser();
             parser.UseFirstRowAsColumnHeaders = false;
-            var output = parser.Parse();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual(3, output.Rows.Count, "Expected 3 rows.");
@@ -736,9 +736,9 @@ namespace DelimitedDataParser
             string input = @"Test 1|Test,2|Test 3" + Environment.NewLine
                 + @"Test 1|Test,2|Test 3" + Environment.NewLine;
 
-            var parser = new Parser(GetTextReader(input));
+            var parser = new Parser();
             parser.FieldSeparator = '|';
-            var output = parser.Parse();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual(1, output.Rows.Count, "Expected 1 rows.");
@@ -756,9 +756,9 @@ namespace DelimitedDataParser
             string input = "Test 1\tTest,2\tTest 3" + Environment.NewLine
                 + "Test 1\tTest,2\tTest 3" + Environment.NewLine;
 
-            var parser = new Parser(GetTextReader(input));
+            var parser = new Parser();
             parser.FieldSeparator = '\t';
-            var output = parser.Parse();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual(1, output.Rows.Count, "Expected 1 rows.");
@@ -776,9 +776,9 @@ namespace DelimitedDataParser
             string input = "Test 1:Test,2:Test 3" + Environment.NewLine
                 + "Test 1:Test,2:Test 3" + Environment.NewLine;
 
-            var parser = new Parser(GetTextReader(input));
+            var parser = new Parser();
             parser.FieldSeparator = ':';
-            var output = parser.Parse();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual(1, output.Rows.Count, "Expected 1 rows.");
@@ -796,9 +796,9 @@ namespace DelimitedDataParser
             string input = "Test1 Test,2 Test3" + Environment.NewLine
                 + "Test1 Test,2 Test3" + Environment.NewLine;
 
-            var parser = new Parser(GetTextReader(input));
+            var parser = new Parser();
             parser.FieldSeparator = ' ';
-            var output = parser.Parse();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(3, output.Columns.Count, "Expected 3 columns.");
             Assert.AreEqual(1, output.Rows.Count, "Expected 1 rows.");
@@ -816,9 +816,9 @@ namespace DelimitedDataParser
             int cellContentLength = 10000000;
             string input = new string('a', cellContentLength);
 
-            var parser = new Parser(GetTextReader(input));
+            var parser = new Parser();
             parser.UseFirstRowAsColumnHeaders = false;
-            var output = parser.Parse();
+            var output = parser.Parse(GetTextReader(input));
 
             Assert.AreEqual(1, output.Columns.Count, "Expected 1 column.");
             Assert.AreEqual(1, output.Rows.Count, "Expected 1 row.");

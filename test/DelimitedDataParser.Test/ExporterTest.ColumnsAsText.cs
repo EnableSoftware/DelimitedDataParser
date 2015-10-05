@@ -15,9 +15,9 @@ namespace DelimitedDataParser
 
             AddRow(input, "001,002", "003,004");
 
-            var exporter = new Exporter(input);
+            var exporter = new Exporter();
 
-            var output = exporter.ExportToString();
+            var output = exporter.ExportToString(input);
 
             Assert.AreEqual(
                 @"""One"",""Two""" + Environment.NewLine
@@ -34,11 +34,11 @@ namespace DelimitedDataParser
 
             AddRow(input, "001,002", "003,004");
 
-            var exporter = new Exporter(input);
+            var exporter = new Exporter();
 
             exporter.SetColumnsAsText(new[] { "Three" });
 
-            var output = exporter.ExportToString();
+            var output = exporter.ExportToString(input);
 
             Assert.AreEqual(
                 @"""One"",""Two""" + Environment.NewLine
@@ -55,11 +55,11 @@ namespace DelimitedDataParser
 
             AddRow(input, "001,002", "003,004");
 
-            var exporter = new Exporter(input);
+            var exporter = new Exporter();
 
             exporter.SetColumnsAsText(new[] { "One" });
 
-            var output = exporter.ExportToString();
+            var output = exporter.ExportToString(input);
 
             Assert.AreEqual(
                 @"""One"",""Two""" + Environment.NewLine
@@ -76,11 +76,11 @@ namespace DelimitedDataParser
 
             AddRow(input, "001,002", "003,004");
 
-            var exporter = new Exporter(input);
+            var exporter = new Exporter();
 
             exporter.SetColumnsAsText(new[] { "Two" });
 
-            var output = exporter.ExportToString();
+            var output = exporter.ExportToString(input);
 
             Assert.AreEqual(
                 @"""One"",""Two""" + Environment.NewLine
@@ -98,11 +98,11 @@ namespace DelimitedDataParser
 
             AddRow(input, "001,002", "003,004", "005,006");
 
-            var exporter = new Exporter(input);
+            var exporter = new Exporter();
 
             exporter.SetColumnsAsText(new[] { "Two" });
 
-            var output = exporter.ExportToString();
+            var output = exporter.ExportToString(input);
 
             Assert.AreEqual(
                 @"""One"",""Two"",""Three""" + Environment.NewLine
@@ -119,11 +119,11 @@ namespace DelimitedDataParser
 
             AddRow(input, "001,002", "003,004");
 
-            var exporter = new Exporter(input);
+            var exporter = new Exporter();
 
             exporter.SetColumnsAsText(new[] { "One", "Two" });
 
-            var output = exporter.ExportToString();
+            var output = exporter.ExportToString(input);
 
             Assert.AreEqual(
                 @"""One"",""Two""" + Environment.NewLine
@@ -141,11 +141,11 @@ namespace DelimitedDataParser
 
             AddRow(input, "Enable", "0845 519 11 00", "UK");
 
-            var exporter = new Exporter(input);
+            var exporter = new Exporter();
 
             exporter.SetColumnsAsText(new[] { "Tel" });
 
-            var output = exporter.ExportToString();
+            var output = exporter.ExportToString(input);
 
             Assert.AreEqual(
                 @"""Name"",""Tel"",""Country""" + Environment.NewLine
@@ -161,11 +161,11 @@ namespace DelimitedDataParser
 
             AddRow(input, "123" + Environment.NewLine + "456");
 
-            var exporter = new Exporter(input);
+            var exporter = new Exporter();
 
             exporter.SetColumnsAsText(new[] { "One" });
 
-            var output = exporter.ExportToString();
+            var output = exporter.ExportToString(input);
 
             Assert.AreEqual(
                 @"""One""" + Environment.NewLine
@@ -181,11 +181,11 @@ namespace DelimitedDataParser
 
             AddRow(input, @"""1111");
 
-            var exporter = new Exporter(input);
+            var exporter = new Exporter();
 
             exporter.SetColumnsAsText(new[] { "One" });
 
-            var output = exporter.ExportToString();
+            var output = exporter.ExportToString(input);
 
             Assert.AreEqual(
                 @"""One""" + Environment.NewLine
@@ -201,11 +201,11 @@ namespace DelimitedDataParser
 
             AddRow(input, @"11""11");
 
-            var exporter = new Exporter(input);
+            var exporter = new Exporter();
 
             exporter.SetColumnsAsText(new[] { "One" });
 
-            var output = exporter.ExportToString();
+            var output = exporter.ExportToString(input);
 
             Assert.AreEqual(
                 @"""One""" + Environment.NewLine
@@ -221,11 +221,11 @@ namespace DelimitedDataParser
 
             AddRow(input, @"1111""");
 
-            var exporter = new Exporter(input);
+            var exporter = new Exporter();
 
             exporter.SetColumnsAsText(new[] { "One" });
 
-            var output = exporter.ExportToString();
+            var output = exporter.ExportToString(input);
 
             Assert.AreEqual(
                 @"""One""" + Environment.NewLine

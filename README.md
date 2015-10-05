@@ -6,12 +6,13 @@ C# library for parsing and exporting tabular data in delimited format (e.g. CSV)
 
 ## Parser
 
-The `Parser` object takes a `TextWriter` and returns `DataTable`.
+The `Parser.Parse()` method takes a `TextWriter` and returns `DataTable`.
+
 ```c#
-DataTable myData;
-using (var parser = new Parser(myTextReader))
+var parser = new Parser();
+using (DataTable myData = parser.Parse(myTextReader))
 {
-    myData = parser.Parse();
+	// Make use of `myData` here…
 }
 ```
 ### Configuration properties
@@ -21,13 +22,14 @@ using (var parser = new Parser(myTextReader))
 
 ## Exporter
 
-The `Exporter` object takes a `DataTable` and writes to a `TextWriter`.
+The `Exporter.Export()` method takes a `DataTable` and writes to a `TextWriter`.
+
 ```c#
 string myCsv;
-using (var exporter = new Exporter(myData))
 using (var writer = new StringWriter())
 {
-    exporter.Export(writer);
+	var exporter = new Exporter();
+    exporter.Export(myData, writer);
 	myCsv = writer.ToString()
 }
 ```

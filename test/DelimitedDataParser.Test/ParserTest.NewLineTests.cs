@@ -87,9 +87,9 @@ namespace DelimitedDataParser
         {
             var input = string.Concat(contentHeaderRow, separator, contentDataRow);
 
-            var parser = new Parser(GetTextReader(input));
-            var output = parser.Parse();
-
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
+            
             Assert.AreEqual(1, output.Columns.Count, "Expected 1 column.");
             Assert.AreEqual(1, output.Rows.Count, "Expected 1 column.");
 

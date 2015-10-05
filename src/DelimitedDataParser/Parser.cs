@@ -10,37 +10,22 @@ namespace DelimitedDataParser
     /// <summary>
     /// Implements a parser of delimited data.
     /// </summary>
-    public class Parser : IDisposable
+    public class Parser
     {
         private const char CarriageReturn = '\r';
         private const char LineFeed = '\n';
         private const char Quotes = '"';
         private const int BufferSize = 4096;
 
-        private readonly TextReader _textReader;
-
         private bool _useFirstRowAsColumnHeaders = true;
         private char _fieldSeparator = ',';
         private ISet<string> _columnNamesAsText;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Parser"/> class with
-        /// the specified <see cref="TextReader"/>.
+        /// Initializes a new instance of the <see cref="Parser"/> class.
         /// </summary>
-        /// <param name="input">
-        /// The <see cref="TextReader"/> containing the delimited data to read.
-        /// </param>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="input"/> is null.
-        /// </exception>
-        public Parser(TextReader input)
+        public Parser()
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException("input");
-            }
-
-            _textReader = input;
         }
 
         /// <summary>
@@ -107,15 +92,26 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Parse the input <see cref="TextReader"/> as a <see cref="DataTable"/>.
+        /// Parse the input <paramref name="TextReader"/> as a <see cref="DataTable"/>.
         /// </summary>
+        /// <param name="textReader">
+        /// The <see cref="TextReader"/> containing the delimited data to read.
+        /// </param>
         /// <returns>
         /// The <see cref="DataTable"/> containing the parsed data.
         /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="textReader"/> is null.
+        /// </exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        public virtual DataTable Parse()
+        public virtual DataTable Parse(TextReader textReader)
         {
-            if (_textReader.Peek() == -1)
+            if (textReader == null)
+            {
+                throw new ArgumentNullException("textReader");
+            }
+
+            if (textReader.Peek() == -1)
             {
                 return new DataTable
                 {
@@ -137,7 +133,7 @@ namespace DelimitedDataParser
             char c;
             int charCount;
 
-            while ((charCount = _textReader.Read(buffer, 0, BufferSize)) > 0)
+            while ((charCount = textReader.Read(buffer, 0, BufferSize)) > 0)
             {
                 for (int i = 0; i < charCount; i++)
                 {
@@ -212,35 +208,6 @@ namespace DelimitedDataParser
             output.AcceptChanges();
 
             return output;
-        }
-
-        /// <summary>
-        /// Releases all resources used by the current instance of the
-        /// <see cref="Parser"/> class.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Releases the unmanaged resources used by the <see cref="Parser"/>
-        /// and optionally releases the managed resources.
-        /// </summary>
-        /// <param name="disposing">
-        /// <c>true</c> to release both managed and unmanaged resources;
-        /// <c>false</c> to release only unmanaged resources.
-        /// </param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (_textReader != null)
-                {
-                    _textReader.Dispose();
-                }
-            }
         }
 
         private static void HandleQuotes(Table table, int quoteCount, ref bool quotedMode, ref bool quotedModeHasPassed)

@@ -9,14 +9,12 @@ namespace DelimitedDataParser
     /// <summary>
     /// Implements an exporter of delimited data.
     /// </summary>
-    public class Exporter : IDisposable
+    public class Exporter
     {
         /// <summary>
-        /// Represent the tab character. This field is read-only.
+        /// Represents the tab character. This field is read-only.
         /// </summary>
         public static readonly char TabSeparator = '\t';
-
-        private readonly DataTable _dataTable;
 
         private bool _outputColumnHeaders = true;
         private char _fieldSeparator = ',';
@@ -24,23 +22,10 @@ namespace DelimitedDataParser
         private ISet<string> _columnNamesAsText;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Exporter"/> class with
-        /// the specified <see cref="DataTable"/>.
+        /// Initializes a new instance of the <see cref="Exporter"/> class.
         /// </summary>
-        /// <param name="input">
-        /// The <see cref="DataTable"/> containing the data to export.
-        /// </param>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="input"/> is null.
-        /// </exception>
-        public Exporter(DataTable input)
+        public Exporter()
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException("input");
-            }
-
-            _dataTable = input;
         }
 
         /// <summary>
@@ -127,32 +112,31 @@ namespace DelimitedDataParser
             _columnNamesAsText = null;
         }
 
-        [Obsolete("Exporting to string is deprecated, please use TextWriter instead.")]
-        public virtual string Export()
-        {
-            using (var sw = new StringWriter(CultureInfo.InvariantCulture))
-            {
-                this.Export(sw);
-                return sw.ToString();
-            }
-        }
-
         /// <summary>
-        /// Write the input <see cref="DataTable"/> to the specified
+        /// Write the input <paramref name="DataTable"/> to the specified
         /// <see cref="TextWriter"/>.
         /// </summary>
+        /// <param name="dataTable">
+        /// The <see cref="DataTable"/> containing the data to export.
+        /// </param>
         /// <param name="writer">
         /// The <see cref="TextWriter"/> to be written to.
         /// </param>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="writer"/> is null.
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="dataTable"/> is <c>null</c> or
+        /// <paramref name="writer"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="InvalidOperationException">
         /// <see cref="IncludeEscapeCharacters"/> is <c>false</c> and
         /// <see cref="FieldSeparator"/> is not a tab character.
         /// </exception>
-        public virtual void Export(TextWriter writer)
+        public virtual void Export(DataTable dataTable, TextWriter writer)
         {
+            if (dataTable == null)
+            {
+                throw new ArgumentNullException("dataTable");
+            }
+
             if (writer == null)
             {
                 throw new ArgumentNullException("writer");
@@ -164,64 +148,35 @@ namespace DelimitedDataParser
                 throw new InvalidOperationException();
             }
 
-            if (_dataTable.Columns.Count > 0)
+            if (dataTable.Columns.Count > 0)
             {
                 if (_outputColumnHeaders)
                 {
-                    RenderHeaderRow(writer);
+                    RenderHeaderRow(dataTable, writer);
                 }
 
-                if (_dataTable.Rows.Count > 0)
+                if (dataTable.Rows.Count > 0)
                 {
-                    for (int rowIndex = 0; rowIndex < _dataTable.Rows.Count; rowIndex++)
+                    for (int rowIndex = 0; rowIndex < dataTable.Rows.Count; rowIndex++)
                     {
-                        var row = _dataTable.Rows[rowIndex];
+                        var row = dataTable.Rows[rowIndex];
 
                         if (rowIndex != 0 || _outputColumnHeaders)
                         {
                             writer.Write(Environment.NewLine);
                         }
 
-                        RenderRow(writer, row);
+                        RenderRow(dataTable, row, writer);
                     }
                 }
             }
         }
 
-        /// <summary>
-        /// Releases all resources used by the current instance of the
-        /// <see cref="Exporter"/> class.
-        /// </summary>
-        public void Dispose()
+        private void RenderHeaderRow(DataTable dataTable, TextWriter writer)
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Releases the unmanaged resources used by the <see cref="Exporter"/>
-        /// and optionally releases the managed resources.
-        /// </summary>
-        /// <param name="disposing">
-        /// <c>true</c> to release both managed and unmanaged resources;
-        /// <c>false</c> to release only unmanaged resources.
-        /// </param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
+            for (int colIndex = 0; colIndex < dataTable.Columns.Count; colIndex++)
             {
-                if (_dataTable != null)
-                {
-                    _dataTable.Dispose();
-                }
-            }
-        }
-
-        private void RenderHeaderRow(TextWriter writer)
-        {
-            for (int colIndex = 0; colIndex < _dataTable.Columns.Count; colIndex++)
-            {
-                var col = _dataTable.Columns[colIndex];
+                var col = dataTable.Columns[colIndex];
 
                 if (colIndex != 0)
                 {
@@ -232,11 +187,11 @@ namespace DelimitedDataParser
             }
         }
 
-        private void RenderRow(TextWriter writer, DataRow row)
+        private void RenderRow(DataTable dataTable, DataRow row, TextWriter writer)
         {
-            for (int colIndex = 0; colIndex < _dataTable.Columns.Count; colIndex++)
+            for (int colIndex = 0; colIndex < dataTable.Columns.Count; colIndex++)
             {
-                var col = _dataTable.Columns[colIndex];
+                var col = dataTable.Columns[colIndex];
 
                 if (colIndex != 0)
                 {

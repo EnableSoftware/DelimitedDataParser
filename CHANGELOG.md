@@ -5,6 +5,22 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [3.0.0] — 2015-10-02
+
+### Changed
+
+- The public API has been re-worked in order to be easier to use and to test.
+
+  The dependencies on `TextReader` and `DataTable` have been changed from
+  constructor parameters to method parameters on the `Parse` and `Export`
+  methods. This makes mocking and dependency injection easier and also allows
+  a single instance of the `Parser` and `Exporter` classes to be re-used for
+  multiple operations.
+
+### Removed
+
+- Exporting to `string` has been removed.
+
 ## [2.6.0] — 2015-09-30
 
 ### Added
@@ -22,7 +38,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Support exporting to `TextWriter`, for more efficient writing.
 - This change log.
 	
-### Changed
+### Deprecated
 	
 - Exporting to `string` deprecated.
 	
@@ -30,6 +46,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Initial public release.
 
-[unreleased]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v2.6.0...HEAD
+[unreleased]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v2.6.0...v3.0.0
 [2.6.0]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v2.5.0...v2.6.0
 [2.5.0]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v2.4.0...v2.5.0
