@@ -1,11 +1,11 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace DelimitedDataParser
 {
     public partial class ParserTest
     {
-        [TestMethod]
+        [Fact]
         public void Supports_ColumnsAsText_Format()
         {
             string input = @"""=""""x"""""",""y""";
@@ -15,12 +15,12 @@ namespace DelimitedDataParser
 
             var output = parser.Parse(GetTextReader(input));
             
-            Assert.AreEqual(2, output.Columns.Count, "Expected 2 columns.");
-            Assert.AreEqual(@"=""x""", output.Rows[0][0], "Field data incorrect.");
-            Assert.AreEqual(@"y", output.Rows[0][1], "Field data incorrect.");
+            Assert.Equal(2, output.Columns.Count);
+            Assert.Equal(@"=""x""", output.Rows[0][0]);
+            Assert.Equal(@"y", output.Rows[0][1]);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_ColumnsAsText_FormatInLastCell()
         {
             string input = @"""=""""x""""""";
@@ -30,11 +30,11 @@ namespace DelimitedDataParser
 
             var output = parser.Parse(GetTextReader(input));
 
-            Assert.AreEqual(1, output.Columns.Count, "Expected 1 column.");
-            Assert.AreEqual(@"=""x""", output.Rows[0][0], "Field data incorrect.");
+            Assert.Equal(1, output.Columns.Count);
+            Assert.Equal(@"=""x""", output.Rows[0][0]);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_ColumnsAsText_None()
         {
             string input = @"""One"",""Two""" + Environment.NewLine +
@@ -45,14 +45,14 @@ namespace DelimitedDataParser
 
             var output = parser.Parse(GetTextReader(input));
 
-            Assert.AreEqual(2, output.Columns.Count, "Expected 2 columns.");
-            Assert.AreEqual("One", output.Columns[0].ColumnName, "Column name incorrect.");
-            Assert.AreEqual("Two", output.Columns[1].ColumnName, "Column name incorrect.");
-            Assert.AreEqual("Three", output.Rows[0][0], "Field data incorrect.");
-            Assert.AreEqual(@"=""Four""", output.Rows[0][1], "Field data incorrect.");
+            Assert.Equal(2, output.Columns.Count);
+            Assert.Equal("One", output.Columns[0].ColumnName);
+            Assert.Equal("Two", output.Columns[1].ColumnName);
+            Assert.Equal("Three", output.Rows[0][0]);
+            Assert.Equal(@"=""Four""", output.Rows[0][1]);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_ColumnsAsText_Single_NonExistant()
         {
             string input = @"""One"",""Two""" + Environment.NewLine +
@@ -65,14 +65,14 @@ namespace DelimitedDataParser
 
             var output = parser.Parse(GetTextReader(input));
 
-            Assert.AreEqual(2, output.Columns.Count, "Expected 2 columns.");
-            Assert.AreEqual("One", output.Columns[0].ColumnName, "Column name incorrect.");
-            Assert.AreEqual("Two", output.Columns[1].ColumnName, "Column name incorrect.");
-            Assert.AreEqual("Three", output.Rows[0][0], "Field data incorrect.");
-            Assert.AreEqual(@"=""Four""", output.Rows[0][1], "Field data incorrect.");
+            Assert.Equal(2, output.Columns.Count);
+            Assert.Equal("One", output.Columns[0].ColumnName);
+            Assert.Equal("Two", output.Columns[1].ColumnName);
+            Assert.Equal("Three", output.Rows[0][0]);
+            Assert.Equal(@"=""Four""", output.Rows[0][1]);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_ColumnsAsText_Single()
         {
             string input = @"""One"",""Two""" + Environment.NewLine +
@@ -85,14 +85,14 @@ namespace DelimitedDataParser
 
             var output = parser.Parse(GetTextReader(input));
 
-            Assert.AreEqual(2, output.Columns.Count, "Expected 2 columns.");
-            Assert.AreEqual("One", output.Columns[0].ColumnName, "Column name incorrect.");
-            Assert.AreEqual("Two", output.Columns[1].ColumnName, "Column name incorrect.");
-            Assert.AreEqual("Three", output.Rows[0][0], "Field data incorrect.");
-            Assert.AreEqual("Four", output.Rows[0][1], "Field data incorrect.");
+            Assert.Equal(2, output.Columns.Count);
+            Assert.Equal("One", output.Columns[0].ColumnName);
+            Assert.Equal("Two", output.Columns[1].ColumnName);
+            Assert.Equal("Three", output.Rows[0][0]);
+            Assert.Equal("Four", output.Rows[0][1]);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_ColumnsAsText_Multiple()
         {
             string input = @"""One"",""Two""" + Environment.NewLine +
@@ -105,14 +105,14 @@ namespace DelimitedDataParser
 
             var output = parser.Parse(GetTextReader(input));
 
-            Assert.AreEqual(2, output.Columns.Count, "Expected 2 columns.");
-            Assert.AreEqual("One", output.Columns[0].ColumnName, "Column name incorrect.");
-            Assert.AreEqual("Two", output.Columns[1].ColumnName, "Column name incorrect.");
-            Assert.AreEqual("Three", output.Rows[0][0], "Field data incorrect.");
-            Assert.AreEqual("Four", output.Rows[0][1], "Field data incorrect.");
+            Assert.Equal(2, output.Columns.Count);
+            Assert.Equal("One", output.Columns[0].ColumnName);
+            Assert.Equal("Two", output.Columns[1].ColumnName);
+            Assert.Equal("Three", output.Rows[0][0]);
+            Assert.Equal("Four", output.Rows[0][1]);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_ColumnsAsText_DataNotInFormat()
         {
             string input = @"""One"",""Two""" + Environment.NewLine +
@@ -126,13 +126,13 @@ namespace DelimitedDataParser
 
             var output = parser.Parse(GetTextReader(input));
 
-            Assert.AreEqual(2, output.Columns.Count, "Expected 2 columns.");
-            Assert.AreEqual("One", output.Columns[0].ColumnName, "Column name incorrect.");
-            Assert.AreEqual("Two", output.Columns[1].ColumnName, "Column name incorrect.");
-            Assert.AreEqual("Three", output.Rows[0][0], "Field data incorrect.");
-            Assert.AreEqual("Four", output.Rows[0][1], "Field data incorrect.");
-            Assert.AreEqual("Five", output.Rows[1][0], "Field data incorrect.");
-            Assert.AreEqual("Six", output.Rows[1][1], "Field data incorrect.");
+            Assert.Equal(2, output.Columns.Count);
+            Assert.Equal("One", output.Columns[0].ColumnName);
+            Assert.Equal("Two", output.Columns[1].ColumnName);
+            Assert.Equal("Three", output.Rows[0][0]);
+            Assert.Equal("Four", output.Rows[0][1]);
+            Assert.Equal("Five", output.Rows[1][0]);
+            Assert.Equal("Six", output.Rows[1][1]);
         }
     }
 }

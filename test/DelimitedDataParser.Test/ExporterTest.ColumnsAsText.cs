@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace DelimitedDataParser
 {
     public partial class ExporterTest
     {
-        [TestMethod]
+        [Fact]
         public void Supports_ColumnsAsText_None()
         {
             var input = CreateDataTable();
@@ -19,13 +19,13 @@ namespace DelimitedDataParser
 
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""One"",""Two""" + Environment.NewLine
                 + @"""001,002"",""003,004""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_ColumnsAsText_Single_NonExistant()
         {
             var input = CreateDataTable();
@@ -40,13 +40,13 @@ namespace DelimitedDataParser
 
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""One"",""Two""" + Environment.NewLine
                 + @"""001,002"",""003,004""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_ColumnsAsText_Single_First()
         {
             var input = CreateDataTable();
@@ -61,13 +61,13 @@ namespace DelimitedDataParser
 
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""One"",""Two""" + Environment.NewLine
                 + @"""=""""001,002"""""",""003,004""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_ColumnsAsText_Single_Second()
         {
             var input = CreateDataTable();
@@ -82,13 +82,13 @@ namespace DelimitedDataParser
 
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""One"",""Two""" + Environment.NewLine
                 + @"""001,002"",""=""""003,004""""""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_ColumnsAsText_Single_MiddleOfThree()
         {
             var input = CreateDataTable();
@@ -104,13 +104,13 @@ namespace DelimitedDataParser
 
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""One"",""Two"",""Three""" + Environment.NewLine
                 + @"""001,002"",""=""""003,004"""""",""005,006""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_ColumnsAsText_Multiple()
         {
             var input = CreateDataTable();
@@ -125,13 +125,13 @@ namespace DelimitedDataParser
 
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""One"",""Two""" + Environment.NewLine
                 + @"""=""""001,002"""""",""=""""003,004""""""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_ColumnsAsText_TelephoneNumber()
         {
             var input = CreateDataTable();
@@ -147,13 +147,13 @@ namespace DelimitedDataParser
 
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""Name"",""Tel"",""Country""" + Environment.NewLine
                 + @"""Enable"",""=""""0845 519 11 00"""""",""UK""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_ColumnsAsText_NewLine()
         {
             var input = CreateDataTable();
@@ -167,13 +167,13 @@ namespace DelimitedDataParser
 
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""One""" + Environment.NewLine
                 + @"""=""""123" + Environment.NewLine + @"456""""""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_ColumnsAsText_Data_Starting_With_Quote()
         {
             var input = CreateDataTable();
@@ -187,13 +187,13 @@ namespace DelimitedDataParser
 
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""One""" + Environment.NewLine
                 + @"""=""""""""1111""""""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_ColumnsAsText_Data_Containing_Quote()
         {
             var input = CreateDataTable();
@@ -207,13 +207,13 @@ namespace DelimitedDataParser
 
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""One""" + Environment.NewLine
                 + @"""=""""11""""11""""""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_ColumnsAsText_Data_Ending_With_Quote()
         {
             var input = CreateDataTable();
@@ -227,7 +227,7 @@ namespace DelimitedDataParser
 
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""One""" + Environment.NewLine
                 + @"""=""""1111""""""""""",
                 output);

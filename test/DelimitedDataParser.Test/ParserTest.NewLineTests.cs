@@ -1,83 +1,83 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace DelimitedDataParser
 {
     public partial class ParserTest
     {
-        [TestMethod]
+        [Fact]
         public void Ensure_CRLF_Equals_Environment_NewLine()
         {
-            Assert.AreEqual("\r\n", Environment.NewLine);
+            Assert.Equal("\r\n", Environment.NewLine);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_NonQuotedHeader_ThenCRLF_ThenNonQuotedContent()
         {
             PerformNewLineTest("Foo", "Foo", "\r\n", "Bar", "Bar");
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_NonQuotedHeader_ThenCR_ThenNonQuotedContent()
         {
             PerformNewLineTest("Foo", "Foo", "\r", "Bar", "Bar");
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_NonQuotedHeader_ThenLF_ThenNonQuotedContent()
         {
             PerformNewLineTest("Foo", "Foo", "\n", "Bar", "Bar");
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_NonQuotedHeader_ThenCRLF_ThenQuotedContent()
         {
             PerformNewLineTest("Foo", "Foo", "\r\n", "\"Bar\"", "Bar");
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_NonQuotedHeader_ThenCR_ThenQuotedContent()
         {
             PerformNewLineTest("Foo", "Foo", "\r", "\"Bar\"", "Bar");
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_NonQuotedHeader_ThenLF_ThenQuotedContent()
         {
             PerformNewLineTest("Foo", "Foo", "\n", "\"Bar\"", "Bar");
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_QuotedHeader_ThenCRLF_ThenNonQuotedContent()
         {
             PerformNewLineTest("\"Foo\"", "Foo", "\r\n", "Bar", "Bar");
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_QuotedHeader_ThenCR_ThenNonQuotedContent()
         {
             PerformNewLineTest("\"Foo\"", "Foo", "\r", "Bar", "Bar");
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_QuotedHeader_ThenLF_ThenNonQuotedContent()
         {
             PerformNewLineTest("\"Foo\"", "Foo", "\n", "Bar", "Bar");
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_QuotedHeader_ThenCRLF_ThenQuotedContent()
         {
             PerformNewLineTest("\"Foo\"", "Foo", "\r\n", "\"Bar\"", "Bar");
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_QuotedHeader_ThenCR_ThenQuotedContent()
         {
             PerformNewLineTest("\"Foo\"", "Foo", "\r", "\"Bar\"", "Bar");
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_QuotedHeader_ThenLF_ThenQuotedContent()
         {
             PerformNewLineTest("\"Foo\"", "Foo", "\n", "\"Bar\"", "Bar");
@@ -90,14 +90,14 @@ namespace DelimitedDataParser
             var parser = new Parser();
             var output = parser.Parse(GetTextReader(input));
             
-            Assert.AreEqual(1, output.Columns.Count, "Expected 1 column.");
-            Assert.AreEqual(1, output.Rows.Count, "Expected 1 column.");
+            Assert.Equal(1, output.Columns.Count);
+            Assert.Equal(1, output.Rows.Count);
 
             var col = output.Columns[0];
             var row = output.Rows[0];
 
-            Assert.AreEqual(expectedHeader, col.ColumnName, "Column name incorrect.");
-            Assert.AreEqual(expectedData, row[col], "Row content incorrect.");
+            Assert.Equal(expectedHeader, col.ColumnName);
+            Assert.Equal(expectedData, row[col]);
         }
     }
 }

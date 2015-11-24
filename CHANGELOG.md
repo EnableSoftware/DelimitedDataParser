@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+### Changed
+
+- Unit test framework replaced with XUnit.net.
+
 ## [3.0.0] — 2015-10-02
 
 ### Changed

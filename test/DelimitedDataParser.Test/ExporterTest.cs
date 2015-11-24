@@ -2,55 +2,54 @@
 using System.Data;
 using System.IO;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace DelimitedDataParser
 {
-    [TestClass]
     public partial class ExporterTest
     {
         private const string CharPool = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
         private readonly Random _random = new Random();
 
-        [TestMethod]
+        [Fact]
         public void Can_Load_Input()
         {
             var exporter = new Exporter();
             var output = exporter.ExportToString(CreateDataTable());
 
-            Assert.IsNotNull(output);
+            Assert.NotNull(output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Can_Parse_Empty_Table()
         {
             var exporter = new Exporter();
 
             var output = exporter.ExportToString(CreateDataTable());
 
-            Assert.AreEqual(0, output.Length, "Should have zero length.");
+            Assert.Equal(0, output.Length);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Fails_Without_Valid_Input()
         {
             using (var writer = new StringWriter())
             {
-                new Exporter().Export(null, writer);
+                var exporter = new Exporter();
+                Assert.Throws<ArgumentNullException>(() => exporter.Export(null, writer));
             }
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
+        [Fact]
         public void Fails_With_Invalid_Settings()
         {
             var exporter = new Exporter();
             exporter.IncludeEscapeCharacters = false;
-            var output = exporter.ExportToString(CreateDataTable());
+
+            Assert.Throws<InvalidOperationException>(() => exporter.ExportToString(CreateDataTable()));
         }
 
-        [TestMethod]
+        [Fact]
         public void Outputs_Column_Names()
         {
             var input = CreateDataTable();
@@ -61,10 +60,10 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(@"""One"",""Two"",""Three""", output, "Expected output to start with column names.");
+            Assert.Equal(@"""One"",""Two"",""Three""", output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Quoted_Column_Name()
         {
             var input = CreateDataTable();
@@ -75,10 +74,10 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(@"""One"",""""""Two"""""",""Three""", output, "Expected output to start with column names.");
+            Assert.Equal(@"""One"",""""""Two"""""",""Three""", output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Column_Name_Containing_Quote()
         {
             var input = CreateDataTable();
@@ -89,10 +88,10 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(@"""One"",""Tw""""o"",""Three""", output, "Expected output to start with column names.");
+            Assert.Equal(@"""One"",""Tw""""o"",""Three""", output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Column_Name_Containing_Comma()
         {
             var input = CreateDataTable();
@@ -103,10 +102,10 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(@"""One"",""Tw,o"",""Three""", output, "Expected output to start with column names.");
+            Assert.Equal(@"""One"",""Tw,o"",""Three""", output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Column_Name_Containing_Full_New_Line()
         {
             var input = CreateDataTable();
@@ -117,10 +116,10 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(@"""One"",""Tw" + Environment.NewLine + @"o"",""Three""", output, "Expected output to start with column names.");
+            Assert.Equal(@"""One"",""Tw" + Environment.NewLine + @"o"",""Three""", output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Column_Name_Containing_Reversed_New_Line()
         {
             var input = CreateDataTable();
@@ -131,10 +130,10 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(@"""One"",""Tw" + "\n\r" + @"o"",""Three""", output, "Expected output to start with column names.");
+            Assert.Equal(@"""One"",""Tw" + "\n\r" + @"o"",""Three""", output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Column_Name_Containing_Carriage_Return()
         {
             var input = CreateDataTable();
@@ -145,10 +144,10 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(@"""One"",""Tw" + "\r" + @"o"",""Three""", output, "Expected output to start with column names.");
+            Assert.Equal(@"""One"",""Tw" + "\r" + @"o"",""Three""", output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Column_Name_Containing_Line_Feed()
         {
             var input = CreateDataTable();
@@ -159,10 +158,10 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(@"""One"",""Tw" + "\n" + @"o"",""Three""", output, "Expected output to start with column names.");
+            Assert.Equal(@"""One"",""Tw" + "\n" + @"o"",""Three""", output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Does_Not_Strip_Whitespace_From_Column_Names()
         {
             var input = CreateDataTable();
@@ -173,10 +172,10 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(@""" One"",""Two "","" Three """, output, "Expected output to start with column names.");
+            Assert.Equal(@""" One"",""Two "","" Three """, output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Null_Column_Name()
         {
             var input = CreateDataTable();
@@ -187,10 +186,10 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(@"""One"",""Column1"",""Three""", output, "Expected output to start with column names.");
+            Assert.Equal(@"""One"",""Column1"",""Three""", output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Empty_Column_Name()
         {
             var input = CreateDataTable();
@@ -201,10 +200,10 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(@"""One"",""Column1"",""Three""", output, "Expected output to start with column names.");
+            Assert.Equal(@"""One"",""Column1"",""Three""", output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Empty_Last_Column_Name()
         {
             var input = CreateDataTable();
@@ -215,10 +214,10 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(@"""One"",""Two"",""Column1""", output, "Expected output to start with column names.");
+            Assert.Equal(@"""One"",""Two"",""Column1""", output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Can_Parse_Empty_Fields()
         {
             var input = CreateDataTable();
@@ -230,13 +229,13 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""Column1"",""Column2""" + Environment.NewLine
                 + @""""",""""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Can_Parse_Null_Fields()
         {
             var input = CreateDataTable();
@@ -248,13 +247,13 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""One"",""Two""" + Environment.NewLine
                 + @""""",""Two""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Can_Parse_Multiple_Rows()
         {
             var input = CreateDataTable();
@@ -267,14 +266,14 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""One"",""Two""" + Environment.NewLine
                 + @"""Three"",""Four""" + Environment.NewLine
                 + @"""Five"",""Six""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Quoted_Data()
         {
             var input = CreateDataTable();
@@ -287,14 +286,14 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""One"",""Two""" + Environment.NewLine
                 + @"""""""Three"""""",""Four""" + Environment.NewLine
                 + @"""Five"",""Six""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Data_Containing_Quote()
         {
             var input = CreateDataTable();
@@ -307,14 +306,14 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""One"",""Two""" + Environment.NewLine
                 + @"""Thr""""ee"",""Four""" + Environment.NewLine
                 + @"""Five"",""Six""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Data_Ending_With_Quote()
         {
             var input = CreateDataTable();
@@ -327,14 +326,14 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""One"",""Two""" + Environment.NewLine
                 + @"""Three"",""Four""" + Environment.NewLine
                 + @"""Five"",""Six""""""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Data_Containing_Full_New_Line()
         {
             var input = CreateDataTable();
@@ -347,14 +346,14 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""One"",""Two""" + Environment.NewLine
                 + @"""Thr" + Environment.NewLine + @"ee"",""Four""" + Environment.NewLine
                 + @"""Five"",""Six""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Multiple_Blank_Rows()
         {
             var input = CreateDataTable();
@@ -369,7 +368,7 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""One"",""Two""" + Environment.NewLine
                 + @"""Three"",""Four""" + Environment.NewLine
                 + @""""",""""" + Environment.NewLine
@@ -378,7 +377,7 @@ namespace DelimitedDataParser
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Not_Outputting_Column_Names()
         {
             var input = CreateDataTable();
@@ -392,13 +391,13 @@ namespace DelimitedDataParser
             exporter.OutputColumnHeaders = false;
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""Three"",""Four""" + Environment.NewLine
                 + @"""Five"",""Six""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Changing_Field_Separator_Char_Pipe()
         {
             var input = CreateDataTable();
@@ -412,14 +411,14 @@ namespace DelimitedDataParser
             exporter.FieldSeparator = '|';
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""One""|""Two""" + Environment.NewLine
                 + @"""Three""|""Four""" + Environment.NewLine
                 + @"""Five""|""Six""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Changing_Field_Separator_Char_Tab()
         {
             var input = CreateDataTable();
@@ -433,14 +432,14 @@ namespace DelimitedDataParser
             exporter.FieldSeparator = '\t';
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 "\"One\"\t\"Two\"" + Environment.NewLine
                 + "\"Three\"\t\"Four\"" + Environment.NewLine
                 + "\"Five\"\t\"Six\"",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Changing_Field_Separator_Char_Colon()
         {
             var input = CreateDataTable();
@@ -454,14 +453,14 @@ namespace DelimitedDataParser
             exporter.FieldSeparator = ':';
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 "\"One\":\"Two\"" + Environment.NewLine
                 + "\"Three\":\"Four\"" + Environment.NewLine
                 + "\"Five\":\"Six\"",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Changing_Field_Separator_Char_Space()
         {
             var input = CreateDataTable();
@@ -475,14 +474,14 @@ namespace DelimitedDataParser
             exporter.FieldSeparator = ' ';
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 "\"One\" \"Two\"" + Environment.NewLine
                 + "\"Three\" \"Four\"" + Environment.NewLine
                 + "\"Five\" \"Six\"",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Large_Cell_Content()
         {
             string cellContent = new string('a', 10000000);
@@ -496,13 +495,13 @@ namespace DelimitedDataParser
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 @"""One"",""Two""" + Environment.NewLine
                 + @"""Three"",""" + cellContent + @"""",
                 output);
         }
 
-        [TestMethod]
+        [Fact]
         public void Supports_Huge_Table()
         {
             int cols = 1000;
@@ -547,17 +546,17 @@ namespace DelimitedDataParser
 
             var exporter = new Exporter();
 
-            DateTime start = DateTime.Now;
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
             var output = exporter.ExportToString(input);
 
-            DateTime end = DateTime.Now;
+            stopwatch.Stop();
 
-            Assert.AreEqual(expected.ToString(), output);
+            Assert.Equal(expected.ToString(), output);
 
-            double duration = end.Subtract(start).TotalMilliseconds;
+            double duration = stopwatch.ElapsedMilliseconds;
 
-            Assert.IsTrue(duration / 1000 < 1);
+            Assert.True(duration / 1000 < 1);
         }
 
         private static DataTable CreateDataTable()
