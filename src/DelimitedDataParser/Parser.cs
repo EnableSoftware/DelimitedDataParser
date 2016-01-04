@@ -210,6 +210,24 @@ namespace DelimitedDataParser
             return output;
         }
 
+        /// <summary>
+        /// Handle quote characters that have been encountered whilst processing the character string.
+        /// </summary>
+        /// <param name="table">
+        /// The <see cref="Table"/> to be used.
+        /// </param>
+        /// <param name="quoteCount">
+        /// How many repeated quote characters have been read.
+        /// </param>
+        /// <param name="quotedMode">
+        /// A <see cref="Boolean"/> to identify whether the current operation is within a quoted string.
+        /// </param>
+        /// <param name="quotedModeHasPassed">
+        /// A <see cref="Boolean"/> specifying whether the current operation has finished parsing a quoted value / just left 'Quoted Mode'.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="table"/> is null.
+        /// </exception>
         private static void HandleQuotes(Table table, int quoteCount, ref bool quotedMode, ref bool quotedModeHasPassed)
         {
             if (table == null)
@@ -250,6 +268,15 @@ namespace DelimitedDataParser
             }
         }
 
+        /// <summary>
+        /// Parse the input <paramref name="String"/> where values may be wrapped in quotes and preceded with an equals sign.
+        /// </summary>
+        /// <param name="value">
+        /// The <see cref="String"/> value to be parsed.
+        /// </param>
+        /// <returns>
+        /// The parsed <see cref="String"/>.
+        /// </returns>
         private static string ParseValueAsText(string value)
         {
             if (string.IsNullOrEmpty(value))
@@ -265,6 +292,12 @@ namespace DelimitedDataParser
             return value.Substring(2, value.Length - 3);
         }
 
+        /// <summary>
+        /// Parse the row values as text for each column where values are wrapped in quotes and preceded with an equals sign.
+        /// </summary>
+        /// <param name="dataTable">
+        /// The <see cref="DataTable"/> containing the columns for which the row values need to be parsed as text. 
+        /// </param>
         private void ResolveColumnsAsText(DataTable dataTable)
         {
             foreach (DataColumn column in dataTable.Columns)

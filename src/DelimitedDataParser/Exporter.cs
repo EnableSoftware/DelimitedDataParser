@@ -171,6 +171,16 @@ namespace DelimitedDataParser
             }
         }
 
+        /// <summary>
+        /// Write an initial row containing the column names from <paramref name="DataTable"/> to the specified
+        /// <see cref="TextWriter"/>.
+        /// </summary>
+        /// <param name="dataTable">
+        /// The <see cref="DataTable"/> containing the columns to be written.
+        /// </param>
+        /// <param name="writer">
+        /// The <see cref="TextWriter"/> to be written to.
+        /// </param>
         private void RenderHeaderRow(DataTable dataTable, TextWriter writer)
         {
             for (int colIndex = 0; colIndex < dataTable.Columns.Count; colIndex++)
@@ -186,6 +196,19 @@ namespace DelimitedDataParser
             }
         }
 
+        /// <summary>
+        /// Write the <paramref name="DataRow"/> from the <paramref name="DataTable"/> to the specified
+        /// <see cref="TextWriter"/>.
+        /// </summary>
+        /// <param name="dataTable">
+        /// The <see cref="DataTable"/> containing the columns to export. 
+        /// </param>
+        /// <param name="row">
+        /// The <see cref="DataRow"/> containing the data to export
+        /// </param>
+        /// <param name="writer">
+        /// The <see cref="TextWriter"/> to be written to.
+        /// </param>
         private void RenderRow(DataTable dataTable, DataRow row, TextWriter writer)
         {
             for (int colIndex = 0; colIndex < dataTable.Columns.Count; colIndex++)
@@ -205,6 +228,18 @@ namespace DelimitedDataParser
             }
         }
 
+        /// <summary>
+        /// Whether the input <paramref name="DataColumn"/> should be treated as a text column.
+        /// </summary>
+        /// <param name="column">
+        /// The <see cref="DataColumn"/> to be checked.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Boolean"/> specifying whether the column should be treated as a text column.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="textReader"/> is null.
+        /// </exception>
         private bool GetIsColumnAsText(DataColumn column)
         {
             if (column == null)
@@ -220,6 +255,18 @@ namespace DelimitedDataParser
             return _columnNamesAsText.Contains(column.ColumnName);
         }
 
+        /// <summary>
+        /// Escape the input <paramref name="String"/> for use in a CSV.
+        /// </summary>
+        /// <param name="value">
+        /// The <see cref="String"/> to be escaped.
+        /// </param>
+        /// <param name="valueAsText">
+        /// Whether the input <paramref name="String"/> should be treated as a text column.
+        /// </param>
+        /// <returns>
+        /// The escaped string
+        /// </returns>
         private string CsvEscape(string value, bool valueAsText)
         {
             if (!_includeEscapeCharacters)
