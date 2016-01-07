@@ -12,27 +12,9 @@ namespace DelimitedDataParser
         }
 
         [Fact]
-        public void Supports_NonQuotedHeader_ThenCRLF_ThenNonQuotedContent()
-        {
-            PerformNewLineTest("Foo", "Foo", "\r\n", "Bar", "Bar");
-        }
-
-        [Fact]
         public void Supports_NonQuotedHeader_ThenCR_ThenNonQuotedContent()
         {
             PerformNewLineTest("Foo", "Foo", "\r", "Bar", "Bar");
-        }
-
-        [Fact]
-        public void Supports_NonQuotedHeader_ThenLF_ThenNonQuotedContent()
-        {
-            PerformNewLineTest("Foo", "Foo", "\n", "Bar", "Bar");
-        }
-
-        [Fact]
-        public void Supports_NonQuotedHeader_ThenCRLF_ThenQuotedContent()
-        {
-            PerformNewLineTest("Foo", "Foo", "\r\n", "\"Bar\"", "Bar");
         }
 
         [Fact]
@@ -42,15 +24,27 @@ namespace DelimitedDataParser
         }
 
         [Fact]
-        public void Supports_NonQuotedHeader_ThenLF_ThenQuotedContent()
+        public void Supports_NonQuotedHeader_ThenCRLF_ThenNonQuotedContent()
         {
-            PerformNewLineTest("Foo", "Foo", "\n", "\"Bar\"", "Bar");
+            PerformNewLineTest("Foo", "Foo", "\r\n", "Bar", "Bar");
         }
 
         [Fact]
-        public void Supports_QuotedHeader_ThenCRLF_ThenNonQuotedContent()
+        public void Supports_NonQuotedHeader_ThenCRLF_ThenQuotedContent()
         {
-            PerformNewLineTest("\"Foo\"", "Foo", "\r\n", "Bar", "Bar");
+            PerformNewLineTest("Foo", "Foo", "\r\n", "\"Bar\"", "Bar");
+        }
+
+        [Fact]
+        public void Supports_NonQuotedHeader_ThenLF_ThenNonQuotedContent()
+        {
+            PerformNewLineTest("Foo", "Foo", "\n", "Bar", "Bar");
+        }
+
+        [Fact]
+        public void Supports_NonQuotedHeader_ThenLF_ThenQuotedContent()
+        {
+            PerformNewLineTest("Foo", "Foo", "\n", "\"Bar\"", "Bar");
         }
 
         [Fact]
@@ -60,9 +54,15 @@ namespace DelimitedDataParser
         }
 
         [Fact]
-        public void Supports_QuotedHeader_ThenLF_ThenNonQuotedContent()
+        public void Supports_QuotedHeader_ThenCR_ThenQuotedContent()
         {
-            PerformNewLineTest("\"Foo\"", "Foo", "\n", "Bar", "Bar");
+            PerformNewLineTest("\"Foo\"", "Foo", "\r", "\"Bar\"", "Bar");
+        }
+
+        [Fact]
+        public void Supports_QuotedHeader_ThenCRLF_ThenNonQuotedContent()
+        {
+            PerformNewLineTest("\"Foo\"", "Foo", "\r\n", "Bar", "Bar");
         }
 
         [Fact]
@@ -72,9 +72,9 @@ namespace DelimitedDataParser
         }
 
         [Fact]
-        public void Supports_QuotedHeader_ThenCR_ThenQuotedContent()
+        public void Supports_QuotedHeader_ThenLF_ThenNonQuotedContent()
         {
-            PerformNewLineTest("\"Foo\"", "Foo", "\r", "\"Bar\"", "Bar");
+            PerformNewLineTest("\"Foo\"", "Foo", "\n", "Bar", "Bar");
         }
 
         [Fact]
@@ -89,7 +89,7 @@ namespace DelimitedDataParser
 
             var parser = new Parser();
             var output = parser.Parse(GetTextReader(input));
-            
+
             Assert.Equal(1, output.Columns.Count);
             Assert.Equal(1, output.Rows.Count);
 

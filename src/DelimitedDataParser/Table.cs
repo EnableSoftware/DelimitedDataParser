@@ -10,9 +10,9 @@ namespace DelimitedDataParser
     {
         private readonly IList<string[]> _rows = new List<string[]>();
 
-        private bool _useFirstRowAsColumnHeaders = true;
         private StringBuilder _currentCell = new StringBuilder();
         private IList<string> _currentRow = new List<string>();
+        private bool _useFirstRowAsColumnHeaders = true;
 
         public virtual bool UseFirstRowAsColumnHeaders
         {

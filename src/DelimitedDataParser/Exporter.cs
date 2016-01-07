@@ -15,10 +15,10 @@ namespace DelimitedDataParser
         /// </summary>
         public static readonly char TabSeparator = '\t';
 
-        private bool _outputColumnHeaders = true;
+        private ISet<string> _columnNamesAsText;
         private char _fieldSeparator = ',';
         private bool _includeEscapeCharacters = true;
-        private ISet<string> _columnNamesAsText;
+        private bool _outputColumnHeaders = true;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Exporter"/> class.
@@ -28,25 +28,8 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Specifies whether an initial row containing column names should be
-        /// written to the output. The default value is <c>true</c>.
-        /// </summary>
-        public virtual bool OutputColumnHeaders
-        {
-            get
-            {
-                return _outputColumnHeaders;
-            }
-
-            set
-            {
-                _outputColumnHeaders = value;
-            }
-        }
-
-        /// <summary>
-        /// The character used as the field delimiter in the output. The
-        /// default value is <c>,</c>, i.e. CSV output.
+        /// The character used as the field delimiter in the output. The default value is <c>,</c>,
+        /// i.e. CSV output.
         /// </summary>
         public virtual char FieldSeparator
         {
@@ -62,12 +45,11 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Specifies whether each value should be escaped by wrapping in
-        /// quotation marks. The default value is <c>true</c>.
+        /// Specifies whether each value should be escaped by wrapping in quotation marks. The
+        /// default value is <c>true</c>.
         /// </summary>
         /// <remarks>
-        /// This must be set to <c>true</c> if <see cref="FieldSeparator"/>
-        /// is a tab character.
+        /// This must be set to <c>true</c> if <see cref="FieldSeparator"/> is a tab character.
         /// </remarks>
         public virtual bool IncludeEscapeCharacters
         {
@@ -83,19 +65,19 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Set which columns should have their values quoted and preceded
-        /// with an equals sign in the output.
+        /// Specifies whether an initial row containing column names should be written to the
+        /// output. The default value is <c>true</c>.
         /// </summary>
-        /// <param name="columnNames">
-        /// The names of the columns whose values should quoted in the output.
-        /// </param>
-        public virtual void SetColumnsAsText(IEnumerable<string> columnNames)
+        public virtual bool OutputColumnHeaders
         {
-            ClearColumnsAsText();
-
-            if (columnNames != null)
+            get
             {
-                _columnNamesAsText = new HashSet<string>(columnNames);
+                return _outputColumnHeaders;
+            }
+
+            set
+            {
+                _outputColumnHeaders = value;
             }
         }
 
@@ -103,8 +85,8 @@ namespace DelimitedDataParser
         /// Clear all "columns as text" settings.
         /// </summary>
         /// <remarks>
-        /// Calling this method clears any "columns as text" settings set via
-        /// the <see cref="SetColumnsAsText(IEnumerable{string})"/> method.
+        /// Calling this method clears any "columns as text" settings set via the <see
+        /// cref="SetColumnsAsText(IEnumerable{string})"/> method.
         /// </remarks>
         public virtual void ClearColumnsAsText()
         {
@@ -112,22 +94,16 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Write the input <paramref name="DataTable"/> to the specified
-        /// <see cref="TextWriter"/>.
+        /// Write the input <paramref name="DataTable"/> to the specified <see cref="TextWriter"/>.
         /// </summary>
-        /// <param name="dataTable">
-        /// The <see cref="DataTable"/> containing the data to export.
-        /// </param>
-        /// <param name="writer">
-        /// The <see cref="TextWriter"/> to be written to.
-        /// </param>
+        /// <param name="dataTable">The <see cref="DataTable"/> containing the data to export.</param>
+        /// <param name="writer">The <see cref="TextWriter"/> to be written to.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="dataTable"/> is <c>null</c> or
-        /// <paramref name="writer"/> is <c>null</c>.
+        /// <paramref name="dataTable"/> is <c>null</c> or <paramref name="writer"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// <see cref="IncludeEscapeCharacters"/> is <c>false</c> and
-        /// <see cref="FieldSeparator"/> is not a tab character.
+        /// <see cref="IncludeEscapeCharacters"/> is <c>false</c> and <see cref="FieldSeparator"/>
+        /// is not a tab character.
         /// </exception>
         public virtual void Export(DataTable dataTable, TextWriter writer)
         {
@@ -172,101 +148,30 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Write an initial row containing the column names from <paramref name="DataTable"/> to the specified
-        /// <see cref="TextWriter"/>.
+        /// Set which columns should have their values quoted and preceded with an equals sign in
+        /// the output.
         /// </summary>
-        /// <param name="dataTable">
-        /// The <see cref="DataTable"/> containing the columns to be written.
+        /// <param name="columnNames">
+        /// The names of the columns whose values should quoted in the output.
         /// </param>
-        /// <param name="writer">
-        /// The <see cref="TextWriter"/> to be written to.
-        /// </param>
-        private void RenderHeaderRow(DataTable dataTable, TextWriter writer)
+        public virtual void SetColumnsAsText(IEnumerable<string> columnNames)
         {
-            for (int colIndex = 0; colIndex < dataTable.Columns.Count; colIndex++)
+            ClearColumnsAsText();
+
+            if (columnNames != null)
             {
-                var col = dataTable.Columns[colIndex];
-
-                if (colIndex != 0)
-                {
-                    writer.Write(_fieldSeparator);
-                }
-
-                writer.Write(CsvEscape(col.ColumnName, false));
+                _columnNamesAsText = new HashSet<string>(columnNames);
             }
-        }
-
-        /// <summary>
-        /// Write the <paramref name="DataRow"/> from the <paramref name="DataTable"/> to the specified
-        /// <see cref="TextWriter"/>.
-        /// </summary>
-        /// <param name="dataTable">
-        /// The <see cref="DataTable"/> containing the columns to export. 
-        /// </param>
-        /// <param name="row">
-        /// The <see cref="DataRow"/> containing the data to export
-        /// </param>
-        /// <param name="writer">
-        /// The <see cref="TextWriter"/> to be written to.
-        /// </param>
-        private void RenderRow(DataTable dataTable, DataRow row, TextWriter writer)
-        {
-            for (int colIndex = 0; colIndex < dataTable.Columns.Count; colIndex++)
-            {
-                var col = dataTable.Columns[colIndex];
-
-                if (colIndex != 0)
-                {
-                    writer.Write(_fieldSeparator);
-                }
-
-                var valueAsText = GetIsColumnAsText(col);
-
-                var value = row[col].ToString();
-
-                writer.Write(CsvEscape(value, valueAsText));
-            }
-        }
-
-        /// <summary>
-        /// Whether the input <paramref name="DataColumn"/> should be treated as a text column.
-        /// </summary>
-        /// <param name="column">
-        /// The <see cref="DataColumn"/> to be checked.
-        /// </param>
-        /// <returns>
-        /// A <see cref="Boolean"/> specifying whether the column should be treated as a text column.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="textReader"/> is null.
-        /// </exception>
-        private bool GetIsColumnAsText(DataColumn column)
-        {
-            if (column == null)
-            {
-                throw new ArgumentNullException("column");
-            }
-
-            if (_columnNamesAsText == null)
-            {
-                return false;
-            }
-
-            return _columnNamesAsText.Contains(column.ColumnName);
         }
 
         /// <summary>
         /// Escape the input <paramref name="String"/> for use in a CSV.
         /// </summary>
-        /// <param name="value">
-        /// The <see cref="String"/> to be escaped.
-        /// </param>
+        /// <param name="value">The <see cref="String"/> to be escaped.</param>
         /// <param name="valueAsText">
         /// Whether the input <paramref name="String"/> should be treated as a text column.
         /// </param>
-        /// <returns>
-        /// The escaped string
-        /// </returns>
+        /// <returns>The escaped string</returns>
         private string CsvEscape(string value, bool valueAsText)
         {
             if (!_includeEscapeCharacters)
@@ -286,6 +191,76 @@ namespace DelimitedDataParser
             }
 
             return value;
+        }
+
+        /// <summary>
+        /// Whether the input <paramref name="DataColumn"/> should be treated as a text column.
+        /// </summary>
+        /// <param name="column">The <see cref="DataColumn"/> to be checked.</param>
+        /// <returns>
+        /// A <see cref="Boolean"/> specifying whether the column should be treated as a text column.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="textReader"/> is null.</exception>
+        private bool GetIsColumnAsText(DataColumn column)
+        {
+            if (column == null)
+            {
+                throw new ArgumentNullException("column");
+            }
+
+            if (_columnNamesAsText == null)
+            {
+                return false;
+            }
+
+            return _columnNamesAsText.Contains(column.ColumnName);
+        }
+
+        /// <summary>
+        /// Write an initial row containing the column names from <paramref name="DataTable"/> to
+        /// the specified <see cref="TextWriter"/>.
+        /// </summary>
+        /// <param name="dataTable">The <see cref="DataTable"/> containing the columns to be written.</param>
+        /// <param name="writer">The <see cref="TextWriter"/> to be written to.</param>
+        private void RenderHeaderRow(DataTable dataTable, TextWriter writer)
+        {
+            for (int colIndex = 0; colIndex < dataTable.Columns.Count; colIndex++)
+            {
+                var col = dataTable.Columns[colIndex];
+
+                if (colIndex != 0)
+                {
+                    writer.Write(_fieldSeparator);
+                }
+
+                writer.Write(CsvEscape(col.ColumnName, false));
+            }
+        }
+
+        /// <summary>
+        /// Write the <paramref name="DataRow"/> from the <paramref name="DataTable"/> to the
+        /// specified <see cref="TextWriter"/>.
+        /// </summary>
+        /// <param name="dataTable">The <see cref="DataTable"/> containing the columns to export.</param>
+        /// <param name="row">The <see cref="DataRow"/> containing the data to export</param>
+        /// <param name="writer">The <see cref="TextWriter"/> to be written to.</param>
+        private void RenderRow(DataTable dataTable, DataRow row, TextWriter writer)
+        {
+            for (int colIndex = 0; colIndex < dataTable.Columns.Count; colIndex++)
+            {
+                var col = dataTable.Columns[colIndex];
+
+                if (colIndex != 0)
+                {
+                    writer.Write(_fieldSeparator);
+                }
+
+                var valueAsText = GetIsColumnAsText(col);
+
+                var value = row[col].ToString();
+
+                writer.Write(CsvEscape(value, valueAsText));
+            }
         }
     }
 }

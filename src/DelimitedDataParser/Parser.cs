@@ -12,14 +12,13 @@ namespace DelimitedDataParser
     /// </summary>
     public class Parser
     {
+        private const int BufferSize = 4096;
         private const char CarriageReturn = '\r';
         private const char LineFeed = '\n';
         private const char Quotes = '"';
-        private const int BufferSize = 4096;
-
-        private bool _useFirstRowAsColumnHeaders = true;
-        private char _fieldSeparator = ',';
         private ISet<string> _columnNamesAsText;
+        private char _fieldSeparator = ',';
+        private bool _useFirstRowAsColumnHeaders = true;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Parser"/> class.
@@ -29,25 +28,8 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Specifies whether the first row of the text file should be treated
-        /// as a header row. The default value is <c>true</c>.
-        /// </summary>
-        public virtual bool UseFirstRowAsColumnHeaders
-        {
-            get
-            {
-                return _useFirstRowAsColumnHeaders;
-            }
-
-            set
-            {
-                _useFirstRowAsColumnHeaders = value;
-            }
-        }
-
-        /// <summary>
-        /// The character used as the field delimiter in the text file. The
-        /// default value is <c>,</c>, i.e. CSV input.
+        /// The character used as the field delimiter in the text file. The default value is
+        /// <c>,</c>, i.e. CSV input.
         /// </summary>
         public virtual char FieldSeparator
         {
@@ -63,19 +45,19 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Specifies which column values are wrapped in quotes and preceded
-        /// with an equals sign in the input.
+        /// Specifies whether the first row of the text file should be treated as a header row. The
+        /// default value is <c>true</c>.
         /// </summary>
-        /// <param name="columnNames">
-        /// The names of the columns whose values are quoted in the input.
-        /// </param>
-        public virtual void SetColumnsAsText(IEnumerable<string> columnNames)
+        public virtual bool UseFirstRowAsColumnHeaders
         {
-            ClearColumnsAsText();
-
-            if (columnNames != null)
+            get
             {
-                _columnNamesAsText = new HashSet<string>(columnNames);
+                return _useFirstRowAsColumnHeaders;
+            }
+
+            set
+            {
+                _useFirstRowAsColumnHeaders = value;
             }
         }
 
@@ -83,8 +65,8 @@ namespace DelimitedDataParser
         /// Clear all "columns as text" settings.
         /// </summary>
         /// <remarks>
-        /// Calling this method clears any "columns as text" settings set via
-        /// the <see cref="SetColumnsAsText(IEnumerable{string})"/> method.
+        /// Calling this method clears any "columns as text" settings set via the <see
+        /// cref="SetColumnsAsText(IEnumerable{string})"/> method.
         /// </remarks>
         public virtual void ClearColumnsAsText()
         {
@@ -97,12 +79,8 @@ namespace DelimitedDataParser
         /// <param name="textReader">
         /// The <see cref="TextReader"/> containing the delimited data to read.
         /// </param>
-        /// <returns>
-        /// The <see cref="DataTable"/> containing the parsed data.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="textReader"/> is null.
-        /// </exception>
+        /// <returns>The <see cref="DataTable"/> containing the parsed data.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="textReader"/> is null.</exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public virtual DataTable Parse(TextReader textReader)
         {
@@ -211,23 +189,35 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
+        /// Specifies which column values are wrapped in quotes and preceded with an equals sign in
+        /// the input.
+        /// </summary>
+        /// <param name="columnNames">
+        /// The names of the columns whose values are quoted in the input.
+        /// </param>
+        public virtual void SetColumnsAsText(IEnumerable<string> columnNames)
+        {
+            ClearColumnsAsText();
+
+            if (columnNames != null)
+            {
+                _columnNamesAsText = new HashSet<string>(columnNames);
+            }
+        }
+
+        /// <summary>
         /// Handle quote characters that have been encountered whilst processing the character string.
         /// </summary>
-        /// <param name="table">
-        /// The <see cref="Table"/> to be used.
-        /// </param>
-        /// <param name="quoteCount">
-        /// How many repeated quote characters have been read.
-        /// </param>
+        /// <param name="table">The <see cref="Table"/> to be used.</param>
+        /// <param name="quoteCount">How many repeated quote characters have been read.</param>
         /// <param name="quotedMode">
         /// A <see cref="Boolean"/> to identify whether the current operation is within a quoted string.
         /// </param>
         /// <param name="quotedModeHasPassed">
-        /// A <see cref="Boolean"/> specifying whether the current operation has finished parsing a quoted value / just left 'Quoted Mode'.
+        /// A <see cref="Boolean"/> specifying whether the current operation has finished parsing a
+        /// quoted value / just left 'Quoted Mode'.
         /// </param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="table"/> is null.
-        /// </exception>
+        /// <exception cref="ArgumentNullException"><paramref name="table"/> is null.</exception>
         private static void HandleQuotes(Table table, int quoteCount, ref bool quotedMode, ref bool quotedModeHasPassed)
         {
             if (table == null)
@@ -269,14 +259,11 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Parse the input <paramref name="String"/> where values may be wrapped in quotes and preceded with an equals sign.
+        /// Parse the input <paramref name="String"/> where values may be wrapped in quotes and
+        /// preceded with an equals sign.
         /// </summary>
-        /// <param name="value">
-        /// The <see cref="String"/> value to be parsed.
-        /// </param>
-        /// <returns>
-        /// The parsed <see cref="String"/>.
-        /// </returns>
+        /// <param name="value">The <see cref="String"/> value to be parsed.</param>
+        /// <returns>The parsed <see cref="String"/>.</returns>
         private static string ParseValueAsText(string value)
         {
             if (string.IsNullOrEmpty(value))
@@ -293,10 +280,12 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Parse the row values as text for each column where values are wrapped in quotes and preceded with an equals sign.
+        /// Parse the row values as text for each column where values are wrapped in quotes and
+        /// preceded with an equals sign.
         /// </summary>
         /// <param name="dataTable">
-        /// The <see cref="DataTable"/> containing the columns for which the row values need to be parsed as text. 
+        /// The <see cref="DataTable"/> containing the columns for which the row values need to be
+        /// parsed as text.
         /// </param>
         private void ResolveColumnsAsText(DataTable dataTable)
         {
