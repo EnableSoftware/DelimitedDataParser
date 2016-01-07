@@ -6,7 +6,7 @@ C# library for parsing and exporting tabular data in delimited format (e.g. CSV)
 
 ## Parser
 
-The `Parser.Parse()` method takes a `TextWriter` and returns `DataTable`.
+The `Parser.Parse()` method takes a `TextReader` and returns `DataTable`.
 
 ```c#
 var parser = new Parser();
@@ -18,7 +18,7 @@ using (DataTable myData = parser.Parse(myTextReader))
 ### Configuration properties
 
 * `FieldSeparator` - the character used as field delimiter in the text file. Default: `,` (i.e., CSV).
-* `UseFirstRowAsColumnHeaders` - indicates whether the first row of the text file should be treated as a header row. Default: `true`.
+* `UseFirstRowAsColumnHeaders` - specifies whether the first row of the text file should be treated as a header row. Default: `true`.
 
 ## Exporter
 
@@ -48,4 +48,11 @@ To set columns as text, call the `SetColumnsAsText` method on either `Parser` or
 ```c#
 parser.SetColumnsAsText(new[] { "Foo", "Bar" });
 exporter.SetColumnsAsText(new[] { "Baz", "Qux" });
+```
+
+To clear any columns previously set as text, call the `ClearColumnsAsText` method on either `Parser` or `Exporter`.
+
+```c#
+parser.ClearColumnsAsText();
+exporter.ClearColumnsAsText();
 ```
