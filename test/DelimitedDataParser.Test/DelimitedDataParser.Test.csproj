@@ -77,6 +77,7 @@
     <Compile Include="ExporterTest.ColumnsAsText.cs" />
     <Compile Include="ExporterTest.cs" />
     <Compile Include="ExporterExtensions.cs" />
+    <Compile Include="ParserTest.ParseRows.cs" />
     <Compile Include="ParserTest.ColumnsAsText.cs" />
     <Compile Include="ParserTest.cs" />
     <Compile Include="ParserTest.NewLineTests.cs" />

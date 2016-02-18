@@ -702,6 +702,9 @@ namespace DelimitedDataParser
                 + @"Test 1,Test 2,Test 葉";
 
             var parser = new Parser();
+
+            // TODO How is this testing an unknown encoding?
+            // This test is identical to `Supports_UTF8_Text`.
             var output = parser.Parse(GetTextReader(input, Encoding.UTF8));
 
             Assert.Equal(3, output.Columns.Count);
