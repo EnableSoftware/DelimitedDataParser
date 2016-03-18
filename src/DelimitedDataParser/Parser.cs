@@ -214,6 +214,24 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
+        /// Create a data reader that will read from the <paramref name="TextReader"/>.
+        /// </summary>
+        /// <param name="textReader">
+        /// The <see cref="TextReader"/> containing the delimited data to read.
+        /// </param>
+        /// <returns>A data reader that will read rows of data.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="textReader"/> is null.</exception>
+        public virtual DelimitedDataReader ParseReader(TextReader textReader)
+        {
+            if (textReader == null)
+            {
+                throw new ArgumentNullException("textReader");
+            }
+
+            return new DelimitedDataReader(textReader, _fieldSeparator);
+        }
+
+        /// <summary>
         /// Specifies which column values are wrapped in quotes and preceded with an equals sign in
         /// the input.
         /// </summary>
