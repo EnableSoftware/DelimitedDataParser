@@ -24,11 +24,63 @@ namespace DelimitedDataParser
             Assert.False(hasRow);
         }
 
-        [Fact(Skip = "Consider for implementation")]
-        public void ParseReader_Execution_Is_Deferred()
+        [Fact]
+        public void ParseReader_Can_Parse_Header()
         {
-            // TODO Should we test that execution is deferred?
-            // See http://codeblog.jonskeet.uk/2010/09/03/reimplementing-linq-to-objects-part-2-quot-where-quot/
+            string input = @"Field 1,Field 2,Field 3";
+
+            var parser = new Parser();
+
+            var reader = parser.ParseReader(GetTextReader(input));
+
+            var hasNextRow = reader.Read();
+            Assert.False(hasNextRow);
+
+            Assert.Equal("Field 1", reader.GetName(0));
+            Assert.Equal("Field 2", reader.GetName(1));
+            Assert.Equal("Field 3", reader.GetName(2));
+        }
+
+        [Fact]
+        public void ParseReader_Can_Parse_Duplicate_Header_Names()
+        {
+            string input = @"Field 1,Field 1";
+
+            var parser = new Parser();
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Equal("Field 1", reader.GetName(0));
+            Assert.Equal("Field 1", reader.GetName(1));
+        }
+
+        [Fact]
+        public void ParseReader_Can_Look_Up_Header_Ordinals()
+        {
+            string input = @"Field 1,Field 2,Field 3";
+
+            var parser = new Parser();
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+            
+            Assert.Equal(0, reader.GetOrdinal("Field 1"));
+            Assert.Equal(1, reader.GetOrdinal("Field 2"));
+            Assert.Equal(2, reader.GetOrdinal("Field 3"));
+        }
+
+        [Fact]
+        public void ParseReader_Can_Look_Up_Duplicated_Header_Ordinals()
+        {
+            string input = @"Field 1,Field 1";
+
+            var parser = new Parser();
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+            
+            Assert.Equal(0, reader.GetOrdinal("Field 1"));
         }
 
         [Fact]
@@ -36,7 +88,11 @@ namespace DelimitedDataParser
         {
             string input = @"Field 1,Field 2,Field 3";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
@@ -47,14 +103,18 @@ namespace DelimitedDataParser
             var hasNextRow = reader.Read();
             Assert.False(hasNextRow);
         }
-
+        
         [Fact]
         public void ParseReader_Can_Parse_Empty_Fields()
         {
             string input = ",";
             var expected = new string[] { string.Empty, string.Empty };
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+            
             var reader = parser.ParseReader(GetTextReader(input)); 
             reader.Read();
 
@@ -67,19 +127,16 @@ namespace DelimitedDataParser
         public void ParseReader_Does_Not_Strip_Whitespace_From_Fields()
         {
             string input = @"Field 1, Field 2";
+            
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
 
-            var parser = new Parser();
             var reader = parser.ParseReader(GetTextReader(input)); 
             reader.Read();
 
             Assert.Equal(" Field 2", reader[1]);
-        }
-
-        [Fact(Skip = "Consider for implementation")]
-        public void ParseReader_Removes_Blank_Rows_At_End()
-        {
-            // TODO Do we want to support this?
-            // We could leave this behaviour to the existing `Parse` method only.
         }
 
         [Fact]
@@ -87,7 +144,11 @@ namespace DelimitedDataParser
         {
             string input = @"Test 1,Test 2,*+{|}][";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input, Encoding.ASCII)); 
             reader.Read();
 
@@ -101,7 +162,11 @@ namespace DelimitedDataParser
         {
             string input = @"Iñtërnâtiônàlizætiøn☃💩";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input, Encoding.BigEndianUnicode)); 
             reader.Read();
 
@@ -112,7 +177,11 @@ namespace DelimitedDataParser
         {
             string input = "\"Test1\",\"Test\"2\"test,\"Test3\"";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input)); 
             reader.Read();
 
@@ -126,7 +195,11 @@ namespace DelimitedDataParser
         {
             string input = "Test1,Test\"2,Test3";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
@@ -140,7 +213,11 @@ namespace DelimitedDataParser
         {
             string input = "\"Test1\",\"Test\"2\",\"Test3\"";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
@@ -154,8 +231,12 @@ namespace DelimitedDataParser
         {
             string input = "Test 1:Test,2:Test 3";
 
-            var parser = new Parser();
-            parser.FieldSeparator = ':';
+            var parser = new Parser
+            {
+                FieldSeparator = ':',
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input)); 
             reader.Read();
 
@@ -170,8 +251,12 @@ namespace DelimitedDataParser
         {
             string input = "Test 1|Test,2|Test 3";
 
-            var parser = new Parser();
-            parser.FieldSeparator = '|';
+            var parser = new Parser
+            {
+                FieldSeparator = '|',
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input)); 
             reader.Read();
 
@@ -186,8 +271,12 @@ namespace DelimitedDataParser
         {
             string input = "Test1 Test,2 Test3";
 
-            var parser = new Parser();
-            parser.FieldSeparator = ' ';
+            var parser = new Parser
+            {
+                FieldSeparator = ' ',
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input)); 
             reader.Read();
 
@@ -202,8 +291,12 @@ namespace DelimitedDataParser
         {
             string input = "Test 1\tTest,2\tTest 3";
 
-            var parser = new Parser();
-            parser.FieldSeparator = '\t';
+            var parser = new Parser
+            {
+                FieldSeparator = '\t',
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input)); 
             reader.Read();
 
@@ -218,7 +311,11 @@ namespace DelimitedDataParser
         {
             string input = "\"Test1\",\",\",\"Test2\"";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
@@ -229,12 +326,49 @@ namespace DelimitedDataParser
         }
 
         [Fact]
+        public void ParseReader_Supports_First_Row_As_Data()
+        {
+            string input = @"Test 1,Test 2,Test 3" + Environment.NewLine
+                + @"Test 1,Test 2,Test 3" + Environment.NewLine
+                + @"Test 1,Test 2,Test 3" + Environment.NewLine;
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+
+            reader.Read();
+
+            Assert.Equal("Test 1", reader[0]);
+            Assert.Equal("Test 2", reader[1]);
+            Assert.Equal("Test 3", reader[2]);
+
+            reader.Read();
+
+            Assert.Equal("Test 1", reader[0]);
+            Assert.Equal("Test 2", reader[1]);
+            Assert.Equal("Test 3", reader[2]);
+
+            reader.Read();
+
+            Assert.Equal("Test 1", reader[0]);
+            Assert.Equal("Test 2", reader[1]);
+            Assert.Equal("Test 3", reader[2]);
+        }
+
+        [Fact]
         public void ParseReader_Supports_Large_Cell_Content()
         {
             const int CellContentLength = 10000000;
             string input = new string('a', CellContentLength);
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input)); 
             reader.Read();
 
@@ -244,14 +378,18 @@ namespace DelimitedDataParser
             Assert.False(hasNextRow);
         }
         
-        [Fact(Skip = "Consider appropriate test cases here")]
+        [Fact]
         public void ParseReader_Supports_Multiple_Blank_Rows()
         {
             string input = @"Test 1,Test 2,Test 3" + Environment.NewLine
                 + Environment.NewLine
                 + @"Test 1,Test 2,Test 3";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
@@ -262,11 +400,8 @@ namespace DelimitedDataParser
             Assert.Equal("Test 3", reader[2]);
 
             reader.Read();
-            Assert.Equal(string.Empty, reader[0]);
-            Assert.Equal(string.Empty, reader[1]);
-            Assert.Equal(string.Empty, reader[2]);
-
             reader.Read();
+
             Assert.Equal("Test 1", reader[0]);
             Assert.Equal("Test 2", reader[1]);
             Assert.Equal("Test 3", reader[2]);
@@ -279,7 +414,11 @@ namespace DelimitedDataParser
                 + '\r'
                 + @"Test 4,Test 5,Test 6";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input));
 
             Assert.True(reader.Read());
@@ -294,10 +433,14 @@ namespace DelimitedDataParser
                 + Environment.NewLine
                 + @"Test 4,Test 5,Test 6";
 
-            var parser = new Parser();
-            var reader = parser.ParseReader(GetTextReader(input));
-            reader.Read();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
 
+            var reader = parser.ParseReader(GetTextReader(input));
+
+            reader.Read();
             Assert.Equal("Test 1", reader[0]);
             Assert.Equal("Test 2", reader[1]);
             Assert.Equal("Test 3", reader[2]);
@@ -318,10 +461,14 @@ namespace DelimitedDataParser
                 + '\n'
                 + @"Test 4,Test 5,Test 6";
 
-            var parser = new Parser();
-            var reader = parser.ParseReader(GetTextReader(input));
-            reader.Read();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
 
+            var reader = parser.ParseReader(GetTextReader(input));
+
+            reader.Read();
             Assert.Equal(3, reader.FieldCount);
             Assert.Equal("Test 1", reader[0]);
             Assert.Equal("Test 2", reader[1]);
@@ -340,10 +487,14 @@ namespace DelimitedDataParser
                 + '\n' + '\r'
                 + @"Test 4,Test 5,Test 6";
 
-            var parser = new Parser();
-            var reader = parser.ParseReader(GetTextReader(input));
-            reader.Read();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
 
+            var reader = parser.ParseReader(GetTextReader(input));
+
+            reader.Read();
             Assert.Equal(3, reader.FieldCount);
             Assert.Equal("Test 1", reader[0]);
             Assert.Equal("Test 2", reader[1]);
@@ -360,7 +511,11 @@ namespace DelimitedDataParser
         {
             string input = @"Col 1,Col 2,""Col" + '\r' + @"3""";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
@@ -377,7 +532,11 @@ namespace DelimitedDataParser
         {
             string input = @"""Col,1"",Col 2,Col 3";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
@@ -394,7 +553,11 @@ namespace DelimitedDataParser
         {
             string input = @"Col 1,""Col """"2"""""",Col 3";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
@@ -413,7 +576,11 @@ namespace DelimitedDataParser
                 + Environment.NewLine
                 + @"3""";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
@@ -430,7 +597,11 @@ namespace DelimitedDataParser
         {
             string input = @"Col 1,Col 2,""Col" + '\n' + @"3""";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
@@ -447,7 +618,11 @@ namespace DelimitedDataParser
         {
             string input = @"Col 1,Col 2,""Col" + '\n' + '\r' + @"3""";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
@@ -464,7 +639,11 @@ namespace DelimitedDataParser
         {
             string input = @"Col 1,Col 2,""Col 3";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
@@ -481,7 +660,11 @@ namespace DelimitedDataParser
         {
             string input = "\"Test1\",\"\",\"Test2\"";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
@@ -498,7 +681,11 @@ namespace DelimitedDataParser
         {
             string input = @"""Col 1"",Col 2,Col 3";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
@@ -515,7 +702,11 @@ namespace DelimitedDataParser
         {
             string input = @"Col 1,Col 2,""Col 3""";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
@@ -532,7 +723,11 @@ namespace DelimitedDataParser
         {
             string input = @"Col 1,""Col 2"",Col 3";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
@@ -549,7 +744,11 @@ namespace DelimitedDataParser
         {
             string input = "\"Test1\",\"\"\"\",\"Test2\"";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input)); 
             reader.Read();
 
@@ -563,7 +762,11 @@ namespace DelimitedDataParser
         {
             string input = @"Iñtërnâtiônàlizætiøn☃💩";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input, Encoding.Unicode)); 
             reader.Read();
 
@@ -575,7 +778,11 @@ namespace DelimitedDataParser
         {
             string input = @"Iñtërnâtiônàlizætiøn☃💩";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input, Encoding.UTF32)); 
             reader.Read();
 
@@ -587,7 +794,11 @@ namespace DelimitedDataParser
         {
             string input = @"Iñtërnâtiônàlizætiøn☃💩";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input, Encoding.UTF7)); 
             reader.Read();
 
@@ -599,7 +810,11 @@ namespace DelimitedDataParser
         {
             string input = @"Iñtërnâtiônàlizætiøn☃💩";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input, Encoding.UTF8));
             reader.Read();
 
@@ -614,7 +829,11 @@ namespace DelimitedDataParser
                 + @"Data 1" + Environment.NewLine
                 + @"Data 1,Data 2,Data 3,Data 4,Data 5";
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
@@ -652,7 +871,11 @@ namespace DelimitedDataParser
 
             Encoding windows1252 = Encoding.GetEncoding(1252);
 
-            var parser = new Parser();
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
             var reader = parser.ParseReader(GetTextReader(input, windows1252));
             reader.Read();
             

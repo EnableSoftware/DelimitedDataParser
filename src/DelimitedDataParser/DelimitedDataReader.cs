@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Globalization;
 using System.IO;
@@ -18,14 +19,18 @@ namespace DelimitedDataParser
 
         private readonly TextReader _textReader;
         private readonly char _fieldSeparator;
+        private readonly bool _useFirstRowAsColumnHeaders;
         private readonly char[] _buffer = new char[4096];
 
+        private IReadOnlyList<string> _fieldNameLookup = null;
         private IReadOnlyList<string> _currentRow = null;
+
+        private bool _isClosed = false;
+        private bool _headerRowRead = false;
         private int _charsInBuffer;
         private int _bufferIndex;
-        private bool _repeatLastChar;
-
-        public DelimitedDataReader(TextReader textReader, char fieldSeparator)
+        
+        public DelimitedDataReader(TextReader textReader, char fieldSeparator, bool useFirstRowAsColumnHeaders)
         {
             if (textReader == null)
             {
@@ -34,13 +39,14 @@ namespace DelimitedDataParser
 
             _textReader = textReader;
             _fieldSeparator = fieldSeparator;
+            _useFirstRowAsColumnHeaders = useFirstRowAsColumnHeaders;
         }
 
         public override int Depth
         {
             get
             {
-                throw new NotSupportedException();
+                return 0;
             }
         }
 
@@ -48,6 +54,9 @@ namespace DelimitedDataParser
         {
             get
             {
+                // TODO See `SqlDataReader`. This returns -1 if we are not on a valid row.
+                // Note, this property must be set before `Read` is called in order to support
+                // `DataTable.Load()`.
                 return _currentRow.Count;
             }
         }
@@ -64,7 +73,7 @@ namespace DelimitedDataParser
         {
             get
             {
-                throw new NotImplementedException();
+                return _isClosed;
             }
         }
 
@@ -72,7 +81,7 @@ namespace DelimitedDataParser
         {
             get
             {
-                throw new NotSupportedException();
+                return -1;
             }
         }
 
@@ -80,7 +89,7 @@ namespace DelimitedDataParser
         {
             get
             {
-                throw new NotImplementedException();
+                return _currentRow[GetOrdinal(name)];
             }
         }
 
@@ -94,7 +103,8 @@ namespace DelimitedDataParser
 
         public override void Close()
         {
-            throw new NotImplementedException();
+            // TODO What should we do here? Dispose of the TextReader?
+            _isClosed = true;
         }
 
         public override bool GetBoolean(int ordinal)
@@ -109,6 +119,7 @@ namespace DelimitedDataParser
 
         public override long GetBytes(int ordinal, long dataOffset, byte[] buffer, int bufferOffset, int length)
         {
+            // TODO See https://github.com/Microsoft/referencesource/blob/e458f8df6ded689323d4bd1a2a725ad32668aaec/System.Data/System/Data/Common/DataRecordInternal.cs#L108
             throw new NotImplementedException();
         }
 
@@ -126,6 +137,7 @@ namespace DelimitedDataParser
 
         public override long GetChars(int ordinal, long dataOffset, char[] buffer, int bufferOffset, int length)
         {
+            // TODO See https://github.com/Microsoft/referencesource/blob/e458f8df6ded689323d4bd1a2a725ad32668aaec/System.Data/System/Data/Common/DataRecordInternal.cs#L176
             throw new NotImplementedException();
         }
 
@@ -156,7 +168,7 @@ namespace DelimitedDataParser
 
         public override IEnumerator GetEnumerator()
         {
-            throw new NotImplementedException();
+            return new DbEnumerator(this);
         }
 
         public override Type GetFieldType(int ordinal)
@@ -196,15 +208,28 @@ namespace DelimitedDataParser
 
         public override string GetName(int ordinal)
         {
-            throw new NotImplementedException();
+            return _fieldNameLookup[ordinal];
         }
 
         public override int GetOrdinal(string name)
         {
-            throw new NotImplementedException();
+            if (name == null)
+            {
+                throw new ArgumentNullException("name");
+            }
+
+            for (int i = 0; i < _fieldNameLookup.Count; i++)
+            {
+                if (string.Equals(name, _fieldNameLookup[i], StringComparison.OrdinalIgnoreCase))
+                {
+                    return i;
+                }
+            }
+
+            throw new ArgumentOutOfRangeException("name");
         }
 
-        public override System.Data.DataTable GetSchemaTable()
+        public override DataTable GetSchemaTable()
         {
             throw new NotSupportedException();
         }
@@ -221,7 +246,19 @@ namespace DelimitedDataParser
 
         public override int GetValues(object[] values)
         {
-            throw new NotImplementedException();
+            if (values == null)
+            {
+                throw new ArgumentNullException("values");
+            }
+
+            var copyLength = Math.Min(values.Length, _currentRow.Count);
+
+            for (int i = 0; i < copyLength; i++)
+            {
+                values[i] = _currentRow[i];
+            }
+
+            return copyLength;
         }
 
         public override bool IsDBNull(int ordinal)
@@ -231,11 +268,21 @@ namespace DelimitedDataParser
 
         public override bool NextResult()
         {
-            throw new NotSupportedException();
+            return false;
         }
 
         public override bool Read()
         {
+            if (_useFirstRowAsColumnHeaders && !_headerRowRead)
+            {
+                if (ReadInternal())
+                {
+                    GenerateFieldLookup();
+                }
+
+                _headerRowRead = true;
+            }
+            
             return ReadInternal();
         }
 
@@ -290,6 +337,12 @@ namespace DelimitedDataParser
 
                 field.Append(Quote, escapedQuoteCount);
             }
+        }
+
+        private void GenerateFieldLookup()
+        {
+            // Here we assume that the current row is the header row.
+            _fieldNameLookup = new List<string>(_currentRow).AsReadOnly();
         }
 
         private bool ReadInternal()
@@ -382,14 +435,7 @@ namespace DelimitedDataParser
 
         private bool ReadNextChar(out char c)
         {
-            if (_repeatLastChar)
-            {
-                _repeatLastChar = false;
-            }
-            else
-            {
-                _bufferIndex++;
-            }
+            _bufferIndex++;
 
             if (_charsInBuffer == 0 || _bufferIndex > _charsInBuffer - 1)
             {
