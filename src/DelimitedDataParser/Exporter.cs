@@ -19,6 +19,8 @@ namespace DelimitedDataParser
         private char _fieldSeparator = ',';
         private bool _includeEscapeCharacters = true;
         private bool _outputColumnHeaders = true;
+        private bool _useExtendedPropertyForColumnName = false;
+        private string _extendedPropertyKey;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Exporter"/> class.
@@ -91,6 +93,26 @@ namespace DelimitedDataParser
         public virtual void ClearColumnsAsText()
         {
             _columnNamesAsText = null;
+        }
+
+        /// <summary>
+        /// Populates column headers using the value stored on DataColumn.ExtendedProperties
+        /// </summary>
+        /// <remarks>
+        /// If no ExtendedProperty can be found that matches the key, the default ColumnName will be used.
+        /// </remarks>
+        /// <param name="key">
+        /// The key that the ExtendedProperties value is stored under
+        /// </param>
+        public virtual void UseExtendedPropertiesKeyForColumnName(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentNullException("key");
+            }
+
+            _useExtendedPropertyForColumnName = true;
+            _extendedPropertyKey = key;
         }
 
         /// <summary>
@@ -233,7 +255,14 @@ namespace DelimitedDataParser
                     writer.Write(_fieldSeparator);
                 }
 
-                writer.Write(CsvEscape(col.ColumnName, false));
+                var columnName = col.ColumnName;
+
+                if (_useExtendedPropertyForColumnName && col.ExtendedProperties.ContainsKey(_extendedPropertyKey))
+                {
+                    columnName = col.ExtendedProperties[_extendedPropertyKey].ToString();
+                }
+
+                writer.Write(CsvEscape(columnName, false));
             }
         }
 
