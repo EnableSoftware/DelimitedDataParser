@@ -38,6 +38,7 @@ using (var writer = new StringWriter())
 * `FieldSeparator` - the character used as field delimiter in the text file. Default: `,` (i.e., CSV).
 * `IncludeEscapeCharacters` - specifies whether each value should be escaped by wrapping in quotation marks. Must be `true` if `FieldSeparator` is a tab character. Default: `true`.
 * `OutputColumnHeaders` - specifies whether an initial row containing column names should be written to the output. Default: `true`.
+* `UseExtendedPropertyForColumnName(string key)` - specifies a key that is used to search on the ExtendedProperties of a DataColumn and if it matches, it will use the value here as the column name instead of taking the DataColumn.ColumnName. This can be used if you are required to output a different column header to what is stored on DataColumn.ColumnName.
 
 ## Columns as text
 

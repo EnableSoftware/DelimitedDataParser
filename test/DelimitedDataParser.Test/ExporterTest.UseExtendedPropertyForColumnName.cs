@@ -13,7 +13,7 @@ namespace DelimitedDataParser
             
             var exporter = new Exporter();
 
-            exporter.UseExtendedPropertiesKeyForColumnName("ColumnKey");
+            exporter.UseExtendedPropertyForColumnName("ColumnKey");
 
             var output = exporter.ExportToString(input);
 
@@ -31,7 +31,7 @@ namespace DelimitedDataParser
             
             var exporter = new Exporter();
 
-            exporter.UseExtendedPropertiesKeyForColumnName("ColumnKey");
+            exporter.UseExtendedPropertyForColumnName("ColumnKey");
 
             var output = exporter.ExportToString(input);
 
@@ -50,7 +50,7 @@ namespace DelimitedDataParser
 
             var exporter = new Exporter();
 
-            exporter.UseExtendedPropertiesKeyForColumnName("ColumnKey");
+            exporter.UseExtendedPropertyForColumnName("ColumnKey");
 
             var output = exporter.ExportToString(input);
 
@@ -74,7 +74,7 @@ namespace DelimitedDataParser
 
             var exporter = new Exporter();
 
-            exporter.UseExtendedPropertiesKeyForColumnName("ColumnKey");
+            exporter.UseExtendedPropertyForColumnName("ColumnKey");
 
             var output = exporter.ExportToString(input);
 
@@ -88,7 +88,7 @@ namespace DelimitedDataParser
         {
             var exporter = new Exporter();
 
-            Assert.Throws<ArgumentNullException>(() => exporter.UseExtendedPropertiesKeyForColumnName(null));
+            Assert.Throws<ArgumentNullException>(() => exporter.UseExtendedPropertyForColumnName(null));
         }
     }
 }

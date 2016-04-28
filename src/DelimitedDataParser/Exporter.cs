@@ -104,7 +104,7 @@ namespace DelimitedDataParser
         /// <param name="key">
         /// The key that the ExtendedProperties value is stored under
         /// </param>
-        public virtual void UseExtendedPropertiesKeyForColumnName(string key)
+        public virtual void UseExtendedPropertyForColumnName(string key)
         {
             if (string.IsNullOrEmpty(key))
             {
