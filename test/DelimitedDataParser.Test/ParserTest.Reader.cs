@@ -160,7 +160,7 @@ namespace DelimitedDataParser
         [Fact]
         public void ParseReader_Supports_BigEndianUnicode_Text()
         {
-            string input = @"Iñtërnâtiônàlizætiøn☃💩";
+            string input = @"Iñtërnâtiônàlizætiøn☃";
 
             var parser = new Parser
             {
@@ -170,7 +170,7 @@ namespace DelimitedDataParser
             var reader = parser.ParseReader(GetTextReader(input, Encoding.BigEndianUnicode)); 
             reader.Read();
 
-            Assert.Equal("Iñtërnâtiônàlizætiøn☃💩", reader[0]);
+            Assert.Equal("Iñtërnâtiônàlizætiøn☃", reader[0]);
         }
 
         public void ParseReader_Supports_Cell_Containing_Quotes_After_Quoted_Content()
@@ -760,7 +760,7 @@ namespace DelimitedDataParser
         [Fact]
         public void ParseReader_Supports_Unicode_Text()
         {
-            string input = @"Iñtërnâtiônàlizætiøn☃💩";
+            string input = @"Iñtërnâtiônàlizætiøn☃";
 
             var parser = new Parser
             {
@@ -770,13 +770,13 @@ namespace DelimitedDataParser
             var reader = parser.ParseReader(GetTextReader(input, Encoding.Unicode)); 
             reader.Read();
 
-            Assert.Equal("Iñtërnâtiônàlizætiøn☃💩", reader[0]);
+            Assert.Equal("Iñtërnâtiônàlizætiøn☃", reader[0]);
         }
 
         [Fact]
         public void ParseReader_Supports_UTF32_Text()
         {
-            string input = @"Iñtërnâtiônàlizætiøn☃💩";
+            string input = @"Iñtërnâtiônàlizætiøn☃";
 
             var parser = new Parser
             {
@@ -786,13 +786,13 @@ namespace DelimitedDataParser
             var reader = parser.ParseReader(GetTextReader(input, Encoding.UTF32)); 
             reader.Read();
 
-            Assert.Equal("Iñtërnâtiônàlizætiøn☃💩", reader[0]);
+            Assert.Equal("Iñtërnâtiônàlizætiøn☃", reader[0]);
         }
 
         [Fact]
         public void ParseReader_Supports_UTF7_Text()
         {
-            string input = @"Iñtërnâtiônàlizætiøn☃💩";
+            string input = @"Iñtërnâtiônàlizætiøn☃";
 
             var parser = new Parser
             {
@@ -802,13 +802,13 @@ namespace DelimitedDataParser
             var reader = parser.ParseReader(GetTextReader(input, Encoding.UTF7)); 
             reader.Read();
 
-            Assert.Equal("Iñtërnâtiônàlizætiøn☃💩", reader[0]);
+            Assert.Equal("Iñtërnâtiônàlizætiøn☃", reader[0]);
         }
 
         [Fact]
         public void ParseReader_Supports_UTF8_Text()
         {
-            string input = @"Iñtërnâtiônàlizætiøn☃💩";
+            string input = @"Iñtërnâtiônàlizætiøn☃";
 
             var parser = new Parser
             {
@@ -818,7 +818,7 @@ namespace DelimitedDataParser
             var reader = parser.ParseReader(GetTextReader(input, Encoding.UTF8));
             reader.Read();
 
-            Assert.Equal("Iñtërnâtiônàlizætiøn☃💩", reader[0]);
+            Assert.Equal("Iñtërnâtiônàlizætiøn☃", reader[0]);
         }
 
         [Fact]

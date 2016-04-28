@@ -111,9 +111,9 @@ namespace DelimitedDataParser
             Assert.Equal("Test 1", output.Rows[0][0]);
             Assert.Equal("Test 2", output.Rows[0][1]);
             Assert.Equal("Test 3", output.Rows[0][2]);
-            Assert.Equal(string.Empty, output.Rows[1][0]);
-            Assert.Equal(string.Empty, output.Rows[1][1]);
-            Assert.Equal(string.Empty, output.Rows[1][2]);
+            Assert.Equal(DBNull.Value, output.Rows[1][0]);
+            Assert.Equal(DBNull.Value, output.Rows[1][1]);
+            Assert.Equal(DBNull.Value, output.Rows[1][2]);
             Assert.Equal("Test 1", output.Rows[2][0]);
             Assert.Equal("Test 2", output.Rows[2][1]);
             Assert.Equal("Test 3", output.Rows[2][2]);
@@ -295,16 +295,16 @@ namespace DelimitedDataParser
             Assert.Equal(6, output.Columns.Count);
             Assert.Equal("Test 1", output.Columns[0].ColumnName);
             Assert.Equal("Test 2", output.Columns[1].ColumnName);
-            Assert.Equal("Column1", output.Columns[2].ColumnName);
-            Assert.Equal("Column2", output.Columns[3].ColumnName);
+            Assert.Equal("Test 11", output.Columns[2].ColumnName);
+            Assert.Equal("Test 12", output.Columns[3].ColumnName);
             Assert.Equal("Test 3", output.Columns[4].ColumnName);
-            Assert.Equal("Column3", output.Columns[5].ColumnName);
+            Assert.Equal("Test 21", output.Columns[5].ColumnName);
             Assert.Equal("Test 1", output.Rows[0][0]);
             Assert.Equal("Test 2", output.Rows[0][1]);
             Assert.Equal("Test 1", output.Rows[0][2]);
-            Assert.Equal(string.Empty, output.Rows[0][3]);
-            Assert.Equal(string.Empty, output.Rows[0][4]);
-            Assert.Equal(string.Empty, output.Rows[0][5]);
+            Assert.Equal(DBNull.Value, output.Rows[0][3]);
+            Assert.Equal(DBNull.Value, output.Rows[0][4]);
+            Assert.Equal(DBNull.Value, output.Rows[0][5]);
         }
 
         [Fact]
@@ -365,7 +365,7 @@ namespace DelimitedDataParser
         }
 
         [Fact]
-        public void Supports_Less_Column_Names_Than_Data_Columns()
+        public void Does_Not_Support_More_Column_Names_Than_Data_Columns()
         {
             string input = @"Col 1,Col 2,Col 3"
                 + Environment.NewLine
@@ -374,15 +374,14 @@ namespace DelimitedDataParser
             var parser = new Parser();
             var output = parser.Parse(GetTextReader(input));
 
-            Assert.Equal(4, output.Columns.Count);
+            Assert.Equal(3, output.Columns.Count);
             Assert.Equal("Col 1", output.Columns[0].ColumnName);
             Assert.Equal("Col 2", output.Columns[1].ColumnName);
             Assert.Equal("Col 3", output.Columns[2].ColumnName);
-            Assert.Equal("Column1", output.Columns[3].ColumnName);
+            Assert.Equal(3, output.Rows[0].ItemArray.Length);
             Assert.Equal("Data 1", output.Rows[0][0]);
             Assert.Equal("Data 2", output.Rows[0][1]);
             Assert.Equal("Data 3", output.Rows[0][2]);
-            Assert.Equal("Data 4", output.Rows[0][3]);
         }
 
         [Fact]
@@ -400,9 +399,9 @@ namespace DelimitedDataParser
             Assert.Equal("Test 1", output.Columns[0].ColumnName);
             Assert.Equal("Test 2", output.Columns[1].ColumnName);
             Assert.Equal("Test 3", output.Columns[2].ColumnName);
-            Assert.Equal(string.Empty, output.Rows[0][0]);
-            Assert.Equal(string.Empty, output.Rows[0][1]);
-            Assert.Equal(string.Empty, output.Rows[0][2]);
+            Assert.Equal(DBNull.Value, output.Rows[0][0]);
+            Assert.Equal(DBNull.Value, output.Rows[0][1]);
+            Assert.Equal(DBNull.Value, output.Rows[0][2]);
             Assert.Equal("Test 1", output.Rows[1][0]);
             Assert.Equal("Test 2", output.Rows[1][1]);
             Assert.Equal("Test 3", output.Rows[1][2]);

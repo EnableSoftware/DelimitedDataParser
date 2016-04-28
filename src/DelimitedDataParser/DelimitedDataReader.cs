@@ -11,7 +11,7 @@ namespace DelimitedDataParser
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1010:CollectionsShouldImplementGenericInterface")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-    public class DelimitedDataReader : DbDataReader
+    internal class DelimitedDataReader : DbDataReader
     {
         private const char CarriageReturn = '\r';
         private const char LineFeed = '\n';
@@ -26,10 +26,11 @@ namespace DelimitedDataParser
         private IReadOnlyList<string> _currentRow = null;
 
         private bool _isClosed = false;
-        private bool _headerRowRead = false;
+        private bool _firstRowRead = false;
+        private bool _yieldExistingRow = false;
         private int _charsInBuffer;
         private int _bufferIndex;
-        
+
         public DelimitedDataReader(TextReader textReader, char fieldSeparator, bool useFirstRowAsColumnHeaders)
         {
             if (textReader == null)
@@ -54,9 +55,15 @@ namespace DelimitedDataParser
         {
             get
             {
-                // TODO See `SqlDataReader`. This returns -1 if we are not on a valid row.
-                // Note, this property must be set before `Read` is called in order to support
-                // `DataTable.Load()`.
+                EnsureInitialised();
+
+                // If we are not on a valid row, return -1.
+                if (_currentRow == null)
+                {
+                    return -1;
+                }
+
+                // Otherwise, return the column count for the current record.
                 return _currentRow.Count;
             }
         }
@@ -65,6 +72,7 @@ namespace DelimitedDataParser
         {
             get
             {
+                // TODO return `_currentRow != null;` or similar
                 throw new NotImplementedException();
             }
         }
@@ -163,7 +171,7 @@ namespace DelimitedDataParser
 
         public override double GetDouble(int ordinal)
         {
-            return Convert.ToDouble(_currentRow[ordinal], CultureInfo.InvariantCulture);
+            return double.Parse(_currentRow[ordinal], CultureInfo.InvariantCulture);
         }
 
         public override IEnumerator GetEnumerator()
@@ -231,7 +239,91 @@ namespace DelimitedDataParser
 
         public override DataTable GetSchemaTable()
         {
-            throw new NotSupportedException();
+            if (_isClosed)
+            {
+                throw new InvalidOperationException();
+            }
+
+            EnsureInitialised();
+
+            var schemaTable = new DataTable("SchemaTable")
+            {
+                Locale = CultureInfo.InvariantCulture
+            };
+
+            var allowDBNull = new DataColumn(SchemaTableColumn.AllowDBNull, typeof(bool));
+            var baseColumnName = new DataColumn(SchemaTableColumn.BaseColumnName, typeof(string));
+            var baseSchemaName = new DataColumn(SchemaTableColumn.BaseSchemaName, typeof(string));
+            var baseTableName = new DataColumn(SchemaTableColumn.BaseTableName, typeof(string));
+            var columnName = new DataColumn(SchemaTableColumn.ColumnName, typeof(string));
+            var columnOrdinal = new DataColumn(SchemaTableColumn.ColumnOrdinal, typeof(int));
+            var columnSize = new DataColumn(SchemaTableColumn.ColumnSize, typeof(int));
+            var dataType = new DataColumn(SchemaTableColumn.DataType, typeof(Type));
+            var isAliased = new DataColumn(SchemaTableColumn.IsAliased, typeof(bool));
+            var isExpression = new DataColumn(SchemaTableColumn.IsExpression, typeof(bool));
+            var isKey = new DataColumn(SchemaTableColumn.IsKey, typeof(bool));
+            var isLong = new DataColumn(SchemaTableColumn.IsLong, typeof(bool));
+            var isUnique = new DataColumn(SchemaTableColumn.IsUnique, typeof(bool));
+            var nonVersionedProviderType = new DataColumn(SchemaTableColumn.NonVersionedProviderType, typeof(int));
+            var numericPrecision = new DataColumn(SchemaTableColumn.NumericPrecision, typeof(short));
+            var numericScale = new DataColumn(SchemaTableColumn.NumericScale, typeof(short));
+            var providerType = new DataColumn(SchemaTableColumn.ProviderType, typeof(int));
+
+            columnOrdinal.DefaultValue = 0;
+            isLong.DefaultValue = false;
+
+            var columns = schemaTable.Columns;
+
+            columns.Add(columnName);
+            columns.Add(columnOrdinal);
+            columns.Add(columnSize);
+            columns.Add(numericPrecision);
+            columns.Add(numericScale);
+            columns.Add(isUnique);
+            columns.Add(isKey);
+            columns.Add(baseColumnName);
+            columns.Add(baseSchemaName);
+            columns.Add(baseTableName);
+            columns.Add(dataType);
+            columns.Add(allowDBNull);
+            columns.Add(providerType);
+            columns.Add(isAliased);
+            columns.Add(isExpression);
+            columns.Add(isLong);
+            columns.Add(nonVersionedProviderType);
+
+            for (int i = 0; i < _fieldNameLookup.Count; i++)
+            {
+                var schemaRow = schemaTable.NewRow();
+
+                schemaRow[allowDBNull] = true;
+                schemaRow[baseColumnName] = _fieldNameLookup[i];
+                schemaRow[columnName] = _fieldNameLookup[i];
+                schemaRow[columnOrdinal] = i;
+                schemaRow[columnSize] = int.MaxValue;
+                schemaRow[dataType] = typeof(string);
+                schemaRow[isAliased] = false;
+                schemaRow[isExpression] = false;
+                schemaRow[isKey] = false;
+                schemaRow[isLong] = false;
+                schemaRow[isUnique] = false;
+                schemaRow[nonVersionedProviderType] = 12; // TODO What is this magic number?
+                schemaRow[numericScale] = byte.MaxValue;
+                schemaRow[numericPrecision] = byte.MaxValue;
+                schemaRow[providerType] = 12; // TODO What is this magic number?
+
+                schemaTable.Rows.Add(schemaRow);
+
+                schemaRow.AcceptChanges();
+            }
+
+            // Mark all columns as read-only.
+            foreach (DataColumn column in columns)
+            {
+                column.ReadOnly = true;
+            }
+
+            return schemaTable;
         }
 
         public override string GetString(int ordinal)
@@ -273,16 +365,15 @@ namespace DelimitedDataParser
 
         public override bool Read()
         {
-            if (_useFirstRowAsColumnHeaders && !_headerRowRead)
-            {
-                if (ReadInternal())
-                {
-                    GenerateFieldLookup();
-                }
+            EnsureInitialised();
 
-                _headerRowRead = true;
+            if (_yieldExistingRow)
+            {
+                _yieldExistingRow = false;
+
+                return _currentRow != null;
             }
-            
+
             return ReadInternal();
         }
 
@@ -336,6 +427,38 @@ namespace DelimitedDataParser
                 }
 
                 field.Append(Quote, escapedQuoteCount);
+            }
+        }
+
+        private void EnsureInitialised()
+        {
+            if (!_firstRowRead)
+            {
+                if (ReadInternal())
+                {
+                    if (_useFirstRowAsColumnHeaders)
+                    {
+                        GenerateFieldLookup();
+                    }
+                    else
+                    {
+                        var defaultColumnHeaders = new List<string>();
+
+                        for (int i = 0; i < _currentRow.Count; i++)
+                        {
+                            defaultColumnHeaders.Add(string.Concat("Column", i + 1));
+                        }
+
+                        _fieldNameLookup = defaultColumnHeaders.AsReadOnly();
+                    }
+                }
+                else
+                {
+                    _fieldNameLookup = new List<string>(0).AsReadOnly();
+                }
+
+                _firstRowRead = true;
+                _yieldExistingRow = !_useFirstRowAsColumnHeaders;
             }
         }
 

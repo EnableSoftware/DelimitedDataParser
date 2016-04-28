@@ -117,7 +117,7 @@ namespace DelimitedDataParser
         /// </param>
         /// <returns>A <see cref="DbDataReader"/> that will read rows of data.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="textReader"/> is null.</exception>
-        public virtual DelimitedDataReader ParseReader(TextReader textReader)
+        public virtual DbDataReader ParseReader(TextReader textReader)
         {
             if (textReader == null)
             {
