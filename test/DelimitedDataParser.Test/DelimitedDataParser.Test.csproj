@@ -74,6 +74,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="ExporterTest.UseExtendedPropertyForColumnName.cs" />
     <Compile Include="ExporterTest.ColumnsAsText.cs" />
     <Compile Include="ExporterTest.cs" />
     <Compile Include="ExporterExtensions.cs" />
