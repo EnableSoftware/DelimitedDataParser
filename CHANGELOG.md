@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Add XML documentation to NuGet package.
+- Support for clearing column names specified via ExtendedProperties on a DataColumn.
 
 ## [3.1.0] — 2016-04-28
 

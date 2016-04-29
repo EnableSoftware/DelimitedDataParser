@@ -90,5 +90,28 @@ namespace DelimitedDataParser
 
             Assert.Throws<ArgumentNullException>(() => exporter.UseExtendedPropertyForColumnName(null));
         }
+
+        [Fact]
+        public void Can_Clear_ExtendedProperty()
+        {
+            // Arrange
+            var input = CreateDataTable();
+
+            var dataColumn = new DataColumn("One");
+            input.Columns.Add(dataColumn);
+
+            dataColumn.ExtendedProperties.Add("ColumnKey", "Two");
+
+            var exporter = new Exporter();
+
+            exporter.UseExtendedPropertyForColumnName("ColumnKey");
+            exporter.ClearExtendedPropertyForColumnName();
+
+            // Act
+            var output = exporter.ExportToString(input);
+
+            // Assert
+            Assert.Equal(@"""One""", output);
+        }
     }
 }

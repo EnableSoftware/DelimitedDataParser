@@ -96,6 +96,19 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
+        /// Clear the extended property key setting.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method clears the extended property key setting set via the
+        /// the <see cref="UseExtendedPropertyForColumnName(string)"/> method.
+        /// </remarks>
+        public virtual void ClearExtendedPropertyForColumnName()
+        {
+            _useExtendedPropertyForColumnName = false;
+            _extendedPropertyKey = default(string);
+        }
+
+        /// <summary>
         /// Populates column headers using the value stored on DataColumn.ExtendedProperties.
         /// </summary>
         /// <remarks>
