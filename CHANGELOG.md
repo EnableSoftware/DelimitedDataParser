@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [3.2.0] — 2016-04-29
+
 ### Added
 
 - Add XML documentation to NuGet package.
@@ -61,7 +63,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Initial public release.
 
-[unreleased]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.1.0...HEAD
+[unreleased]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.2.0...HEAD
+[3.2.0]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v2.6.0...v3.0.0
 [2.6.0]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v2.5.0...v2.6.0
