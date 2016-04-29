@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+### Added
+
+- Add XML documentation to NuGet package.
+
 ## [3.1.0] — 2016-04-28
 
 ### Added

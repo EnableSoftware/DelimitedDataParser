@@ -29,7 +29,7 @@ namespace DelimitedDataParser
 
         /// <summary>
         /// The character used as the field delimiter in the text file. The default value is
-        /// <c>,</c>, i.e. CSV input.
+        /// '<c>,</c>', i.e. CSV input.
         /// </summary>
         public virtual char FieldSeparator
         {
@@ -65,8 +65,8 @@ namespace DelimitedDataParser
         /// Clear all "columns as text" settings.
         /// </summary>
         /// <remarks>
-        /// Calling this method clears any "columns as text" settings set via the <see
-        /// cref="SetColumnsAsText(IEnumerable{string})"/> method.
+        /// Calling this method clears any "columns as text" settings set via the
+        /// <see cref="SetColumnsAsText(IEnumerable{string})"/> method.
         /// </remarks>
         public virtual void ClearColumnsAsText()
         {
@@ -74,7 +74,7 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Parse the input <paramref name="TextReader"/> as a <see cref="DataTable"/>.
+        /// Parse the input <see cref="TextReader"/> as a <see cref="DataTable"/>.
         /// </summary>
         /// <param name="textReader">
         /// The <see cref="TextReader"/> containing the delimited data to read.
@@ -211,10 +211,10 @@ namespace DelimitedDataParser
         /// <param name="table">The <see cref="Table"/> to be used.</param>
         /// <param name="quoteCount">How many repeated quote characters have been read.</param>
         /// <param name="quotedMode">
-        /// A <see cref="Boolean"/> to identify whether the current operation is within a quoted string.
+        /// A <see cref="bool"/> to identify whether the current operation is within a quoted string.
         /// </param>
         /// <param name="quotedModeHasPassed">
-        /// A <see cref="Boolean"/> specifying whether the current operation has finished parsing a
+        /// A <see cref="bool"/> specifying whether the current operation has finished parsing a
         /// quoted value / just left 'Quoted Mode'.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="table"/> is null.</exception>
@@ -259,7 +259,7 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Parse the input <paramref name="String"/> where values may be wrapped in quotes and
+        /// Parse the input <paramref name="value"/> where values may be wrapped in quotes and
         /// preceded with an equals sign.
         /// </summary>
         /// <param name="value">The <see cref="String"/> value to be parsed.</param>

@@ -30,8 +30,8 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// The character used as the field delimiter in the output. The default value is <c>,</c>,
-        /// i.e. CSV output.
+        /// The character used as the field delimiter in the output. The default value is
+        /// '<c>,</c>', i.e. CSV input.
         /// </summary>
         public virtual char FieldSeparator
         {
@@ -87,8 +87,8 @@ namespace DelimitedDataParser
         /// Clear all "columns as text" settings.
         /// </summary>
         /// <remarks>
-        /// Calling this method clears any "columns as text" settings set via the <see
-        /// cref="SetColumnsAsText(IEnumerable{string})"/> method.
+        /// Calling this method clears any "columns as text" settings set via the
+        /// <see cref="SetColumnsAsText(IEnumerable{string})"/> method.
         /// </remarks>
         public virtual void ClearColumnsAsText()
         {
@@ -96,13 +96,13 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Populates column headers using the value stored on DataColumn.ExtendedProperties
+        /// Populates column headers using the value stored on DataColumn.ExtendedProperties.
         /// </summary>
         /// <remarks>
         /// If no ExtendedProperty can be found that matches the key, the default ColumnName will be used.
         /// </remarks>
         /// <param name="key">
-        /// The key that the ExtendedProperties value is stored under
+        /// The key that the ExtendedProperties value is stored under.
         /// </param>
         public virtual void UseExtendedPropertyForColumnName(string key)
         {
@@ -116,7 +116,7 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Write the input <paramref name="DataTable"/> to the specified <see cref="TextWriter"/>.
+        /// Write the input <paramref name="dataTable"/> to the specified <see cref="TextWriter"/>.
         /// </summary>
         /// <param name="dataTable">The <see cref="DataTable"/> containing the data to export.</param>
         /// <param name="writer">The <see cref="TextWriter"/> to be written to.</param>
@@ -187,11 +187,11 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Escape the input <paramref name="String"/> for use in a CSV.
+        /// Escape the input <paramref name="value"/> for use in a CSV.
         /// </summary>
-        /// <param name="value">The <see cref="String"/> to be escaped.</param>
+        /// <param name="value">The <see cref="string"/> to be escaped.</param>
         /// <param name="valueAsText">
-        /// Whether the input <paramref name="String"/> should be treated as a text column.
+        /// Whether the input <paramref name="value"/> should be treated as a text column.
         /// </param>
         /// <returns>The escaped string</returns>
         private string CsvEscape(string value, bool valueAsText)
@@ -216,13 +216,13 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Whether the input <paramref name="DataColumn"/> should be treated as a text column.
+        /// Whether the input <paramref name="column"/> should be treated as a text column.
         /// </summary>
         /// <param name="column">The <see cref="DataColumn"/> to be checked.</param>
         /// <returns>
-        /// A <see cref="Boolean"/> specifying whether the column should be treated as a text column.
+        /// A <see cref="bool"/> specifying whether the column should be treated as a text column.
         /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="textReader"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="column"/> is null.</exception>
         private bool GetIsColumnAsText(DataColumn column)
         {
             if (column == null)
@@ -239,7 +239,7 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Write an initial row containing the column names from <paramref name="DataTable"/> to
+        /// Write an initial row containing the column names from <paramref name="dataTable"/> to
         /// the specified <see cref="TextWriter"/>.
         /// </summary>
         /// <param name="dataTable">The <see cref="DataTable"/> containing the columns to be written.</param>
@@ -267,7 +267,7 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Write the <paramref name="DataRow"/> from the <paramref name="DataTable"/> to the
+        /// Write the <paramref name="row"/> from the <paramref name="dataTable"/> to the
         /// specified <see cref="TextWriter"/>.
         /// </summary>
         /// <param name="dataTable">The <see cref="DataTable"/> containing the columns to export.</param>
