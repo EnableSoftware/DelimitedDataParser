@@ -343,14 +343,12 @@ namespace DelimitedDataParser
                 throw new ArgumentNullException("values");
             }
 
-            var copyLength = Math.Min(values.Length, _currentRow.Count);
-
-            for (int i = 0; i < copyLength; i++)
+            for (int i = 0; i < values.Length; i++)
             {
-                values[i] = _currentRow[i];
+                values[i] = i < _currentRow.Count ? _currentRow[i] : null;
             }
 
-            return copyLength;
+            return Math.Min(values.Length, _currentRow.Count);
         }
 
         public override bool IsDBNull(int ordinal)
@@ -475,14 +473,12 @@ namespace DelimitedDataParser
             var newLineCharacterSequenceCount = 0;
             var quoteCount = 0;
             var currentCell = new StringBuilder();
-            var row = new List<string>();
+            var row = new List<string>(_currentRow != null ? _currentRow.Count : 4);
             char c;
             var readAnyChar = false;
 
             while (ReadNextChar(out c))
             {
-                readAnyChar = true;
-
                 if (newLineCharacterSequenceCount > 0)
                 {
                     if (newLineCharacterSequenceCount == 1 && (c == CarriageReturn || c == LineFeed))
@@ -491,13 +487,20 @@ namespace DelimitedDataParser
                         continue;
                     }
 
-                    row.Add(currentCell.ToString());
-                    currentCell.Clear();
+                    if (currentCell.Length != 0 || quoteCount > 0 || row.Count > 0)
+                    {
+                        row.Add(currentCell.ToString());
+                    }
 
+                    currentCell.Clear();
+                    
                     _bufferIndex--;
+
                     _currentRow = row.AsReadOnly();
                     return true;
                 }
+
+                readAnyChar = true;
 
                 if (c == Quote)
                 {

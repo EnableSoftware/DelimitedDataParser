@@ -108,7 +108,6 @@ namespace DelimitedDataParser
         public void ParseReader_Can_Parse_Empty_Fields()
         {
             string input = ",";
-            var expected = new string[] { string.Empty, string.Empty };
 
             var parser = new Parser
             {
@@ -328,9 +327,9 @@ namespace DelimitedDataParser
         [Fact]
         public void ParseReader_Supports_First_Row_As_Data()
         {
-            string input = @"Test 1,Test 2,Test 3" + Environment.NewLine
-                + @"Test 1,Test 2,Test 3" + Environment.NewLine
-                + @"Test 1,Test 2,Test 3" + Environment.NewLine;
+            string input = @"Data 1,Data 2,Data 3" + Environment.NewLine
+                + @"Data 4,Data 5,Data 6" + Environment.NewLine
+                + @"Data 7,Data 8,Data 9" + Environment.NewLine;
 
             var parser = new Parser
             {
@@ -341,21 +340,21 @@ namespace DelimitedDataParser
 
             reader.Read();
 
-            Assert.Equal("Test 1", reader[0]);
-            Assert.Equal("Test 2", reader[1]);
-            Assert.Equal("Test 3", reader[2]);
+            Assert.Equal("Data 1", reader[0]);
+            Assert.Equal("Data 2", reader[1]);
+            Assert.Equal("Data 3", reader[2]);
 
             reader.Read();
 
-            Assert.Equal("Test 1", reader[0]);
-            Assert.Equal("Test 2", reader[1]);
-            Assert.Equal("Test 3", reader[2]);
+            Assert.Equal("Data 4", reader[0]);
+            Assert.Equal("Data 5", reader[1]);
+            Assert.Equal("Data 6", reader[2]);
 
             reader.Read();
 
-            Assert.Equal("Test 1", reader[0]);
-            Assert.Equal("Test 2", reader[1]);
-            Assert.Equal("Test 3", reader[2]);
+            Assert.Equal("Data 7", reader[0]);
+            Assert.Equal("Data 8", reader[1]);
+            Assert.Equal("Data 9", reader[2]);
         }
 
         [Fact]
@@ -381,9 +380,9 @@ namespace DelimitedDataParser
         [Fact]
         public void ParseReader_Supports_Multiple_Blank_Rows()
         {
-            string input = @"Test 1,Test 2,Test 3" + Environment.NewLine
+            string input = @"Data 1,Data 2,Data 3" + Environment.NewLine
                 + Environment.NewLine
-                + @"Test 1,Test 2,Test 3";
+                + @"Data 4,Data 5,Data 6";
 
             var parser = new Parser
             {
@@ -395,24 +394,24 @@ namespace DelimitedDataParser
 
             Assert.Equal(3, reader.FieldCount);
 
-            Assert.Equal("Test 1", reader[0]);
-            Assert.Equal("Test 2", reader[1]);
-            Assert.Equal("Test 3", reader[2]);
+            Assert.Equal("Data 1", reader[0]);
+            Assert.Equal("Data 2", reader[1]);
+            Assert.Equal("Data 3", reader[2]);
 
             reader.Read();
             reader.Read();
 
-            Assert.Equal("Test 1", reader[0]);
-            Assert.Equal("Test 2", reader[1]);
-            Assert.Equal("Test 3", reader[2]);
+            Assert.Equal("Data 4", reader[0]);
+            Assert.Equal("Data 5", reader[1]);
+            Assert.Equal("Data 6", reader[2]);
         }
 
         [Fact]
         public void ParseReader_Supports_New_Row_By_Carriage_Return()
         {
-            string input = @"Test 1,Test 2,Test 3"
+            string input = @"Data 1,Data 2,Data 3"
                 + '\r'
-                + @"Test 4,Test 5,Test 6";
+                + @"Data 4,Data 5,Data 6";
 
             var parser = new Parser
             {
@@ -429,9 +428,9 @@ namespace DelimitedDataParser
         [Fact]
         public void ParseReader_Supports_New_Row_By_Full_New_Line()
         {
-            string input = @"Test 1,Test 2,Test 3"
+            string input = @"Data 1,Data 2,Data 3"
                 + Environment.NewLine
-                + @"Test 4,Test 5,Test 6";
+                + @"Data 4,Data 5,Data 6";
 
             var parser = new Parser
             {
@@ -441,14 +440,14 @@ namespace DelimitedDataParser
             var reader = parser.ParseReader(GetTextReader(input));
 
             reader.Read();
-            Assert.Equal("Test 1", reader[0]);
-            Assert.Equal("Test 2", reader[1]);
-            Assert.Equal("Test 3", reader[2]);
+            Assert.Equal("Data 1", reader[0]);
+            Assert.Equal("Data 2", reader[1]);
+            Assert.Equal("Data 3", reader[2]);
 
             reader.Read();
-            Assert.Equal("Test 4", reader[0]);
-            Assert.Equal("Test 5", reader[1]);
-            Assert.Equal("Test 6", reader[2]);
+            Assert.Equal("Data 4", reader[0]);
+            Assert.Equal("Data 5", reader[1]);
+            Assert.Equal("Data 6", reader[2]);
 
             var hasNextRow = reader.Read();
             Assert.False(hasNextRow);
@@ -457,9 +456,9 @@ namespace DelimitedDataParser
         [Fact]
         public void ParseReader_Supports_New_Row_By_Line_Feed()
         {
-            string input = @"Test 1,Test 2,Test 3"
+            string input = @"Data 1,Data 2,Data 3"
                 + '\n'
-                + @"Test 4,Test 5,Test 6";
+                + @"Data 4,Data 5,Data 6";
 
             var parser = new Parser
             {
@@ -470,22 +469,22 @@ namespace DelimitedDataParser
 
             reader.Read();
             Assert.Equal(3, reader.FieldCount);
-            Assert.Equal("Test 1", reader[0]);
-            Assert.Equal("Test 2", reader[1]);
-            Assert.Equal("Test 3", reader[2]);
+            Assert.Equal("Data 1", reader[0]);
+            Assert.Equal("Data 2", reader[1]);
+            Assert.Equal("Data 3", reader[2]);
 
             reader.Read();
-            Assert.Equal("Test 4", reader[0]);
-            Assert.Equal("Test 5", reader[1]);
-            Assert.Equal("Test 6", reader[2]);
+            Assert.Equal("Data 4", reader[0]);
+            Assert.Equal("Data 5", reader[1]);
+            Assert.Equal("Data 6", reader[2]);
         }
 
         [Fact]
         public void ParseReader_Supports_New_Row_By_Reverse_New_Line()
         {
-            string input = @"Test 1,Test 2,Test 3"
+            string input = @"Data 1,Data 2,Data 3"
                 + '\n' + '\r'
-                + @"Test 4,Test 5,Test 6";
+                + @"Data 4,Data 5,Data 6";
 
             var parser = new Parser
             {
@@ -496,20 +495,20 @@ namespace DelimitedDataParser
 
             reader.Read();
             Assert.Equal(3, reader.FieldCount);
-            Assert.Equal("Test 1", reader[0]);
-            Assert.Equal("Test 2", reader[1]);
-            Assert.Equal("Test 3", reader[2]);
+            Assert.Equal("Data 1", reader[0]);
+            Assert.Equal("Data 2", reader[1]);
+            Assert.Equal("Data 3", reader[2]);
 
             reader.Read();
-            Assert.Equal("Test 4", reader[0]);
-            Assert.Equal("Test 5", reader[1]);
-            Assert.Equal("Test 6", reader[2]);
+            Assert.Equal("Data 4", reader[0]);
+            Assert.Equal("Data 5", reader[1]);
+            Assert.Equal("Data 6", reader[2]);
         }
 
         [Fact]
         public void ParseReader_Supports_Quoted_Column_Name_Containing_Carriage_Return()
         {
-            string input = @"Col 1,Col 2,""Col" + '\r' + @"3""";
+            string input = @"Data 1,Data 2,""Data" + '\r' + @"3""";
 
             var parser = new Parser
             {
@@ -519,9 +518,9 @@ namespace DelimitedDataParser
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
-            Assert.Equal("Col 1", reader[0]);
-            Assert.Equal("Col 2", reader[1]);
-            Assert.Equal("Col" + '\r' + "3", reader[2]);
+            Assert.Equal("Data 1", reader[0]);
+            Assert.Equal("Data 2", reader[1]);
+            Assert.Equal("Data" + '\r' + "3", reader[2]);
 
             var hasNextRow = reader.Read();
             Assert.False(hasNextRow);
@@ -530,7 +529,7 @@ namespace DelimitedDataParser
         [Fact]
         public void ParseReader_Supports_Quoted_Column_Name_Containing_Comma()
         {
-            string input = @"""Col,1"",Col 2,Col 3";
+            string input = @"""Data,1"",Data 2,Data 3";
 
             var parser = new Parser
             {
@@ -540,9 +539,9 @@ namespace DelimitedDataParser
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
-            Assert.Equal("Col,1", reader[0]);
-            Assert.Equal("Col 2", reader[1]);
-            Assert.Equal("Col 3", reader[2]);
+            Assert.Equal("Data,1", reader[0]);
+            Assert.Equal("Data 2", reader[1]);
+            Assert.Equal("Data 3", reader[2]);
 
             var hasNextRow = reader.Read();
             Assert.False(hasNextRow);
@@ -551,7 +550,7 @@ namespace DelimitedDataParser
         [Fact]
         public void ParseReader_Supports_Quoted_Column_Name_Containing_Escaped_Quote()
         {
-            string input = @"Col 1,""Col """"2"""""",Col 3";
+            string input = @"Data 1,""Data """"2"""""",Data 3";
 
             var parser = new Parser
             {
@@ -561,9 +560,9 @@ namespace DelimitedDataParser
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
-            Assert.Equal("Col 1", reader[0]);
-            Assert.Equal(@"Col ""2""", reader[1]);
-            Assert.Equal("Col 3", reader[2]);
+            Assert.Equal("Data 1", reader[0]);
+            Assert.Equal(@"Data ""2""", reader[1]);
+            Assert.Equal("Data 3", reader[2]);
 
             var hasNextRow = reader.Read();
             Assert.False(hasNextRow);
@@ -887,6 +886,48 @@ namespace DelimitedDataParser
             Assert.Equal("Test 1", reader[0]);
             Assert.Equal("Test 2", reader[1]);
             Assert.Equal("Test æ", reader[2]);
+        }
+
+        [Theory]
+        [InlineData(4093, "\r\n")]
+        [InlineData(4094, "\r\n")]
+        [InlineData(4095, "\r\n")]
+        [InlineData(4096, "\r\n")]
+        [InlineData(4097, "\r\n")]
+        [InlineData(4098, "\r\n")]
+        [InlineData(4099, "\r\n")]
+        [InlineData(4093, "\r")]
+        [InlineData(4094, "\r")]
+        [InlineData(4095, "\r")]
+        [InlineData(4096, "\r")]
+        [InlineData(4097, "\r")]
+        [InlineData(4098, "\r")]
+        [InlineData(4099, "\r")]
+        [InlineData(4093, "\n")]
+        [InlineData(4094, "\n")]
+        [InlineData(4095, "\n")]
+        [InlineData(4096, "\n")]
+        [InlineData(4097, "\n")]
+        [InlineData(4098, "\n")]
+        [InlineData(4099, "\n")]
+        public void ParseReader_Supports_NewLineAtBufferEnd(int charCount, string newLine)
+        {
+            var firstLine = new string('a', charCount);
+            var secondLine = "b";
+
+            string input = firstLine + newLine + secondLine;
+
+            var parser = new Parser { UseFirstRowAsColumnHeaders = false };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+
+            reader.Read();
+            Assert.Equal(1, reader.FieldCount);
+            Assert.Equal(firstLine, reader[0]);
+
+            reader.Read();
+            Assert.Equal(1, reader.FieldCount);
+            Assert.Equal(secondLine, reader[0]);
         }
     }
 }

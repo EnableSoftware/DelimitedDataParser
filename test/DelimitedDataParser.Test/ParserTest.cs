@@ -47,19 +47,31 @@ namespace DelimitedDataParser
         [Fact]
         public void Can_Parse_Empty_Fields()
         {
-            string input = @"," + Environment.NewLine
+            string input = @"Col 1,Col 2,Col 3" + Environment.NewLine
+                + @"Data 1,," + Environment.NewLine
                 + @"," + Environment.NewLine
-                + @"PreventBlankRow,BeingRemoved";
+                + @"""""";
 
             var parser = new Parser();
             var output = parser.Parse(GetTextReader(input));
 
-            Assert.Equal(2, output.Rows.Count);
-            Assert.Equal(2, output.Columns.Count);
-            Assert.Equal("Column1", output.Columns[0].ColumnName);
-            Assert.Equal("Column2", output.Columns[1].ColumnName);
-            Assert.Equal(string.Empty, output.Rows[0][0]);
+            Assert.Equal(3, output.Rows.Count);
+            Assert.Equal(3, output.Columns.Count);
+            Assert.Equal("Col 1", output.Columns[0].ColumnName);
+            Assert.Equal("Col 2", output.Columns[1].ColumnName);
+            Assert.Equal("Col 3", output.Columns[2].ColumnName);
+
+            Assert.Equal("Data 1", output.Rows[0][0]);
             Assert.Equal(string.Empty, output.Rows[0][1]);
+            Assert.Equal(string.Empty, output.Rows[0][2]);
+
+            Assert.Equal(string.Empty, output.Rows[1][0]);
+            Assert.Equal(string.Empty, output.Rows[1][1]);
+            Assert.Equal(DBNull.Value, output.Rows[1][2]);
+
+            Assert.Equal(string.Empty, output.Rows[2][0]);
+            Assert.Equal(DBNull.Value, output.Rows[2][1]);
+            Assert.Equal(DBNull.Value, output.Rows[2][2]);
         }
 
         [Fact]
@@ -89,34 +101,6 @@ namespace DelimitedDataParser
             var parser = new Parser();
 
             Assert.Throws<ArgumentNullException>(() => parser.Parse(null));
-        }
-
-        [Fact]
-        public void Removes_Blank_Rows_At_End()
-        {
-            string input = @"Test 1,Test 2,Test 3" + Environment.NewLine
-                + @"Test 1,Test 2,Test 3" + Environment.NewLine
-                + Environment.NewLine
-                + @"Test 1,Test 2,Test 3" + Environment.NewLine
-                + Environment.NewLine;
-
-            var parser = new Parser();
-            var output = parser.Parse(GetTextReader(input));
-
-            Assert.Equal(3, output.Columns.Count);
-            Assert.Equal(3, output.Rows.Count);
-            Assert.Equal("Test 1", output.Columns[0].ColumnName);
-            Assert.Equal("Test 2", output.Columns[1].ColumnName);
-            Assert.Equal("Test 3", output.Columns[2].ColumnName);
-            Assert.Equal("Test 1", output.Rows[0][0]);
-            Assert.Equal("Test 2", output.Rows[0][1]);
-            Assert.Equal("Test 3", output.Rows[0][2]);
-            Assert.Equal(DBNull.Value, output.Rows[1][0]);
-            Assert.Equal(DBNull.Value, output.Rows[1][1]);
-            Assert.Equal(DBNull.Value, output.Rows[1][2]);
-            Assert.Equal("Test 1", output.Rows[2][0]);
-            Assert.Equal("Test 2", output.Rows[2][1]);
-            Assert.Equal("Test 3", output.Rows[2][2]);
         }
 
         [Fact]
@@ -387,24 +371,24 @@ namespace DelimitedDataParser
         [Fact]
         public void Supports_Multiple_Blank_Rows()
         {
-            string input = @"Test 1,Test 2,Test 3" + Environment.NewLine
+            string input = @"Col 1,Col 2,Col 3" + Environment.NewLine
                 + Environment.NewLine
-                + @"Test 1,Test 2,Test 3";
+                + @"Data 1,Data 2,Data 3";
 
             var parser = new Parser();
             var output = parser.Parse(GetTextReader(input));
-
+            
             Assert.Equal(3, output.Columns.Count);
             Assert.Equal(2, output.Rows.Count);
-            Assert.Equal("Test 1", output.Columns[0].ColumnName);
-            Assert.Equal("Test 2", output.Columns[1].ColumnName);
-            Assert.Equal("Test 3", output.Columns[2].ColumnName);
+            Assert.Equal("Col 1", output.Columns[0].ColumnName);
+            Assert.Equal("Col 2", output.Columns[1].ColumnName);
+            Assert.Equal("Col 3", output.Columns[2].ColumnName);
             Assert.Equal(DBNull.Value, output.Rows[0][0]);
             Assert.Equal(DBNull.Value, output.Rows[0][1]);
             Assert.Equal(DBNull.Value, output.Rows[0][2]);
-            Assert.Equal("Test 1", output.Rows[1][0]);
-            Assert.Equal("Test 2", output.Rows[1][1]);
-            Assert.Equal("Test 3", output.Rows[1][2]);
+            Assert.Equal("Data 1", output.Rows[1][0]);
+            Assert.Equal("Data 2", output.Rows[1][1]);
+            Assert.Equal("Data 3", output.Rows[1][2]);
         }
 
         [Fact]
@@ -777,33 +761,28 @@ namespace DelimitedDataParser
         {
             string input = @"Col 1,Col 2,Col 3" + Environment.NewLine
                 + @"Data 1,Data 2,Data 3,Data 4" + Environment.NewLine
-                + @"Data 1" + Environment.NewLine
-                + @"Data 1,Data 2,Data 3,Data 4,Data 5";
+                + @"Data 5" + Environment.NewLine
+                + @"Data 6,Data 7,Data 8,Data 9,Data 10";
 
             var parser = new Parser();
             var output = parser.Parse(GetTextReader(input));
 
-            Assert.Equal(5, output.Columns.Count);
+            Assert.Equal(3, output.Columns.Count);
             Assert.Equal("Col 1", output.Columns[0].ColumnName);
             Assert.Equal("Col 2", output.Columns[1].ColumnName);
             Assert.Equal("Col 3", output.Columns[2].ColumnName);
-            Assert.Equal("Column1", output.Columns[3].ColumnName);
-            Assert.Equal("Column2", output.Columns[4].ColumnName);
+
             Assert.Equal("Data 1", output.Rows[0][0]);
             Assert.Equal("Data 2", output.Rows[0][1]);
             Assert.Equal("Data 3", output.Rows[0][2]);
-            Assert.Equal("Data 4", output.Rows[0][3]);
-            Assert.Equal(string.Empty, output.Rows[0][4]);
-            Assert.Equal("Data 1", output.Rows[1][0]);
-            Assert.Equal(string.Empty, output.Rows[1][1]);
-            Assert.Equal(string.Empty, output.Rows[1][2]);
-            Assert.Equal(string.Empty, output.Rows[1][3]);
-            Assert.Equal(string.Empty, output.Rows[1][4]);
-            Assert.Equal("Data 1", output.Rows[2][0]);
-            Assert.Equal("Data 2", output.Rows[2][1]);
-            Assert.Equal("Data 3", output.Rows[2][2]);
-            Assert.Equal("Data 4", output.Rows[2][3]);
-            Assert.Equal("Data 5", output.Rows[2][4]);
+
+            Assert.Equal("Data 5", output.Rows[1][0]);
+            Assert.Equal(DBNull.Value, output.Rows[1][1]);
+            Assert.Equal(DBNull.Value, output.Rows[1][2]);
+
+            Assert.Equal("Data 6", output.Rows[2][0]);
+            Assert.Equal("Data 7", output.Rows[2][1]);
+            Assert.Equal("Data 8", output.Rows[2][2]);
         }
 
         [Fact]
