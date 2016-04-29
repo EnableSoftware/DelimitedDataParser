@@ -5,6 +5,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+### Fixed
+
+Fix a bug with the `IncludeEscapeCharacters` setting. Previously this setting
+could only be disabled if using a tab character as a field separator.
+
 ## [3.2.0] — 2016-04-29
 
 ### Added

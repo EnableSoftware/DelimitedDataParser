@@ -104,6 +104,8 @@ namespace DelimitedDataParser
         public void Fails_With_Invalid_Settings()
         {
             var exporter = new Exporter();
+
+            exporter.FieldSeparator = Exporter.TabSeparator;
             exporter.IncludeEscapeCharacters = false;
 
             Assert.Throws<InvalidOperationException>(() => exporter.ExportToString(CreateDataTable()));
@@ -556,6 +558,30 @@ namespace DelimitedDataParser
                 @"""One"",""Two""" + Environment.NewLine
                 + @"""""""Three"""""",""Four""" + Environment.NewLine
                 + @"""Five"",""Six""",
+                output);
+        }
+
+        [Fact]
+        public void Exports_Unquoted_Data()
+        {
+            var input = CreateDataTable();
+            AddColumn(input, "One");
+            AddColumn(input, "Two");
+
+            AddRow(input, "Three", "Four");
+            AddRow(input, "Five", "Six");
+
+            var exporter = new Exporter
+            {
+                IncludeEscapeCharacters = false
+            };
+
+            var output = exporter.ExportToString(input);
+
+            Assert.Equal(
+                "One,Two" + Environment.NewLine
+                + "Three,Four" + Environment.NewLine
+                + "Five,Six",
                 output);
         }
 

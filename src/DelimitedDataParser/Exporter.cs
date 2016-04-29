@@ -153,7 +153,7 @@ namespace DelimitedDataParser
             }
 
             // Ensure escape characters are included unless we are exporting tab separated values
-            if (!_includeEscapeCharacters && _fieldSeparator != TabSeparator)
+            if (!_includeEscapeCharacters && _fieldSeparator == TabSeparator)
             {
                 throw new InvalidOperationException();
             }
