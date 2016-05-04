@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
-## [3.3.0] — 2016-05-04
+## [3.3.1] — 2016-05-04
 
 ### Added
 Add support for a blacklist of field values. Fields that start with a value from the blacklist should have a single quote prepended to them.
@@ -73,8 +73,8 @@ could only be disabled if using a tab character as a field separator.
 
 - Initial public release.
 
-[unreleased]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.3.0...HEAD
-[3.3.0]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.2.0...v3.3.0
+[unreleased]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.3.1...HEAD
+[3.3.1]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.2.0...v3.3.1
 [3.2.0]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v2.6.0...v3.0.0

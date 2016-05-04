@@ -602,7 +602,7 @@ namespace DelimitedDataParser
             var exporter = new Exporter
             {
                 IncludeEscapeCharacters = false,
-                SantizeStrings = true
+                SanitizeStrings = true
             };
 
             var output = exporter.ExportToString(input);
@@ -631,7 +631,7 @@ namespace DelimitedDataParser
             var exporter = new Exporter
             {
                 IncludeEscapeCharacters = false,
-                SantizeStrings = true
+                SanitizeStrings = true
             };
 
             var output = exporter.ExportToString(input);
@@ -654,7 +654,7 @@ namespace DelimitedDataParser
             var exporter = new Exporter
             {
                 IncludeEscapeCharacters = false,
-                SantizeStrings = true
+                SanitizeStrings = true
             };
 
             var output = exporter.ExportToString(input);

@@ -74,7 +74,7 @@ namespace DelimitedDataParser
         /// Specifies whether strings should be sanitized, prepending blacklisted characters at the
         /// start of the string with a single quote "'". The default value is <c>false</c>.
         /// </summary>
-        public virtual bool SantizeStrings
+        public virtual bool SanitizeStrings
         {
             get
             {
