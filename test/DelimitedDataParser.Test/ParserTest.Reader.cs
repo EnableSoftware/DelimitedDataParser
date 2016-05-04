@@ -84,9 +84,27 @@ namespace DelimitedDataParser
         }
 
         [Fact]
+        public void ParseReader_Can_Index_On_Field_Names()
+        {
+            string input = @"Field 1,Field 2" + Environment.NewLine
+                + @"Data 1,Data 2" + Environment.NewLine;
+
+            var parser = new Parser();
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Equal("Data 1", reader["Field 1"]);
+            Assert.Equal("Data 2", reader["Field 2"]);
+
+            var hasNextRow = reader.Read();
+            Assert.False(hasNextRow);
+        }
+
+        [Fact]
         public void ParseReader_Can_Parse_Row()
         {
-            string input = @"Field 1,Field 2,Field 3";
+            string input = @"Data 1,Data 2,Data 3";
 
             var parser = new Parser
             {
@@ -96,14 +114,14 @@ namespace DelimitedDataParser
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
-            Assert.Equal("Field 1", reader[0]);
-            Assert.Equal("Field 2", reader[1]);
-            Assert.Equal("Field 3", reader[2]);
+            Assert.Equal("Data 1", reader[0]);
+            Assert.Equal("Data 2", reader[1]);
+            Assert.Equal("Data 3", reader[2]);
 
             var hasNextRow = reader.Read();
             Assert.False(hasNextRow);
         }
-        
+
         [Fact]
         public void ParseReader_Can_Parse_Empty_Fields()
         {
@@ -931,6 +949,323 @@ namespace DelimitedDataParser
             reader.Read();
             Assert.Equal(1, reader.FieldCount);
             Assert.Equal(secondLine, reader[0]);
+        }
+
+        [Fact]
+        public void ParseReader_Depth_Returns_Zero()
+        {
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(string.Empty));
+
+            Assert.Equal(0, reader.Depth);
+        }
+
+        [Fact]
+        public void ParseReader_FieldCount_Yields_Count_For_Header_Row()
+        {
+            string input = @"Field 1,Field 2,Field 3";
+
+            var parser = new Parser();
+
+            var reader = parser.ParseReader(GetTextReader(input));
+
+            Assert.Equal(3, reader.FieldCount);
+        }
+
+        [Fact]
+        public void ParseReader_FieldCount_Yields_Count_For_Row()
+        {
+            string input = @"Data 1,Data 2,Data 3";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+
+            Assert.Equal(3, reader.FieldCount);
+        }
+
+        [Fact]
+        public void ParseReader_FieldCount_Yields_Count_For_Each_Row()
+        {
+            string input = @"Data 1,Data 2,Data 3" + Environment.NewLine
+                + @"Data 4,Data 5" + Environment.NewLine
+                + @"Data 6,Data 7,Data 8,Data 9" + Environment.NewLine;
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+
+            reader.Read();
+            Assert.Equal(3, reader.FieldCount);
+
+            reader.Read();
+            Assert.Equal(2, reader.FieldCount);
+
+            reader.Read();
+            Assert.Equal(4, reader.FieldCount);
+        }
+
+        [Fact]
+        public void ParseReader_VisibleFieldCount_Yields_Count_For_Header_Row()
+        {
+            string input = @"Field 1,Field 2,Field 3";
+
+            var parser = new Parser();
+
+            var reader = parser.ParseReader(GetTextReader(input));
+
+            Assert.Equal(3, reader.VisibleFieldCount);
+        }
+
+        [Fact]
+        public void ParseReader_VisibleFieldCount_Yields_Count_For_Row()
+        {
+            string input = @"Data 1,Data 2,Data 3";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+
+            Assert.Equal(3, reader.VisibleFieldCount);
+        }
+
+        [Fact]
+        public void ParseReader_VisibleFieldCount_Yields_Count_For_Each_Row()
+        {
+            string input = @"Data 1,Data 2,Data 3" + Environment.NewLine
+                + @"Data 4,Data 5" + Environment.NewLine
+                + @"Data 6,Data 7,Data 8,Data 9" + Environment.NewLine;
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+
+            reader.Read();
+            Assert.Equal(3, reader.VisibleFieldCount);
+
+            reader.Read();
+            Assert.Equal(2, reader.VisibleFieldCount);
+
+            reader.Read();
+            Assert.Equal(4, reader.VisibleFieldCount);
+        }
+
+        [Fact]
+        public void ParseReader_RecordsAffected_Returns_Minus_One()
+        {
+            var parser = new Parser();
+
+            var reader = parser.ParseReader(GetTextReader(string.Empty));
+
+            Assert.Equal(-1, reader.RecordsAffected);
+        }
+
+        [Fact]
+        public void ParseReader_HasRows_Returns_True()
+        {
+            var input = "Data 1";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+
+            Assert.True(reader.HasRows);
+        }
+
+        [Fact]
+        public void ParseReader_HasRows_Returns_False_For_Empty_Input()
+        {
+            var parser = new Parser();
+
+            var reader = parser.ParseReader(GetTextReader(string.Empty));
+
+            Assert.False(reader.HasRows);
+        }
+
+        [Theory]
+        [InlineData("ca761232ed4211cebacd00aa0057b223")]
+        [InlineData("CA761232-ED42-11CE-BACD-00AA0057B223")]
+        [InlineData("ca761232-ed42-11ce-bacd-00aa0057b223")]
+        [InlineData("{CA761232-ED42-11CE-BACD-00AA0057B223}")]
+        [InlineData("(CA761232-ED42-11CE-BACD-00AA0057B223)")]
+        public void ParseReader_GetGuid_Can_Get(string input)
+        {
+            var expected = new Guid("CA761232-ED42-11CE-BACD-00AA0057B223");
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Equal(expected, reader.GetGuid(0));
+        }
+
+        [Fact]
+        public void ParseReader_GetGuid_Throws()
+        {
+            var input = "Data 1";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Throws<InvalidCastException>(() => reader.GetGuid(0));
+        }
+
+        [Theory]
+        [InlineData("42", 42)]
+        [InlineData("1", 1)]
+        [InlineData("0", 0)]
+        [InlineData("-1", -1)]
+        public void ParseReader_GetInt16_Can_Get(string input, short expected)
+        {
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Equal(expected, reader.GetInt16(0));
+        }
+
+        [Fact]
+        public void ParseReader_GetInt16_Throws()
+        {
+            var input = "Data 1";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Throws<InvalidCastException>(() => reader.GetInt16(0));
+        }
+
+        [Fact]
+        public void ParseReader_GetInt32_Can_Get()
+        {
+            var input = "32768";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Equal(32768, reader.GetInt32(0));
+        }
+
+        [Fact]
+        public void ParseReader_GetInt32_Throws()
+        {
+            var input = "Data 1";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Throws<InvalidCastException>(() => reader.GetInt32(0));
+        }
+
+        [Fact]
+        public void ParseReader_GetInt64_Can_Get()
+        {
+            var input = "2147483648";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Equal(2147483648L, reader.GetInt64(0));
+        }
+
+        [Fact]
+        public void ParseReader_GetInt64_Throws()
+        {
+            var input = "Data 1";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Throws<InvalidCastException>(() => reader.GetInt64(0));
+        }
+
+        [Fact]
+        public void ParseReader_IsDBNull_Returns_True()
+        {
+            var input = ",";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.True(reader.IsDBNull(0));
+        }
+
+        [Fact]
+        public void ParseReader_IsDBNull_Returns_False()
+        {
+            var input = "Data 1,Data 2";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.False(reader.IsDBNull(0));
         }
     }
 }

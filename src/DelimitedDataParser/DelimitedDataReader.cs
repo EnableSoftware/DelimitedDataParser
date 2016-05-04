@@ -72,8 +72,9 @@ namespace DelimitedDataParser
         {
             get
             {
-                // TODO return `_currentRow != null;` or similar
-                throw new NotImplementedException();
+                EnsureInitialised();
+
+                return _currentRow != null;
             }
         }
 
@@ -111,7 +112,6 @@ namespace DelimitedDataParser
 
         public override void Close()
         {
-            // TODO What should we do here? Dispose of the TextReader?
             _isClosed = true;
         }
 
@@ -196,22 +196,50 @@ namespace DelimitedDataParser
 
         public override Guid GetGuid(int ordinal)
         {
-            return Guid.Parse(_currentRow[ordinal]);
+            Guid value;
+
+            if (!Guid.TryParse(_currentRow[ordinal], out value))
+            {
+                throw new InvalidCastException();
+            }
+
+            return value;
         }
 
         public override short GetInt16(int ordinal)
         {
-            return short.Parse(_currentRow[ordinal], CultureInfo.InvariantCulture);
+            short value;
+
+            if (!short.TryParse(_currentRow[ordinal], NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
+            {
+                throw new InvalidCastException();
+            }
+
+             return value;
         }
 
         public override int GetInt32(int ordinal)
         {
-            return int.Parse(_currentRow[ordinal], CultureInfo.InvariantCulture);
+            int value;
+
+            if (!int.TryParse(_currentRow[ordinal], NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
+            {
+                throw new InvalidCastException();
+            }
+
+            return value;
         }
 
         public override long GetInt64(int ordinal)
         {
-            return long.Parse(_currentRow[ordinal], CultureInfo.InvariantCulture);
+            long value;
+
+            if (!long.TryParse(_currentRow[ordinal], NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
+            {
+                throw new InvalidCastException();
+            }
+
+            return value;
         }
 
         public override string GetName(int ordinal)
@@ -307,10 +335,10 @@ namespace DelimitedDataParser
                 schemaRow[isKey] = false;
                 schemaRow[isLong] = false;
                 schemaRow[isUnique] = false;
-                schemaRow[nonVersionedProviderType] = 12; // TODO What is this magic number?
+                schemaRow[nonVersionedProviderType] = DbType.String;
                 schemaRow[numericScale] = byte.MaxValue;
                 schemaRow[numericPrecision] = byte.MaxValue;
-                schemaRow[providerType] = 12; // TODO What is this magic number?
+                schemaRow[providerType] = DbType.String;
 
                 schemaTable.Rows.Add(schemaRow);
 
@@ -440,14 +468,7 @@ namespace DelimitedDataParser
                     }
                     else
                     {
-                        var defaultColumnHeaders = new List<string>();
-
-                        for (int i = 0; i < _currentRow.Count; i++)
-                        {
-                            defaultColumnHeaders.Add(string.Concat("Column", i + 1));
-                        }
-
-                        _fieldNameLookup = defaultColumnHeaders.AsReadOnly();
+                        GenerateDefaultFieldNameLookup();
                     }
                 }
                 else
@@ -464,6 +485,18 @@ namespace DelimitedDataParser
         {
             // Here we assume that the current row is the header row.
             _fieldNameLookup = new List<string>(_currentRow).AsReadOnly();
+        }
+
+        private void GenerateDefaultFieldNameLookup()
+        {
+            var defaultColumnHeaders = new List<string>(_currentRow.Count);
+
+            for (int i = 0; i < _currentRow.Count; i++)
+            {
+                defaultColumnHeaders.Add(string.Concat("Column", i + 1));
+            }
+
+            _fieldNameLookup = defaultColumnHeaders.AsReadOnly();
         }
 
         private bool ReadInternal()
