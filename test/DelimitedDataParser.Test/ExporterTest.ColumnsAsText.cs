@@ -9,19 +9,19 @@ namespace DelimitedDataParser
         public void Supports_ColumnsAsText_Data_Containing_Quote()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
+            AddColumn(input, "Field 1");
 
-            AddRow(input, @"11""11");
+            AddRow(input, @"Dat""a 1");
 
             var exporter = new Exporter();
 
-            exporter.SetColumnsAsText(new[] { "One" });
+            exporter.SetColumnsAsText(new[] { "Field 1" });
 
             var output = exporter.ExportToString(input);
 
             Assert.Equal(
-                @"""One""" + Environment.NewLine
-                + @"""=""""11""""11""""""",
+                @"""Field 1""" + Environment.NewLine
+                + @"""=""""Dat""""a 1""""""",
                 output);
         }
 
@@ -29,19 +29,19 @@ namespace DelimitedDataParser
         public void Supports_ColumnsAsText_Data_Ending_With_Quote()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
+            AddColumn(input, "Field 1");
 
-            AddRow(input, @"1111""");
+            AddRow(input, @"Data 1""");
 
             var exporter = new Exporter();
 
-            exporter.SetColumnsAsText(new[] { "One" });
+            exporter.SetColumnsAsText(new[] { "Field 1" });
 
             var output = exporter.ExportToString(input);
 
             Assert.Equal(
-                @"""One""" + Environment.NewLine
-                + @"""=""""1111""""""""""",
+                @"""Field 1""" + Environment.NewLine
+                + @"""=""""Data 1""""""""""",
                 output);
         }
 
@@ -49,19 +49,19 @@ namespace DelimitedDataParser
         public void Supports_ColumnsAsText_Data_Starting_With_Quote()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
+            AddColumn(input, "Field 1");
 
-            AddRow(input, @"""1111");
+            AddRow(input, @"""Data 1");
 
             var exporter = new Exporter();
 
-            exporter.SetColumnsAsText(new[] { "One" });
+            exporter.SetColumnsAsText(new[] { "Field 1" });
 
             var output = exporter.ExportToString(input);
 
             Assert.Equal(
-                @"""One""" + Environment.NewLine
-                + @"""=""""""""1111""""""",
+                @"""Field 1""" + Environment.NewLine
+                + @"""=""""""""Data 1""""""",
                 output);
         }
 
@@ -69,20 +69,20 @@ namespace DelimitedDataParser
         public void Supports_ColumnsAsText_Multiple()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Two");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Field 2");
 
-            AddRow(input, "001,002", "003,004");
+            AddRow(input, "Dat,a 1", "Dat,a 2");
 
             var exporter = new Exporter();
 
-            exporter.SetColumnsAsText(new[] { "One", "Two" });
+            exporter.SetColumnsAsText(new[] { "Field 1", "Field 2" });
 
             var output = exporter.ExportToString(input);
 
             Assert.Equal(
-                @"""One"",""Two""" + Environment.NewLine
-                + @"""=""""001,002"""""",""=""""003,004""""""",
+                @"""Field 1"",""Field 2""" + Environment.NewLine
+                + @"""=""""Dat,a 1"""""",""=""""Dat,a 2""""""",
                 output);
         }
 
@@ -90,19 +90,19 @@ namespace DelimitedDataParser
         public void Supports_ColumnsAsText_NewLine()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
+            AddColumn(input, "Field 1");
 
-            AddRow(input, "123" + Environment.NewLine + "456");
+            AddRow(input, "Dat" + Environment.NewLine + "a 1");
 
             var exporter = new Exporter();
 
-            exporter.SetColumnsAsText(new[] { "One" });
+            exporter.SetColumnsAsText(new[] { "Field 1" });
 
             var output = exporter.ExportToString(input);
 
             Assert.Equal(
-                @"""One""" + Environment.NewLine
-                + @"""=""""123" + Environment.NewLine + @"456""""""",
+                @"""Field 1""" + Environment.NewLine
+                + @"""=""""Dat" + Environment.NewLine + @"a 1""""""",
                 output);
         }
 
@@ -110,18 +110,18 @@ namespace DelimitedDataParser
         public void Supports_ColumnsAsText_None()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Two");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Field 2");
 
-            AddRow(input, "001,002", "003,004");
+            AddRow(input, "Dat,a 1", "Dat,a 2");
 
             var exporter = new Exporter();
 
             var output = exporter.ExportToString(input);
 
             Assert.Equal(
-                @"""One"",""Two""" + Environment.NewLine
-                + @"""001,002"",""003,004""",
+                @"""Field 1"",""Field 2""" + Environment.NewLine
+                + @"""Dat,a 1"",""Dat,a 2""",
                 output);
         }
 
@@ -129,20 +129,20 @@ namespace DelimitedDataParser
         public void Supports_ColumnsAsText_Single_First()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Two");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Field 2");
 
-            AddRow(input, "001,002", "003,004");
+            AddRow(input, "Dat,a 1", "Dat,a 2");
 
             var exporter = new Exporter();
 
-            exporter.SetColumnsAsText(new[] { "One" });
+            exporter.SetColumnsAsText(new[] { "Field 1" });
 
             var output = exporter.ExportToString(input);
 
             Assert.Equal(
-                @"""One"",""Two""" + Environment.NewLine
-                + @"""=""""001,002"""""",""003,004""",
+                @"""Field 1"",""Field 2""" + Environment.NewLine
+                + @"""=""""Dat,a 1"""""",""Dat,a 2""",
                 output);
         }
 
@@ -150,21 +150,21 @@ namespace DelimitedDataParser
         public void Supports_ColumnsAsText_Single_MiddleOfThree()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Two");
-            AddColumn(input, "Three");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Field 2");
+            AddColumn(input, "Field 3");
 
-            AddRow(input, "001,002", "003,004", "005,006");
+            AddRow(input, "Dat,a 1", "Dat,a 2", "Dat,a 3");
 
             var exporter = new Exporter();
 
-            exporter.SetColumnsAsText(new[] { "Two" });
+            exporter.SetColumnsAsText(new[] { "Field 2" });
 
             var output = exporter.ExportToString(input);
 
             Assert.Equal(
-                @"""One"",""Two"",""Three""" + Environment.NewLine
-                + @"""001,002"",""=""""003,004"""""",""005,006""",
+                @"""Field 1"",""Field 2"",""Field 3""" + Environment.NewLine
+                + @"""Dat,a 1"",""=""""Dat,a 2"""""",""Dat,a 3""",
                 output);
         }
 
@@ -172,20 +172,20 @@ namespace DelimitedDataParser
         public void Supports_ColumnsAsText_Single_NonExistant()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Two");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Field 2");
 
-            AddRow(input, "001,002", "003,004");
+            AddRow(input, "Dat,a 1", "Dat,a 2");
 
             var exporter = new Exporter();
 
-            exporter.SetColumnsAsText(new[] { "Three" });
+            exporter.SetColumnsAsText(new[] { "Field 3" });
 
             var output = exporter.ExportToString(input);
 
             Assert.Equal(
-                @"""One"",""Two""" + Environment.NewLine
-                + @"""001,002"",""003,004""",
+                @"""Field 1"",""Field 2""" + Environment.NewLine
+                + @"""Dat,a 1"",""Dat,a 2""",
                 output);
         }
 
@@ -193,20 +193,20 @@ namespace DelimitedDataParser
         public void Supports_ColumnsAsText_Single_Second()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Two");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Field 2");
 
-            AddRow(input, "001,002", "003,004");
+            AddRow(input, "Dat,a 1", "Dat,a 2");
 
             var exporter = new Exporter();
 
-            exporter.SetColumnsAsText(new[] { "Two" });
+            exporter.SetColumnsAsText(new[] { "Field 2" });
 
             var output = exporter.ExportToString(input);
 
             Assert.Equal(
-                @"""One"",""Two""" + Environment.NewLine
-                + @"""001,002"",""=""""003,004""""""",
+                @"""Field 1"",""Field 2""" + Environment.NewLine
+                + @"""Dat,a 1"",""=""""Dat,a 2""""""",
                 output);
         }
 

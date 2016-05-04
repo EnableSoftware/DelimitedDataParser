@@ -45,26 +45,26 @@ namespace DelimitedDataParser
 
             var output = exporter.ExportToString(CreateDataTable());
 
-            Assert.Equal(0, output.Length);
+            Assert.Empty(output);
         }
 
         [Fact]
         public void Can_Parse_Multiple_Rows()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Two");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Field 2");
 
-            AddRow(input, "Three", "Four");
-            AddRow(input, "Five", "Six");
+            AddRow(input, "Data 1", "Data 2");
+            AddRow(input, "Data 3", "Data 4");
 
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
             Assert.Equal(
-                @"""One"",""Two""" + Environment.NewLine
-                + @"""Three"",""Four""" + Environment.NewLine
-                + @"""Five"",""Six""",
+                @"""Field 1"",""Field 2""" + Environment.NewLine
+                + @"""Data 1"",""Data 2""" + Environment.NewLine
+                + @"""Data 3"",""Data 4""",
                 output);
         }
 
@@ -72,17 +72,17 @@ namespace DelimitedDataParser
         public void Can_Parse_Null_Fields()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Two");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Field 2");
 
-            AddRow(input, null, "Two");
+            AddRow(input, null, "Data 1");
 
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
             Assert.Equal(
-                @"""One"",""Two""" + Environment.NewLine
-                + @""""",""Two""",
+                @"""Field 1"",""Field 2""" + Environment.NewLine
+                + @""""",""Data 1""",
                 output);
         }
 
@@ -90,14 +90,14 @@ namespace DelimitedDataParser
         public void Does_Not_Strip_Whitespace_From_Column_Names()
         {
             var input = CreateDataTable();
-            AddColumn(input, " One");
-            AddColumn(input, "Two ");
-            AddColumn(input, " Three ");
+            AddColumn(input, " Field 1");
+            AddColumn(input, "Field 2 ");
+            AddColumn(input, " Field 3 ");
 
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.Equal(@""" One"",""Two "","" Three """, output);
+            Assert.Equal(@""" Field 1"",""Field 2 "","" Field 3 """, output);
         }
 
         [Fact]
@@ -123,34 +123,34 @@ namespace DelimitedDataParser
         public void Outputs_Column_Names()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Two");
-            AddColumn(input, "Three");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Field 2");
+            AddColumn(input, "Field 3");
 
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.Equal(@"""One"",""Two"",""Three""", output);
+            Assert.Equal(@"""Field 1"",""Field 2"",""Field 3""", output);
         }
 
         [Fact]
         public void Supports_Changing_Field_Separator_Char_Colon()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Two");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Field 2");
 
-            AddRow(input, "Three", "Four");
-            AddRow(input, "Five", "Six");
+            AddRow(input, "Data 1", "Data 2");
+            AddRow(input, "Data 3", "Data 4");
 
             var exporter = new Exporter();
             exporter.FieldSeparator = ':';
             var output = exporter.ExportToString(input);
 
             Assert.Equal(
-                "\"One\":\"Two\"" + Environment.NewLine
-                + "\"Three\":\"Four\"" + Environment.NewLine
-                + "\"Five\":\"Six\"",
+                "\"Field 1\":\"Field 2\"" + Environment.NewLine
+                + "\"Data 1\":\"Data 2\"" + Environment.NewLine
+                + "\"Data 3\":\"Data 4\"",
                 output);
         }
 
@@ -158,20 +158,20 @@ namespace DelimitedDataParser
         public void Supports_Changing_Field_Separator_Char_Pipe()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Two");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Field 2");
 
-            AddRow(input, "Three", "Four");
-            AddRow(input, "Five", "Six");
+            AddRow(input, "Data 1", "Data 2");
+            AddRow(input, "Data 3", "Data 4");
 
             var exporter = new Exporter();
             exporter.FieldSeparator = '|';
             var output = exporter.ExportToString(input);
 
             Assert.Equal(
-                @"""One""|""Two""" + Environment.NewLine
-                + @"""Three""|""Four""" + Environment.NewLine
-                + @"""Five""|""Six""",
+                @"""Field 1""|""Field 2""" + Environment.NewLine
+                + @"""Data 1""|""Data 2""" + Environment.NewLine
+                + @"""Data 3""|""Data 4""",
                 output);
         }
 
@@ -179,20 +179,20 @@ namespace DelimitedDataParser
         public void Supports_Changing_Field_Separator_Char_Space()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Two");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Field 2");
 
-            AddRow(input, "Three", "Four");
-            AddRow(input, "Five", "Six");
+            AddRow(input, "Data 1", "Data 2");
+            AddRow(input, "Data 3", "Data 4");
 
             var exporter = new Exporter();
             exporter.FieldSeparator = ' ';
             var output = exporter.ExportToString(input);
 
             Assert.Equal(
-                "\"One\" \"Two\"" + Environment.NewLine
-                + "\"Three\" \"Four\"" + Environment.NewLine
-                + "\"Five\" \"Six\"",
+                "\"Field 1\" \"Field 2\"" + Environment.NewLine
+                + "\"Data 1\" \"Data 2\"" + Environment.NewLine
+                + "\"Data 3\" \"Data 4\"",
                 output);
         }
 
@@ -200,20 +200,20 @@ namespace DelimitedDataParser
         public void Supports_Changing_Field_Separator_Char_Tab()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Two");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Field 2");
 
-            AddRow(input, "Three", "Four");
-            AddRow(input, "Five", "Six");
+            AddRow(input, "Data 1", "Data 2");
+            AddRow(input, "Data 3", "Data 4");
 
             var exporter = new Exporter();
             exporter.FieldSeparator = '\t';
             var output = exporter.ExportToString(input);
 
             Assert.Equal(
-                "\"One\"\t\"Two\"" + Environment.NewLine
-                + "\"Three\"\t\"Four\"" + Environment.NewLine
-                + "\"Five\"\t\"Six\"",
+                "\"Field 1\"\t\"Field 2\"" + Environment.NewLine
+                + "\"Data 1\"\t\"Data 2\"" + Environment.NewLine
+                + "\"Data 3\"\t\"Data 4\"",
                 output);
         }
 
@@ -221,103 +221,103 @@ namespace DelimitedDataParser
         public void Supports_Column_Name_Containing_Carriage_Return()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Tw\ro");
-            AddColumn(input, "Three");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Fie\rld 2");
+            AddColumn(input, "Field 3");
 
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.Equal(@"""One"",""Tw" + "\r" + @"o"",""Three""", output);
+            Assert.Equal(@"""Field 1"",""Fie" + "\r" + @"ld 2"",""Field 3""", output);
         }
 
         [Fact]
         public void Supports_Column_Name_Containing_Comma()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, @"Tw,o");
-            AddColumn(input, "Three");
+            AddColumn(input, "Field 1");
+            AddColumn(input, @"Fie,ld 2");
+            AddColumn(input, "Field 3");
 
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.Equal(@"""One"",""Tw,o"",""Three""", output);
+            Assert.Equal(@"""Field 1"",""Fie,ld 2"",""Field 3""", output);
         }
 
         [Fact]
         public void Supports_Column_Name_Containing_Full_New_Line()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Tw" + Environment.NewLine + "o");
-            AddColumn(input, "Three");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Fie" + Environment.NewLine + "ld 2");
+            AddColumn(input, "Field 3");
 
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.Equal(@"""One"",""Tw" + Environment.NewLine + @"o"",""Three""", output);
+            Assert.Equal(@"""Field 1"",""Fie" + Environment.NewLine + @"ld 2"",""Field 3""", output);
         }
 
         [Fact]
         public void Supports_Column_Name_Containing_Line_Feed()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Tw\no");
-            AddColumn(input, "Three");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Fie\nld 2");
+            AddColumn(input, "Field 3");
 
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.Equal(@"""One"",""Tw" + "\n" + @"o"",""Three""", output);
+            Assert.Equal(@"""Field 1"",""Fie" + "\n" + @"ld 2"",""Field 3""", output);
         }
 
         [Fact]
         public void Supports_Column_Name_Containing_Quote()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, @"Tw""o");
-            AddColumn(input, "Three");
+            AddColumn(input, "Field 1");
+            AddColumn(input, @"Fie""ld 2");
+            AddColumn(input, "Field 3");
 
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.Equal(@"""One"",""Tw""""o"",""Three""", output);
+            Assert.Equal(@"""Field 1"",""Fie""""ld 2"",""Field 3""", output);
         }
 
         [Fact]
         public void Supports_Column_Name_Containing_Reversed_New_Line()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Tw\n\ro");
-            AddColumn(input, "Three");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Fie\n\rld 2");
+            AddColumn(input, "Field 3");
 
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.Equal(@"""One"",""Tw" + "\n\r" + @"o"",""Three""", output);
+            Assert.Equal(@"""Field 1"",""Fie" + "\n\r" + @"ld 2"",""Field 3""", output);
         }
 
         [Fact]
         public void Supports_Data_Containing_Full_New_Line()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Two");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Field 2");
 
-            AddRow(input, "Thr" + Environment.NewLine + "ee", "Four");
-            AddRow(input, "Five", "Six");
+            AddRow(input, "Dat" + Environment.NewLine + "a 1", "Data 2");
+            AddRow(input, "Data 2", "Data 3");
 
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
             Assert.Equal(
-                @"""One"",""Two""" + Environment.NewLine
-                + @"""Thr" + Environment.NewLine + @"ee"",""Four""" + Environment.NewLine
-                + @"""Five"",""Six""",
+                @"""Field 1"",""Field 2""" + Environment.NewLine
+                + @"""Dat" + Environment.NewLine + @"a 1"",""Data 2""" + Environment.NewLine
+                + @"""Data 2"",""Data 3""",
                 output);
         }
 
@@ -325,19 +325,19 @@ namespace DelimitedDataParser
         public void Supports_Data_Containing_Quote()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Two");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Field 2");
 
-            AddRow(input, @"Thr""ee", "Four");
-            AddRow(input, "Five", "Six");
+            AddRow(input, @"Data""1", "Data 2");
+            AddRow(input, "Data 3", "Data 4");
 
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
             Assert.Equal(
-                @"""One"",""Two""" + Environment.NewLine
-                + @"""Thr""""ee"",""Four""" + Environment.NewLine
-                + @"""Five"",""Six""",
+                @"""Field 1"",""Field 2""" + Environment.NewLine
+                + @"""Data""""1"",""Data 2""" + Environment.NewLine
+                + @"""Data 3"",""Data 4""",
                 output);
         }
 
@@ -345,19 +345,19 @@ namespace DelimitedDataParser
         public void Supports_Data_Ending_With_Quote()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Two");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Field 2");
 
-            AddRow(input, "Three", "Four");
-            AddRow(input, "Five", @"Six""");
+            AddRow(input, "Data 1", "Data 2");
+            AddRow(input, "Data 3", @"Data 4""");
 
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
             Assert.Equal(
-                @"""One"",""Two""" + Environment.NewLine
-                + @"""Three"",""Four""" + Environment.NewLine
-                + @"""Five"",""Six""""""",
+                @"""Field 1"",""Field 2""" + Environment.NewLine
+                + @"""Data 1"",""Data 2""" + Environment.NewLine
+                + @"""Data 3"",""Data 4""""""",
                 output);
         }
 
@@ -365,28 +365,28 @@ namespace DelimitedDataParser
         public void Supports_Empty_Column_Name()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
+            AddColumn(input, "Field 1");
             AddColumn(input, string.Empty);
-            AddColumn(input, "Three");
+            AddColumn(input, "Field 3");
 
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.Equal(@"""One"",""Column1"",""Three""", output);
+            Assert.Equal(@"""Field 1"",""Column1"",""Field 3""", output);
         }
 
         [Fact]
         public void Supports_Empty_Last_Column_Name()
         {
             var input = CreateDataTable();
-            AddColumn(input, "One");
-            AddColumn(input, "Two");
+            AddColumn(input, "Field 1");
+            AddColumn(input, "Field 2");
             AddColumn(input, string.Empty);
 
             var exporter = new Exporter();
             var output = exporter.ExportToString(input);
 
-            Assert.Equal(@"""One"",""Two"",""Column1""", output);
+            Assert.Equal(@"""Field 1"",""Field 2"",""Column1""", output);
         }
 
         [Fact]
