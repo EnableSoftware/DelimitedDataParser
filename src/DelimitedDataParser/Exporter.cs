@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 
 namespace DelimitedDataParser
 {
@@ -15,9 +16,12 @@ namespace DelimitedDataParser
         /// </summary>
         public static readonly char TabSeparator = '\t';
 
+        private static readonly string[] UnsafeLeadingCharacters = { "=", "+", "-", "@" };
+
         private ISet<string> _columnNamesAsText;
         private char _fieldSeparator = ',';
         private bool _includeEscapeCharacters = true;
+        private bool _sanitizeStrings = false;
         private bool _outputColumnHeaders = true;
         private bool _useExtendedPropertyForColumnName = false;
         private string _extendedPropertyKey;
@@ -63,6 +67,23 @@ namespace DelimitedDataParser
             set
             {
                 _includeEscapeCharacters = value;
+            }
+        }
+
+        /// <summary>
+        /// Specifies whether strings should be sanitized, prepending blacklisted characters at the
+        /// start of the string with a single quote "'". The default value is <c>false</c>.
+        /// </summary>
+        public virtual bool SantizeStrings
+        {
+            get
+            {
+                return _sanitizeStrings;
+            }
+
+            set
+            {
+                _sanitizeStrings = value;
             }
         }
 
@@ -209,20 +230,38 @@ namespace DelimitedDataParser
         /// <returns>The escaped string</returns>
         private string CsvEscape(string value, bool valueAsText)
         {
-            if (!_includeEscapeCharacters)
+            if (_includeEscapeCharacters)
             {
-                return value;
+                value = value.Replace(@"""", @"""""");
+
+                if (valueAsText)
+                {
+                    value = string.Concat(@"""=""""", value, @"""""""");
+                }
+                else
+                {
+                    value = string.Concat(@"""", value, @"""");
+                }
             }
 
-            value = value.Replace(@"""", @"""""");
-
-            if (valueAsText)
+            if (_sanitizeStrings)
             {
-                value = string.Concat(@"""=""""", value, @"""""""");
+                value = Sanitize(value);
             }
-            else
+
+            return value;
+        }
+
+        /// <summary>
+        /// Sanitize the input <paramref name="value"/> for use in a CSV.
+        /// </summary>
+        /// <param name="value">The <see cref="string"/> to be sanitized.</param>
+        /// <returns>The sanitized string</returns>
+        private string Sanitize(string value)
+        {
+            if (value != null && UnsafeLeadingCharacters.Any(value.StartsWith))
             {
-                value = string.Concat(@"""", value, @"""");
+                return string.Concat("'", value);
             }
 
             return value;

@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+### Added
+Add support for a blacklist of field values. Fields that start with a value from the blacklist should have a single quote prepended to them.
+
 ### Fixed
 
 Fix a bug with the `IncludeEscapeCharacters` setting. Previously this setting
