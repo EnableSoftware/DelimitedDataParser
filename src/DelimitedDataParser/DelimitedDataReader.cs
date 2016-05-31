@@ -117,12 +117,26 @@ namespace DelimitedDataParser
 
         public override bool GetBoolean(int ordinal)
         {
-            return bool.Parse(_currentRow[ordinal]);
+            bool value;
+
+            if (!bool.TryParse(_currentRow[ordinal], out value))
+            {
+                throw new InvalidCastException();
+            }
+
+            return value;
         }
 
         public override byte GetByte(int ordinal)
         {
-            return byte.Parse(_currentRow[ordinal], CultureInfo.InvariantCulture);
+            byte value;
+
+            if (!byte.TryParse(_currentRow[ordinal], NumberStyles.Any, CultureInfo.InvariantCulture, out value))
+            {
+                throw new InvalidCastException();
+            }
+
+            return value;
         }
 
         public override long GetBytes(int ordinal, long dataOffset, byte[] buffer, int bufferOffset, int length)
@@ -161,17 +175,38 @@ namespace DelimitedDataParser
 
         public override DateTime GetDateTime(int ordinal)
         {
-            return DateTime.Parse(_currentRow[ordinal], CultureInfo.InvariantCulture);
+            DateTime value;
+
+            if (!DateTime.TryParse(_currentRow[ordinal], CultureInfo.InvariantCulture, DateTimeStyles.None, out value))
+            {
+                throw new InvalidCastException();
+            }
+
+            return value;
         }
 
         public override decimal GetDecimal(int ordinal)
         {
-            return decimal.Parse(_currentRow[ordinal], CultureInfo.InvariantCulture);
+            decimal value;
+
+            if (!decimal.TryParse(_currentRow[ordinal], NumberStyles.Number, CultureInfo.InvariantCulture, out value))
+            {
+                throw new InvalidCastException();
+            }
+
+            return value;
         }
 
         public override double GetDouble(int ordinal)
         {
-            return double.Parse(_currentRow[ordinal], CultureInfo.InvariantCulture);
+            double value;
+
+            if (!double.TryParse(_currentRow[ordinal], NumberStyles.Number, CultureInfo.InvariantCulture, out value))
+            {
+                throw new InvalidCastException();
+            }
+
+            return value;
         }
 
         public override IEnumerator GetEnumerator()
@@ -191,7 +226,14 @@ namespace DelimitedDataParser
 
         public override float GetFloat(int ordinal)
         {
-            return float.Parse(_currentRow[ordinal], CultureInfo.InvariantCulture);
+            float value;
+
+            if (!float.TryParse(_currentRow[ordinal], NumberStyles.Float, CultureInfo.InvariantCulture, out value))
+            {
+                throw new InvalidCastException();
+            }
+
+            return value;
         }
 
         public override Guid GetGuid(int ordinal)

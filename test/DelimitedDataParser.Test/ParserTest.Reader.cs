@@ -1102,6 +1102,216 @@ namespace DelimitedDataParser
         }
 
         [Theory]
+        [InlineData("2016-05-31")]
+        [InlineData("2016/05/31")]
+        [InlineData("May 31, 2016")]
+        [InlineData("31 May 2016")]
+        public void ParseReader_GetDateTime_Can_Get(string input)
+        {
+            var expected = new DateTime(2016, 5, 31);
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Equal(expected, reader.GetDateTime(0));
+        }
+
+        [Fact]
+        public void ParseReader_GetDateTime_Throws()
+        {
+            var input = "Data 1";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Throws<InvalidCastException>(() => reader.GetDateTime(0));
+        }
+
+        [Theory]
+        [InlineData("-99999999999", -99999999999F)]
+        [InlineData("0.00", 0.00F)]
+        [InlineData("1.23", 1.23F)]
+        [InlineData("99999999999", 99999999999F)]
+        public void ParseReader_GetFloat_Can_Get(string input, float expected)
+        {
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Equal(expected, reader.GetFloat(0));
+        }
+
+        [Fact]
+        public void ParseReader_GetFloat_Throws()
+        {
+            var input = "Data 1";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Throws<InvalidCastException>(() => reader.GetFloat(0));
+        }
+        
+        [Theory]
+        [InlineData("-99999999999", -99999999999)]
+        [InlineData("0.00", 0.00)]
+        [InlineData("1.23", 1.23)]
+        [InlineData("99999999999", 99999999999)]
+        public void ParseReader_GetDecimal_Can_Get(string input, decimal expected)
+        {
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Equal(expected, reader.GetDecimal(0));
+        }
+
+        [Fact]
+        public void ParseReader_GetDecimal_Throws()
+        {
+            var input = "Data 1";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Throws<InvalidCastException>(() => reader.GetDecimal(0));
+        }
+
+        [Theory]
+        [InlineData("-1700", -1.7E+3D)]
+        [InlineData("0.00", 0.00D)]
+        [InlineData("1.23", 1.23D)]
+        [InlineData("1700", 1.7E+3D)]
+        public void ParseReader_GetDouble_Can_Get(string input, double expected)
+        {
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Equal(expected, reader.GetDouble(0));
+        }
+
+        [Fact]
+        public void ParseReader_GetDouble_Throws()
+        {
+            var input = "Data 1";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Throws<InvalidCastException>(() => reader.GetDouble(0));
+        }
+
+        [Theory]
+        [InlineData("true", true)]
+        [InlineData("TRUE", true)]
+        [InlineData("TrUe", true)]
+        [InlineData("false", false)]
+        [InlineData("FALSE", false)]
+        [InlineData("FaLsE", false)]
+        [InlineData(" true ", true)]
+        [InlineData(" false ", false)]
+        public void ParseReader_GetBoolean_Can_Get(string input, bool expected)
+        {
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Equal(expected, reader.GetBoolean(0));
+        }
+
+        [Fact]
+        public void ParseReader_GetBoolean_Throws()
+        {
+            var input = "Data 1";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Throws<InvalidCastException>(() => reader.GetBoolean(0));
+        }
+
+        [Theory]
+        [InlineData("0", 0)]
+        [InlineData("1", 1)]
+        [InlineData("42", 42)]
+        [InlineData("255", 255)]
+        public void ParseReader_GetByte_Can_Get(string input, byte expected)
+        {
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Equal(expected, reader.GetByte(0));
+        }
+
+        [Fact]
+        public void ParseReader_GetByte_Throws()
+        {
+            var input = "Data 1";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            Assert.Throws<InvalidCastException>(() => reader.GetByte(0));
+        }
+
+        [Theory]
         [InlineData("ca761232ed4211cebacd00aa0057b223")]
         [InlineData("CA761232-ED42-11CE-BACD-00AA0057B223")]
         [InlineData("ca761232-ed42-11ce-bacd-00aa0057b223")]
