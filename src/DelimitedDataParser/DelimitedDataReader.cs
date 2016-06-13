@@ -139,10 +139,34 @@ namespace DelimitedDataParser
             return value;
         }
 
+        // TODO See https://github.com/Microsoft/referencesource/blob/e458f8df6ded689323d4bd1a2a725ad32668aaec/System.Data/System/Data/Common/DataRecordInternal.cs#L108
         public override long GetBytes(int ordinal, long dataOffset, byte[] buffer, int bufferOffset, int length)
         {
-            // TODO See https://github.com/Microsoft/referencesource/blob/e458f8df6ded689323d4bd1a2a725ad32668aaec/System.Data/System/Data/Common/DataRecordInternal.cs#L108
-            throw new NotImplementedException();
+            if (ordinal < 0 || ordinal >= _currentRow.Count)
+            {
+                throw new ArgumentOutOfRangeException("ordinal");
+            }
+
+            if (bufferOffset < 0 || (bufferOffset > 0 && bufferOffset >= buffer.Length))
+            {
+                throw new ArgumentOutOfRangeException("bufferOffset");
+            }
+
+            var chars = _currentRow[ordinal];
+
+            var bytesToCopy = Math.Min(length, chars.Length);
+
+            if (buffer.Length < bytesToCopy)
+            {
+                throw new ArgumentException("Destination array not long enough.", "buffer");
+            }
+
+            for (int i = 0; i < bytesToCopy; i++)
+            {
+                buffer[i] = (byte)chars[i];
+            }
+
+            return bytesToCopy;
         }
 
         public override char GetChar(int ordinal)
@@ -257,7 +281,7 @@ namespace DelimitedDataParser
                 throw new InvalidCastException();
             }
 
-             return value;
+            return value;
         }
 
         public override int GetInt32(int ordinal)
@@ -568,7 +592,7 @@ namespace DelimitedDataParser
                     }
 
                     currentCell.Clear();
-                    
+
                     _bufferIndex--;
 
                     _currentRow = row.AsReadOnly();

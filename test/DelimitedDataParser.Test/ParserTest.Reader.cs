@@ -64,7 +64,7 @@ namespace DelimitedDataParser
 
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
-            
+
             Assert.Equal(0, reader.GetOrdinal("Field 1"));
             Assert.Equal(1, reader.GetOrdinal("Field 2"));
             Assert.Equal(2, reader.GetOrdinal("Field 3"));
@@ -79,7 +79,7 @@ namespace DelimitedDataParser
 
             var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
-            
+
             Assert.Equal(0, reader.GetOrdinal("Field 1"));
         }
 
@@ -131,8 +131,8 @@ namespace DelimitedDataParser
             {
                 UseFirstRowAsColumnHeaders = false
             };
-            
-            var reader = parser.ParseReader(GetTextReader(input)); 
+
+            var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
             Assert.Equal(2, reader.FieldCount);
@@ -144,13 +144,13 @@ namespace DelimitedDataParser
         public void ParseReader_Does_Not_Strip_Whitespace_From_Fields()
         {
             string input = @"Field 1, Field 2";
-            
+
             var parser = new Parser
             {
                 UseFirstRowAsColumnHeaders = false
             };
 
-            var reader = parser.ParseReader(GetTextReader(input)); 
+            var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
             Assert.Equal(" Field 2", reader[1]);
@@ -166,7 +166,7 @@ namespace DelimitedDataParser
                 UseFirstRowAsColumnHeaders = false
             };
 
-            var reader = parser.ParseReader(GetTextReader(input, Encoding.ASCII)); 
+            var reader = parser.ParseReader(GetTextReader(input, Encoding.ASCII));
             reader.Read();
 
             Assert.Equal("Data 1", reader[0]);
@@ -184,7 +184,7 @@ namespace DelimitedDataParser
                 UseFirstRowAsColumnHeaders = false
             };
 
-            var reader = parser.ParseReader(GetTextReader(input, Encoding.BigEndianUnicode)); 
+            var reader = parser.ParseReader(GetTextReader(input, Encoding.BigEndianUnicode));
             reader.Read();
 
             Assert.Equal("Iñtërnâtiônàlizætiøn☃", reader[0]);
@@ -199,7 +199,7 @@ namespace DelimitedDataParser
                 UseFirstRowAsColumnHeaders = false
             };
 
-            var reader = parser.ParseReader(GetTextReader(input)); 
+            var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
             Assert.Equal("Data 1", reader[0]);
@@ -254,7 +254,7 @@ namespace DelimitedDataParser
                 UseFirstRowAsColumnHeaders = false
             };
 
-            var reader = parser.ParseReader(GetTextReader(input)); 
+            var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
             Assert.Equal(3, reader.FieldCount);
@@ -274,7 +274,7 @@ namespace DelimitedDataParser
                 UseFirstRowAsColumnHeaders = false
             };
 
-            var reader = parser.ParseReader(GetTextReader(input)); 
+            var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
             Assert.Equal(3, reader.FieldCount);
@@ -294,7 +294,7 @@ namespace DelimitedDataParser
                 UseFirstRowAsColumnHeaders = false
             };
 
-            var reader = parser.ParseReader(GetTextReader(input)); 
+            var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
             Assert.Equal(3, reader.FieldCount);
@@ -314,7 +314,7 @@ namespace DelimitedDataParser
                 UseFirstRowAsColumnHeaders = false
             };
 
-            var reader = parser.ParseReader(GetTextReader(input)); 
+            var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
             Assert.Equal(3, reader.FieldCount);
@@ -386,7 +386,7 @@ namespace DelimitedDataParser
                 UseFirstRowAsColumnHeaders = false
             };
 
-            var reader = parser.ParseReader(GetTextReader(input)); 
+            var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
             Assert.Equal(CellContentLength, reader.GetString(0).Length);
@@ -394,7 +394,7 @@ namespace DelimitedDataParser
             var hasNextRow = reader.Read();
             Assert.False(hasNextRow);
         }
-        
+
         [Fact]
         public void ParseReader_Supports_Multiple_Blank_Rows()
         {
@@ -766,7 +766,7 @@ namespace DelimitedDataParser
                 UseFirstRowAsColumnHeaders = false
             };
 
-            var reader = parser.ParseReader(GetTextReader(input)); 
+            var reader = parser.ParseReader(GetTextReader(input));
             reader.Read();
 
             Assert.Equal("Data 1", reader[0]);
@@ -784,7 +784,7 @@ namespace DelimitedDataParser
                 UseFirstRowAsColumnHeaders = false
             };
 
-            var reader = parser.ParseReader(GetTextReader(input, Encoding.Unicode)); 
+            var reader = parser.ParseReader(GetTextReader(input, Encoding.Unicode));
             reader.Read();
 
             Assert.Equal("Iñtërnâtiônàlizætiøn☃", reader[0]);
@@ -800,7 +800,7 @@ namespace DelimitedDataParser
                 UseFirstRowAsColumnHeaders = false
             };
 
-            var reader = parser.ParseReader(GetTextReader(input, Encoding.UTF32)); 
+            var reader = parser.ParseReader(GetTextReader(input, Encoding.UTF32));
             reader.Read();
 
             Assert.Equal("Iñtërnâtiônàlizætiøn☃", reader[0]);
@@ -816,7 +816,7 @@ namespace DelimitedDataParser
                 UseFirstRowAsColumnHeaders = false
             };
 
-            var reader = parser.ParseReader(GetTextReader(input, Encoding.UTF7)); 
+            var reader = parser.ParseReader(GetTextReader(input, Encoding.UTF7));
             reader.Read();
 
             Assert.Equal("Iñtërnâtiônàlizætiøn☃", reader[0]);
@@ -895,7 +895,7 @@ namespace DelimitedDataParser
 
             var reader = parser.ParseReader(GetTextReader(input, windows1252));
             reader.Read();
-            
+
             Assert.Equal("Data 1", reader[0]);
             Assert.Equal("Data 2", reader[1]);
             Assert.Equal("Data ½", reader[2]);
@@ -1170,7 +1170,7 @@ namespace DelimitedDataParser
 
             Assert.Throws<InvalidCastException>(() => reader.GetFloat(0));
         }
-        
+
         [Theory]
         [InlineData("-99999999999", -99999999999)]
         [InlineData("0.00", 0.00)]
@@ -1476,6 +1476,119 @@ namespace DelimitedDataParser
             reader.Read();
 
             Assert.False(reader.IsDBNull(0));
+        }
+
+        [Theory]
+        [InlineData("Data 1", -1)]
+        [InlineData("Data 1", 1)]
+        [InlineData("Data 1", 2)]
+        [InlineData("Data 1,Data 2", 2)]
+        public void ParseReader_GetBytes_OrdinalOutOfRange_Throws(string input, int ordinal)
+        {
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            var buffer = new byte[1];
+            Assert.Throws<ArgumentOutOfRangeException>(() => reader.GetBytes(ordinal, 0, buffer, 0, 1));
+        }
+
+        [Theory]
+        [InlineData(1, -1)]
+        [InlineData(1, 1)]
+        [InlineData(1, 2)]
+        [InlineData(2, 2)]
+        public void ParseReader_GetBytes_BufferOffsetOutOfRange_Throws(int bufferLength, int bufferOffset)
+        {
+            var input = "Data 1";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            var buffer = new byte[bufferLength];
+            Assert.Throws<ArgumentOutOfRangeException>(() => reader.GetBytes(0, 0, buffer, bufferOffset, 1));
+        }
+
+        [Theory]
+        [InlineData(0, 1)]
+        [InlineData(0, 2)]
+        [InlineData(1, 2)]
+        [InlineData(2, 3)]
+        [InlineData(2, 4)]
+        public void ParseReader_GetBytes_BufferNotLongEnough_Throws(int bufferLength, int length)
+        {
+            var input = "Data 1";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            var buffer = new byte[bufferLength];
+            Assert.Throws<ArgumentException>(() => reader.GetBytes(0, 0, buffer, 0, length));
+        }
+
+        [Theory]
+        [InlineData("Data 1", 1, "D")]
+        [InlineData("Data 1", 2, "Da")]
+        [InlineData("Data 1", 6, "Data 1")]
+        [InlineData("Foo", 3, "Foo")]
+        [InlineData("Foo", 4, "Foo")]
+        public void ParseReader_GetBytes_CopiesExpectedCountOfBytes(string input, int length, string expected)
+        {
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            var buffer = new byte[length];
+            var bytesCopied  = reader.GetBytes(0, 0, buffer, 0, length);
+
+            Assert.Equal(expected.Length, bytesCopied);
+
+            for (int i = 0; i < expected.Length; i++)
+            {
+                Assert.Equal((byte)expected[i], buffer[i]);
+            }
+        }
+
+        [Theory]
+        [InlineData("Data 1", 0, "Data 1")]
+        [InlineData("Data 1,Data 2", 0, "Data 1")]
+        [InlineData("Data 1,Data 2", 1, "Data 2")]
+        [InlineData("Data 1,Data 2,Data 3", 2, "Data 3")]
+        public void ParseReader_GetBytes_CopiesFromExpectedOrdinal(string input, int ordinal, string expected)
+        {
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            var buffer = new byte[6];
+            reader.GetBytes(ordinal, 0, buffer, 0, 6);
+
+            for (int i = 0; i < expected.Length; i++)
+            {
+                Assert.Equal((byte)expected[i], buffer[i]);
+            }
         }
     }
 }
