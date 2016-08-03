@@ -5,6 +5,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [3.3.2] — 2016-08-03
+
+### Fixed
+
+Remove check from Exporter preventing TabSeparator being used when IncludeEscapeCharacters disabled.
+
 ## [3.3.1] — 2016-05-04
 
 ### Added
@@ -73,7 +79,8 @@ could only be disabled if using a tab character as a field separator.
 
 - Initial public release.
 
-[unreleased]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.3.1...HEAD
+[unreleased]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.3.2...HEAD
+[3.3.2]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.3.1...v3.3.2
 [3.3.1]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.2.0...v3.3.1
 [3.2.0]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.0.0...v3.1.0
