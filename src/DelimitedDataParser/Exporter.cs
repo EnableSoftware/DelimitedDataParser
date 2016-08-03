@@ -173,12 +173,6 @@ namespace DelimitedDataParser
                 throw new ArgumentNullException("writer");
             }
 
-            // Ensure escape characters are included unless we are exporting tab separated values
-            if (!_includeEscapeCharacters && _fieldSeparator == TabSeparator)
-            {
-                throw new InvalidOperationException();
-            }
-
             if (dataTable.Columns.Count > 0)
             {
                 if (_outputColumnHeaders)

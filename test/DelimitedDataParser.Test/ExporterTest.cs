@@ -101,17 +101,6 @@ namespace DelimitedDataParser
         }
 
         [Fact]
-        public void Fails_With_Invalid_Settings()
-        {
-            var exporter = new Exporter();
-
-            exporter.FieldSeparator = Exporter.TabSeparator;
-            exporter.IncludeEscapeCharacters = false;
-
-            Assert.Throws<InvalidOperationException>(() => exporter.ExportToString(CreateDataTable()));
-        }
-
-        [Fact]
         public void Fails_Without_Valid_Input()
         {
             using (var writer = new StringWriter())
