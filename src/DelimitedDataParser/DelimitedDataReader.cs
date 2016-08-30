@@ -187,8 +187,36 @@ namespace DelimitedDataParser
 
         public override long GetChars(int ordinal, long dataOffset, char[] buffer, int bufferOffset, int length)
         {
-            // TODO See https://github.com/Microsoft/referencesource/blob/e458f8df6ded689323d4bd1a2a725ad32668aaec/System.Data/System/Data/Common/DataRecordInternal.cs#L176
-            throw new NotImplementedException();
+            var chars = _currentRow[ordinal];
+
+            if (buffer == null)
+            {
+                return chars.Length;
+            }
+
+            if (ordinal < 0 || ordinal >= _currentRow.Count)
+            {
+                throw new ArgumentOutOfRangeException("ordinal");
+            }
+
+            if (bufferOffset < 0 || (bufferOffset > 0 && bufferOffset >= buffer.Length))
+            {
+                throw new ArgumentOutOfRangeException("bufferOffset");
+            }
+
+            var charsToCopy = Math.Min(length, chars.Length);
+
+            if (buffer.Length < charsToCopy)
+            {
+                throw new ArgumentException("Destination array not long enough.", "buffer");
+            }
+
+            for (int i = 0; i < charsToCopy; i++)
+            {
+                buffer[i] = chars[i];
+            }
+
+            return charsToCopy;
         }
 
         public override string GetDataTypeName(int ordinal)

@@ -1608,5 +1608,136 @@ namespace DelimitedDataParser
                 Assert.Equal((byte)expected[i], buffer[i]);
             }
         }
+
+        [Theory]
+        [InlineData("Data 1", -1)]
+        [InlineData("Data 1", 1)]
+        [InlineData("Data 1", 2)]
+        [InlineData("Data 1,Data 2", 2)]
+        public void ParseReader_GetChars_OrdinalOutOfRange_Throws(string input, int ordinal)
+        {
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            var buffer = new char[1];
+            Assert.Throws<ArgumentOutOfRangeException>(() => reader.GetChars(ordinal, 0, buffer, 0, 1));
+        }
+
+        [Theory]
+        [InlineData(1, -1)]
+        [InlineData(1, 1)]
+        [InlineData(1, 2)]
+        [InlineData(2, 2)]
+        public void ParseReader_GetChars_BufferOffsetOutOfRange_Throws(int bufferLength, int bufferOffset)
+        {
+            var input = "Data 1";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            var buffer = new char[bufferLength];
+            Assert.Throws<ArgumentOutOfRangeException>(() => reader.GetChars(0, 0, buffer, bufferOffset, 1));
+        }
+
+        [Theory]
+        [InlineData(0, 1)]
+        [InlineData(0, 2)]
+        [InlineData(1, 2)]
+        [InlineData(2, 3)]
+        [InlineData(2, 4)]
+        public void ParseReader_GetChars_BufferNotLongEnough_Throws(int bufferLength, int length)
+        {
+            var input = "Data 1";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            var buffer = new char[bufferLength];
+            Assert.Throws<ArgumentException>(() => reader.GetChars(0, 0, buffer, 0, length));
+        }
+
+        [Theory]
+        [InlineData("Data 1", 6, 6)]
+        [InlineData("Foo", 3, 3)]
+        public void ParseReader_GetChars_ReturnsExpectedCountWithNullBuffer(string input, int length, int expected)
+        {
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            var charsCopied = reader.GetChars(0, 0, null, 0, length);
+
+            Assert.Equal(expected, charsCopied);
+        }
+
+        [Theory]
+        [InlineData("Data 1", 1, "D")]
+        [InlineData("Data 1", 2, "Da")]
+        [InlineData("Data 1", 6, "Data 1")]
+        [InlineData("Foo", 3, "Foo")]
+        [InlineData("Foo", 4, "Foo")]
+        public void ParseReader_GetChars_CopiesExpectedCountOfChars(string input, int length, string expected)
+        {
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            var buffer = new char[length];
+            var charsCopied = reader.GetChars(0, 0, buffer, 0, length);
+
+            Assert.Equal(expected.Length, charsCopied);
+
+            for (int i = 0; i < expected.Length; i++)
+            {
+                Assert.Equal(expected[i], buffer[i]);
+            }
+        }
+
+        [Theory]
+        [InlineData("Data 1", 0, "Data 1")]
+        [InlineData("Data 1,Data 2", 0, "Data 1")]
+        [InlineData("Data 1,Data 2", 1, "Data 2")]
+        [InlineData("Data 1,Data 2,Data 3", 2, "Data 3")]
+        public void ParseReader_GetChars_CopiesFromExpectedOrdinal(string input, int ordinal, string expected)
+        {
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            var buffer = new char[6];
+            reader.GetChars(ordinal, 0, buffer, 0, 6);
+
+            for (int i = 0; i < expected.Length; i++)
+            {
+                Assert.Equal(expected[i], buffer[i]);
+            }
+        }
     }
 }
