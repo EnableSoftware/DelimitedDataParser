@@ -1541,6 +1541,24 @@ namespace DelimitedDataParser
         }
 
         [Theory]
+        [InlineData("Data 1", 6, 6)]
+        [InlineData("Foo", 3, 3)]
+        public void ParseReader_GetBytes_ReturnsExpectedCountWithNullBuffer(string input, int length, int expected)
+        {
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+            reader.Read();
+
+            var bytesCopied = reader.GetBytes(0, 0, null, 0, length);
+
+            Assert.Equal(expected, bytesCopied);
+        }
+
+        [Theory]
         [InlineData("Data 1", 1, "D")]
         [InlineData("Data 1", 2, "Da")]
         [InlineData("Data 1", 6, "Data 1")]

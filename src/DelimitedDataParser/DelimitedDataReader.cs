@@ -139,9 +139,15 @@ namespace DelimitedDataParser
             return value;
         }
 
-        // TODO See https://github.com/Microsoft/referencesource/blob/e458f8df6ded689323d4bd1a2a725ad32668aaec/System.Data/System/Data/Common/DataRecordInternal.cs#L108
         public override long GetBytes(int ordinal, long dataOffset, byte[] buffer, int bufferOffset, int length)
         {
+            var chars = _currentRow[ordinal];
+
+            if (buffer == null)
+            {
+                return chars.Length;
+            }
+
             if (ordinal < 0 || ordinal >= _currentRow.Count)
             {
                 throw new ArgumentOutOfRangeException("ordinal");
@@ -151,8 +157,6 @@ namespace DelimitedDataParser
             {
                 throw new ArgumentOutOfRangeException("bufferOffset");
             }
-
-            var chars = _currentRow[ordinal];
 
             var bytesToCopy = Math.Min(length, chars.Length);
 
