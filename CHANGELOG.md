@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+### Added
+
+- Add support for a streaming reading of delimited data files.
+
 ## [3.3.2] — 2016-08-03
 
 ### Fixed
