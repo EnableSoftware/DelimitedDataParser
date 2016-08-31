@@ -2,7 +2,7 @@
 
 C# library for parsing and exporting tabular data in delimited format (e.g. CSV).
 
-[![NuGet Version](https://img.shields.io/nuget/v/DelimitedDataParser.svg)](https://www.nuget.org/packages/DelimitedDataParser/) [![NuGet Downloads](https://img.shields.io/nuget/dt/DelimitedDataParser.svg)](https://www.nuget.org/packages/DelimitedDataParser/)
+ [![NuGet Downloads](https://buildstats.info/nuget/DelimitedDataParser)](https://www.nuget.org/packages/DelimitedDataParser/)
 
 ## Parser
 
@@ -36,8 +36,10 @@ using (var writer = new StringWriter())
 ### Configuration properties
 
 * `FieldSeparator` - the character used as field delimiter in the text file. Default: `,` (i.e., CSV).
-* `IncludeEscapeCharacters` - specifies whether each value should be escaped by wrapping in quotation marks. Must be `true` if `FieldSeparator` is a tab character. Default: `true`.
+* `SanitizeStrings` - specifies whether strings should be sanitized, prepending blacklisted characters at the start of the string with a single quote `'`. The default value is `false`.
+* `IncludeEscapeCharacters` - specifies whether each value should be escaped by wrapping in quotation marks. Default: `true`.
 * `OutputColumnHeaders` - specifies whether an initial row containing column names should be written to the output. Default: `true`.
+* `UseExtendedPropertyForColumnName(string key)` - specifies a key that is used to search on the ExtendedProperties of a DataColumn. If it finds a value this will be used as the column header, if no match is found it will default to the column's ColumnName. This should be used if you are required to output a different column header to what is stored on the column's ColumnName.
 
 ## Columns as text
 

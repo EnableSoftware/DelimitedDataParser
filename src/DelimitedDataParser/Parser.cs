@@ -31,7 +31,7 @@ namespace DelimitedDataParser
 
         /// <summary>
         /// The character used as the field delimiter in the text file. The default value is
-        /// <c>,</c>, i.e. CSV input.
+        /// '<c>,</c>', i.e. CSV input.
         /// </summary>
         public virtual char FieldSeparator
         {
@@ -67,8 +67,8 @@ namespace DelimitedDataParser
         /// Clear all "columns as text" settings.
         /// </summary>
         /// <remarks>
-        /// Calling this method clears any "columns as text" settings set via the <see
-        /// cref="SetColumnsAsText(IEnumerable{string})"/> method.
+        /// Calling this method clears any "columns as text" settings set via the
+        /// <see cref="SetColumnsAsText(IEnumerable{string})"/> method.
         /// </remarks>
         public virtual void ClearColumnsAsText()
         {
@@ -76,7 +76,7 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Parse the input <paramref name="TextReader"/> as a <see cref="DataTable"/>.
+        /// Parse the input <see cref="TextReader"/> as a <see cref="DataTable"/>.
         /// </summary>
         /// <param name="textReader">
         /// The <see cref="TextReader"/> containing the delimited data to read.
@@ -145,7 +145,7 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Parse the input <paramref name="String"/> where values may be wrapped in quotes and
+        /// Parse the input <paramref name="value"/> where values may be wrapped in quotes and
         /// preceded with an equals sign.
         /// </summary>
         /// <param name="value">The <see cref="String"/> value to be parsed.</param>

