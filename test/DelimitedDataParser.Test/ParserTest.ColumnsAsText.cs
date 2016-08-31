@@ -8,131 +8,132 @@ namespace DelimitedDataParser
         [Fact]
         public void Supports_ColumnsAsText_DataNotInFormat()
         {
-            string input = @"""One"",""Two""" + Environment.NewLine +
-                @"""=""""Three"""""",""=""""Four""""""" + Environment.NewLine +
-                @"""Five"",""=""""Six""""""";
+            string input = @"""Field 1"",""Field 2""" + Environment.NewLine +
+                @"""=""""Data 1"""""",""=""""Data 2""""""" + Environment.NewLine +
+                @"""Data 3"",""=""""Data 4""""""";
 
             var parser = new Parser();
-            parser.UseFirstRowAsColumnHeaders = true;
 
-            parser.SetColumnsAsText(new[] { "One", "Two" });
+            parser.SetColumnsAsText(new[] { "Field 1", "Field 2" });
 
             var output = parser.Parse(GetTextReader(input));
 
             Assert.Equal(2, output.Columns.Count);
-            Assert.Equal("One", output.Columns[0].ColumnName);
-            Assert.Equal("Two", output.Columns[1].ColumnName);
-            Assert.Equal("Three", output.Rows[0][0]);
-            Assert.Equal("Four", output.Rows[0][1]);
-            Assert.Equal("Five", output.Rows[1][0]);
-            Assert.Equal("Six", output.Rows[1][1]);
+            Assert.Equal("Field 1", output.Columns[0].ColumnName);
+            Assert.Equal("Field 2", output.Columns[1].ColumnName);
+            Assert.Equal("Data 1", output.Rows[0][0]);
+            Assert.Equal("Data 2", output.Rows[0][1]);
+            Assert.Equal("Data 3", output.Rows[1][0]);
+            Assert.Equal("Data 4", output.Rows[1][1]);
         }
 
         [Fact]
         public void Supports_ColumnsAsText_Format()
         {
-            string input = @"""=""""x"""""",""y""";
+            string input = @"""=""""Data 1"""""",""Data 2""";
 
-            var parser = new Parser();
-            parser.UseFirstRowAsColumnHeaders = false;
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
 
             var output = parser.Parse(GetTextReader(input));
 
             Assert.Equal(2, output.Columns.Count);
-            Assert.Equal(@"=""x""", output.Rows[0][0]);
-            Assert.Equal(@"y", output.Rows[0][1]);
+            Assert.Equal(@"=""Data 1""", output.Rows[0][0]);
+            Assert.Equal("Data 2", output.Rows[0][1]);
         }
 
         [Fact]
         public void Supports_ColumnsAsText_FormatInLastCell()
         {
-            string input = @"""=""""x""""""";
+            string input = @"""=""""Data 1""""""";
 
-            var parser = new Parser();
-            parser.UseFirstRowAsColumnHeaders = false;
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
 
             var output = parser.Parse(GetTextReader(input));
 
             Assert.Equal(1, output.Columns.Count);
-            Assert.Equal(@"=""x""", output.Rows[0][0]);
+            Assert.Equal(@"=""Data 1""", output.Rows[0][0]);
         }
 
         [Fact]
         public void Supports_ColumnsAsText_Multiple()
         {
-            string input = @"""One"",""Two""" + Environment.NewLine +
-                @"""=""""Three"""""",""=""""Four""""""";
+            string input = @"""Field 1"",""Field 2""" + Environment.NewLine +
+                @"""=""""Data 1"""""",""=""""Data 2""""""";
 
             var parser = new Parser();
-            parser.UseFirstRowAsColumnHeaders = true;
 
-            parser.SetColumnsAsText(new[] { "One", "Two" });
+            parser.SetColumnsAsText(new[] { "Field 1", "Field 2" });
 
             var output = parser.Parse(GetTextReader(input));
 
             Assert.Equal(2, output.Columns.Count);
-            Assert.Equal("One", output.Columns[0].ColumnName);
-            Assert.Equal("Two", output.Columns[1].ColumnName);
-            Assert.Equal("Three", output.Rows[0][0]);
-            Assert.Equal("Four", output.Rows[0][1]);
+            Assert.Equal("Field 1", output.Columns[0].ColumnName);
+            Assert.Equal("Field 2", output.Columns[1].ColumnName);
+            Assert.Equal("Data 1", output.Rows[0][0]);
+            Assert.Equal("Data 2", output.Rows[0][1]);
         }
 
         [Fact]
         public void Supports_ColumnsAsText_None()
         {
-            string input = @"""One"",""Two""" + Environment.NewLine +
-                @"""Three"",""=""""Four""""""";
+            string input = @"""Field 1"",""Field 2""" + Environment.NewLine +
+                @"""Data 1"",""=""""Data 2""""""";
 
             var parser = new Parser();
-            parser.UseFirstRowAsColumnHeaders = true;
 
             var output = parser.Parse(GetTextReader(input));
 
             Assert.Equal(2, output.Columns.Count);
-            Assert.Equal("One", output.Columns[0].ColumnName);
-            Assert.Equal("Two", output.Columns[1].ColumnName);
-            Assert.Equal("Three", output.Rows[0][0]);
-            Assert.Equal(@"=""Four""", output.Rows[0][1]);
+            Assert.Equal("Field 1", output.Columns[0].ColumnName);
+            Assert.Equal("Field 2", output.Columns[1].ColumnName);
+            Assert.Equal("Data 1", output.Rows[0][0]);
+            Assert.Equal(@"=""Data 2""", output.Rows[0][1]);
         }
 
         [Fact]
         public void Supports_ColumnsAsText_Single()
         {
-            string input = @"""One"",""Two""" + Environment.NewLine +
-                @"""Three"",""=""""Four""""""";
+            string input = @"""Field 1"",""Field 2""" + Environment.NewLine +
+                @"""Data 1"",""=""""Data 2""""""";
 
             var parser = new Parser();
             parser.UseFirstRowAsColumnHeaders = true;
 
-            parser.SetColumnsAsText(new[] { "Two" });
+            parser.SetColumnsAsText(new[] { "Field 2" });
 
             var output = parser.Parse(GetTextReader(input));
 
             Assert.Equal(2, output.Columns.Count);
-            Assert.Equal("One", output.Columns[0].ColumnName);
-            Assert.Equal("Two", output.Columns[1].ColumnName);
-            Assert.Equal("Three", output.Rows[0][0]);
-            Assert.Equal("Four", output.Rows[0][1]);
+            Assert.Equal("Field 1", output.Columns[0].ColumnName);
+            Assert.Equal("Field 2", output.Columns[1].ColumnName);
+            Assert.Equal("Data 1", output.Rows[0][0]);
+            Assert.Equal("Data 2", output.Rows[0][1]);
         }
 
         [Fact]
         public void Supports_ColumnsAsText_Single_NonExistant()
         {
-            string input = @"""One"",""Two""" + Environment.NewLine +
-                @"""Three"",""=""""Four""""""";
+            string input = @"""Field 1"",""Field 2""" + Environment.NewLine +
+                @"""Data 1"",""=""""Data 2""""""";
 
             var parser = new Parser();
             parser.UseFirstRowAsColumnHeaders = true;
 
-            parser.SetColumnsAsText(new[] { "Three" });
+            parser.SetColumnsAsText(new[] { "Field 3" });
 
             var output = parser.Parse(GetTextReader(input));
 
             Assert.Equal(2, output.Columns.Count);
-            Assert.Equal("One", output.Columns[0].ColumnName);
-            Assert.Equal("Two", output.Columns[1].ColumnName);
-            Assert.Equal("Three", output.Rows[0][0]);
-            Assert.Equal(@"=""Four""", output.Rows[0][1]);
+            Assert.Equal("Field 1", output.Columns[0].ColumnName);
+            Assert.Equal("Field 2", output.Columns[1].ColumnName);
+            Assert.Equal("Data 1", output.Rows[0][0]);
+            Assert.Equal(@"=""Data 2""", output.Rows[0][1]);
         }
     }
 }

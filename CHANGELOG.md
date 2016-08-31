@@ -5,34 +5,42 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+### Added
+
+- Add support for a streaming reading of delimited data files.
+
 ## [3.3.2] — 2016-08-03
 
 ### Fixed
 
-Remove check from Exporter preventing TabSeparator being used when IncludeEscapeCharacters disabled.
+- Remove check from `Exporter` preventing `TabSeparator` being used when
+  `IncludeEscapeCharacters` disabled.
 
 ## [3.3.1] — 2016-05-04
 
 ### Added
-Add support for a blacklist of field values. Fields that start with a value from the blacklist should have a single quote prepended to them.
+
+- Add support for a blacklist of field values. Fields that start with a value
+  from the blacklist should have a single quote prepended to them.
 
 ### Fixed
 
-Fix a bug with the `IncludeEscapeCharacters` setting. Previously this setting
-could only be disabled if using a tab character as a field separator.
+- Fix a bug with the `IncludeEscapeCharacters` setting. Previously this setting
+  could only be disabled if using a tab character as a field separator.
 
 ## [3.2.0] — 2016-04-29
 
 ### Added
 
 - Add XML documentation to NuGet package.
-- Support for clearing column names specified via ExtendedProperties on a DataColumn.
+- Support for clearing column names specified via `ExtendedProperties` on a
+  `DataColumn`.
 
 ## [3.1.0] — 2016-04-28
 
 ### Added
 
-- Support for using ExtendedProperties on a DataColumn.
+- Support for using `ExtendedProperties` on a `DataColumn`.
 
 ### Changed
 
