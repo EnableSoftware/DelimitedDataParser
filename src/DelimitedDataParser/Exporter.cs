@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.IO;
 using System.Linq;
 
@@ -19,6 +20,8 @@ namespace DelimitedDataParser
         private static readonly string[] UnsafeLeadingCharacters = { "=", "+", "-", "@" };
 
         private ISet<string> _columnNamesAsText;
+        private IDictionary<string, string> _extendedPropertyValueLookup;
+
         private char _fieldSeparator = ',';
         private bool _includeEscapeCharacters = true;
         private bool _sanitizeStrings = false;
@@ -150,16 +153,55 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
+        /// Write the input <see cref="DbDataReader"/> to the specified <see cref="TextWriter"/>.
+        /// </summary>
+        /// <param name="reader">The <see cref="DbDataReader"/> containing the data to export.</param>
+        /// <param name="writer">The <see cref="TextWriter"/> to be written to.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="reader"/> is <c>null</c> or <paramref name="writer"/> is <c>null</c>.
+        /// </exception>
+        public virtual void ExportReader(DbDataReader reader, TextWriter writer)
+        {
+            if (reader == null)
+            {
+                throw new ArgumentNullException("reader");
+            }
+
+            if (writer == null)
+            {
+                throw new ArgumentNullException("writer");
+            }
+
+            if (_outputColumnHeaders)
+            {
+                RenderHeaderRow(reader, writer);
+            }
+
+            if (reader.HasRows)
+            {
+                var rowIndex = 0;
+
+                while (reader.Read())
+                {
+                    if (rowIndex != 0 || _outputColumnHeaders)
+                    {
+                        writer.Write(Environment.NewLine);
+                    }
+
+                    RenderRow(reader, writer);
+
+                    rowIndex++;
+                }
+            }
+        }
+
+        /// <summary>
         /// Write the input <paramref name="dataTable"/> to the specified <see cref="TextWriter"/>.
         /// </summary>
         /// <param name="dataTable">The <see cref="DataTable"/> containing the data to export.</param>
         /// <param name="writer">The <see cref="TextWriter"/> to be written to.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="dataTable"/> is <c>null</c> or <paramref name="writer"/> is <c>null</c>.
-        /// </exception>
-        /// <exception cref="InvalidOperationException">
-        /// <see cref="IncludeEscapeCharacters"/> is <c>false</c> and <see cref="FieldSeparator"/>
-        /// is not a tab character.
         /// </exception>
         public virtual void Export(DataTable dataTable, TextWriter writer)
         {
@@ -175,25 +217,30 @@ namespace DelimitedDataParser
 
             if (dataTable.Columns.Count > 0)
             {
-                if (_outputColumnHeaders)
+                if (_useExtendedPropertyForColumnName)
                 {
-                    RenderHeaderRow(dataTable, writer);
-                }
+                    _extendedPropertyValueLookup = new Dictionary<string, string>();
 
-                if (dataTable.Rows.Count > 0)
-                {
-                    for (int rowIndex = 0; rowIndex < dataTable.Rows.Count; rowIndex++)
+                    // If using an extended property for column names, we create
+                    // a lookup of column names to extended property values.
+                    // This is used when rendering the header row.
+                    for (int colIndex = 0; colIndex < dataTable.Columns.Count; colIndex++)
                     {
-                        var row = dataTable.Rows[rowIndex];
+                        var column = dataTable.Columns[colIndex];
 
-                        if (rowIndex != 0 || _outputColumnHeaders)
+                        if (column.ExtendedProperties.ContainsKey(_extendedPropertyKey))
                         {
-                            writer.Write(Environment.NewLine);
-                        }
+                            var columnName = column.ColumnName;
+                            var extendedPropertyValue = column.ExtendedProperties[_extendedPropertyKey].ToString();
 
-                        RenderRow(dataTable, row, writer);
+                            _extendedPropertyValueLookup[columnName] = extendedPropertyValue;
+                        }
                     }
                 }
+
+                var reader = dataTable.CreateDataReader();
+
+                ExportReader(reader, writer);
             }
         }
 
@@ -262,18 +309,18 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Whether the input <paramref name="column"/> should be treated as a text column.
+        /// Whether the input <paramref name="columnName"/> should be treated as a text column.
         /// </summary>
-        /// <param name="column">The <see cref="DataColumn"/> to be checked.</param>
+        /// <param name="columnName">The name of the column to be checked.</param>
         /// <returns>
         /// A <see cref="bool"/> specifying whether the column should be treated as a text column.
         /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="column"/> is null.</exception>
-        private bool GetIsColumnAsText(DataColumn column)
+        /// <exception cref="ArgumentNullException"><paramref name="columnName"/> is null.</exception>
+        private bool GetIsColumnAsText(string columnName)
         {
-            if (column == null)
+            if (columnName == null)
             {
-                throw new ArgumentNullException("column");
+                throw new ArgumentNullException("columnName");
             }
 
             if (_columnNamesAsText == null)
@@ -281,58 +328,70 @@ namespace DelimitedDataParser
                 return false;
             }
 
-            return _columnNamesAsText.Contains(column.ColumnName);
+            return _columnNamesAsText.Contains(columnName);
         }
 
         /// <summary>
-        /// Write an initial row containing the column names from <paramref name="dataTable"/> to
-        /// the specified <see cref="TextWriter"/>.
+        /// Write an initial row containing the column names from the specified
+        /// <see cref="DbDataReader"/> to the specified <see cref="TextWriter"/>.
         /// </summary>
-        /// <param name="dataTable">The <see cref="DataTable"/> containing the columns to be written.</param>
+        /// <param name="reader">The <see cref="DbDataReader"/> containing the columns to be written.</param>
         /// <param name="writer">The <see cref="TextWriter"/> to be written to.</param>
-        private void RenderHeaderRow(DataTable dataTable, TextWriter writer)
+        private void RenderHeaderRow(DbDataReader reader, TextWriter writer)
         {
-            for (int colIndex = 0; colIndex < dataTable.Columns.Count; colIndex++)
-            {
-                var col = dataTable.Columns[colIndex];
+            var schemaTable = reader.GetSchemaTable();
 
+            int colIndex = 0;
+
+            foreach (DataRow row in schemaTable.Rows)
+            {
+                // `colIndex` is not a typo: `GetSchemaTable` returns a row per
+                // column in the `DbDataReader`.
                 if (colIndex != 0)
                 {
                     writer.Write(_fieldSeparator);
                 }
 
-                var columnName = col.ColumnName;
+                var columnName = row[SchemaTableColumn.ColumnName].ToString();
 
-                if (_useExtendedPropertyForColumnName && col.ExtendedProperties.ContainsKey(_extendedPropertyKey))
+                if (_useExtendedPropertyForColumnName &&
+                    _extendedPropertyValueLookup != null)
                 {
-                    columnName = col.ExtendedProperties[_extendedPropertyKey].ToString();
+                    string extendedPropertyValue;
+
+                    if (_extendedPropertyValueLookup.TryGetValue(columnName, out extendedPropertyValue))
+                    {
+                        columnName = extendedPropertyValue;
+                    }
                 }
 
-                writer.Write(CsvEscape(columnName, false));
+                writer.Write(CsvEscape(columnName, valueAsText: false));
+
+                colIndex++;
             }
         }
 
         /// <summary>
-        /// Write the <paramref name="row"/> from the <paramref name="dataTable"/> to the
-        /// specified <see cref="TextWriter"/>.
+        /// Write the <see cref="DbDataReader"/> record to the specified <see cref="TextWriter"/>.
         /// </summary>
-        /// <param name="dataTable">The <see cref="DataTable"/> containing the columns to export.</param>
-        /// <param name="row">The <see cref="DataRow"/> containing the data to export</param>
+        /// <param name="reader">The <see cref="DbDataReader"/> containing the data to export.</param>
         /// <param name="writer">The <see cref="TextWriter"/> to be written to.</param>
-        private void RenderRow(DataTable dataTable, DataRow row, TextWriter writer)
+        private void RenderRow(DbDataReader reader, TextWriter writer)
         {
-            for (int colIndex = 0; colIndex < dataTable.Columns.Count; colIndex++)
+            for (int colIndex = 0; colIndex < reader.FieldCount; colIndex++)
             {
-                var col = dataTable.Columns[colIndex];
-
                 if (colIndex != 0)
                 {
                     writer.Write(_fieldSeparator);
                 }
 
-                var valueAsText = GetIsColumnAsText(col);
+                var columnName = reader.GetName(colIndex);
+                
+                var valueAsText = GetIsColumnAsText(columnName);
 
-                var value = row[col].ToString();
+                var value = !reader.IsDBNull(colIndex)
+                    ? reader.GetValue(colIndex).ToString()
+                    : string.Empty;
 
                 writer.Write(CsvEscape(value, valueAsText));
             }

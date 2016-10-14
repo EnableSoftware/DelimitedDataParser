@@ -106,7 +106,7 @@ namespace DelimitedDataParser
             using (var writer = new StringWriter())
             {
                 var exporter = new Exporter();
-                Assert.Throws<ArgumentNullException>(() => exporter.Export(null, writer));
+                Assert.Throws<ArgumentNullException>(() => exporter.Export((DataTable)null, writer));
             }
         }
 
