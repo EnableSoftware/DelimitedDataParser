@@ -716,7 +716,7 @@ namespace DelimitedDataParser
 
             var output = sut.ExportToString(reader.Object);
 
-            Assert.Equal(@"""Field 1"",""Column1"",""Field 3""", output);
+            Assert.Equal(@"""Field 1"",""Column2"",""Field 3""", output);
         }
         
         [Fact]

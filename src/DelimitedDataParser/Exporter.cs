@@ -340,8 +340,7 @@ namespace DelimitedDataParser
         private void RenderHeaderRow(DbDataReader reader, TextWriter writer)
         {
             var schemaTable = reader.GetSchemaTable();
-
-            int colIndex = 0;
+            var colIndex = 0;
 
             foreach (DataRow row in schemaTable.Rows)
             {
@@ -363,6 +362,11 @@ namespace DelimitedDataParser
                     {
                         columnName = extendedPropertyValue;
                     }
+                }
+
+                if (string.IsNullOrEmpty(columnName))
+                {
+                    columnName = "Column" + (colIndex + 1);
                 }
 
                 writer.Write(CsvEscape(columnName, valueAsText: false));
