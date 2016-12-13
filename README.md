@@ -47,7 +47,17 @@ using (var writer = new StringWriter())
 {
 	var exporter = new Exporter();
     exporter.Export(myData, writer);
-	myCsv = writer.ToString()
+    myCsv = writer.ToString();
+}
+```
+
+For exporting a large amount of delimited data, the `Exporter.ExportReader()` method takes a `System.Data.Common.DbDataReader` instance and writes to a specified `TextWriter`, which provides a fast, streamed-based generation of row data. This allows for processing each row in turn, rather than needing to retain the whole data source in memory.
+
+```c#
+using (var fileWriter = File.CreateText("my.csv"))
+{
+    var exporter = new Exporter();
+    exporter.ExportReader(myDataReader, fileWriter);
 }
 ```
 
