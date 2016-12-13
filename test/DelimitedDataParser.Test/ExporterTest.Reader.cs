@@ -837,8 +837,8 @@ namespace DelimitedDataParser
         {
             var columns = new[]
             {
-                "Field 1",
-                "Field 2"
+                "One",
+                "Two"
             };
 
             var rows = new[]
