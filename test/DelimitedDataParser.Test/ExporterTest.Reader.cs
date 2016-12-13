@@ -477,7 +477,7 @@ namespace DelimitedDataParser
 
             Assert.Equal(
                 @"""Field 1"",""Field 2""" + Environment.NewLine
-                + @"""Data""""1"",""Data 2""" + Environment.NewLine
+                + @"""Data"""" 1"",""Data 2""" + Environment.NewLine
                 + @"""Data 3"",""Data 4""",
                 output);
         }
