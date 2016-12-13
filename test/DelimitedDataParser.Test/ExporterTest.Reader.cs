@@ -125,6 +125,32 @@ namespace DelimitedDataParser
         }
 
         [Fact]
+        public void ExportReader_Can_Parse_DbNull_Fields()
+        {
+            var columns = new[]
+            {
+                "Field 1",
+                "Field 2"
+            };
+
+            var rows = new[]
+            {
+                new object[] { DBNull.Value, "Data 1" }
+            };
+
+            var reader = CreateDbDataReader(columns, rows);
+
+            var sut = new Exporter();
+
+            var output = sut.ExportToString(reader.Object);
+
+            Assert.Equal(
+                @"""Field 1"",""Field 2""" + Environment.NewLine
+                + @""""",""Data 1""",
+                output);
+        }
+
+        [Fact]
         public void ExportReader_Does_Not_Strip_Whitespace_From_Column_Names()
         {
             var columns = new[]
@@ -844,7 +870,7 @@ namespace DelimitedDataParser
             return CreateDbDataReader(columns, new string[0][]);
         }
 
-        private static Mock<DbDataReader> CreateDbDataReader(string[] columns, string[][] rows)
+        private static Mock<DbDataReader> CreateDbDataReader(string[] columns, object[][] rows)
         {
             if (columns == null)
             {
