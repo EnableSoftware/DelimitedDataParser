@@ -389,11 +389,22 @@ namespace DelimitedDataParser
                 
                 var valueAsText = GetIsColumnAsText(columnName);
 
-                var value = !reader.IsDBNull(colIndex)
-                    ? reader.GetValue(colIndex).ToString()
-                    : string.Empty;
+                string valueAsString;
 
-                writer.Write(CsvEscape(value, valueAsText));
+                if (!reader.IsDBNull(colIndex))
+                {
+                    object rawValue = reader.GetValue(colIndex);
+
+                    valueAsString = rawValue != null
+                        ? rawValue.ToString()
+                        : string.Empty;
+                }
+                else
+                {
+                    valueAsString = string.Empty;
+                }
+
+                writer.Write(CsvEscape(valueAsString, valueAsText));
             }
         }
     }
