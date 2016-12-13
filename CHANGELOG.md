@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Add support for a streaming reading of delimited data files.
+- Add support for a streaming export of delimited data files from a `DbDataReader`.
 
 ## [3.3.2] — 2016-08-03
 
