@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
 using Moq;
 using Xunit;
@@ -551,14 +553,12 @@ namespace DelimitedDataParser
         [Fact]
         public void ExportReader_Supports_Large_Dataset()
         {
-            int colCount = 1000;
-            int rowCount = 1000;
-
+            var colCount = 1000;
+            var rowCount = 1000;
             var columns = new List<string>();
-
             var expected = new StringBuilder();
 
-            for (int i = 0; i < colCount; i++)
+            for (var i = 0; i < colCount; i++)
             {
                 var column = "Col" + i.ToString();
 
@@ -574,13 +574,13 @@ namespace DelimitedDataParser
 
             var rows = new List<string[]>();
 
-            for (int i = 0; i < rowCount; i++)
+            for (var i = 0; i < rowCount; i++)
             {
                 expected.Append(Environment.NewLine);
 
                 var rowContent = new string[colCount];
 
-                for (int j = 0; j < colCount; j++)
+                for (var j = 0; j < colCount; j++)
                 {
                     rowContent[j] = GetRandomString(10);
 
@@ -591,29 +591,31 @@ namespace DelimitedDataParser
 
                     expected.AppendFormat("\"{0}\"", rowContent[j]);
                 }
+
+                rows.Add(rowContent);
             }
 
-            var reader = CreateDbDataReader(columns.ToArray(), rows.ToArray());
+            Stopwatch stopwatch;
+            string output;
 
-            var sut = new Exporter();
+            using (var stringReader = new StringReader(expected.ToString()))
+            using (var dataReader = new DelimitedDataReader(stringReader, ',', true))
+            {
+                var sut = new Exporter();
 
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-
-            var output = sut.ExportToString(reader.Object);
-
-            stopwatch.Stop();
+                stopwatch = Stopwatch.StartNew();
+                output = sut.ExportToString(dataReader);
+                stopwatch.Stop();
+            }
 
             Assert.Equal(expected.ToString(), output);
-
-            double duration = stopwatch.ElapsedMilliseconds;
-
-            Assert.True(duration / 1000 < 1);
+            Assert.True(stopwatch.ElapsedMilliseconds / 1000 < 1);
         }
 
         [Fact]
         public void ExportReader_Supports_Large_Cell_Content()
         {
-            string cellContent = new string('a', 10000000);
+            var cellContent = new string('a', 10000000);
 
             var columns = new[]
             {
