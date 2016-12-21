@@ -45,6 +45,14 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Moq, Version=4.5.23.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Moq.4.5.23\lib\net45\Moq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.XML" />
@@ -74,10 +82,12 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="ExporterTest.Reader.cs" />
     <Compile Include="ExporterTest.UseExtendedPropertyForColumnName.cs" />
     <Compile Include="ExporterTest.ColumnsAsText.cs" />
     <Compile Include="ExporterTest.cs" />
     <Compile Include="ExporterExtensions.cs" />
+    <Compile Include="ParserTest.Reader.cs" />
     <Compile Include="ParserTest.ColumnsAsText.cs" />
     <Compile Include="ParserTest.cs" />
     <Compile Include="ParserTest.NewLineTests.cs" />

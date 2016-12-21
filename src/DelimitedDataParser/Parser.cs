@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace DelimitedDataParser
 {
@@ -89,94 +91,13 @@ namespace DelimitedDataParser
                 throw new ArgumentNullException("textReader");
             }
 
-            if (textReader.Peek() == -1)
+            var output = new DataTable
             {
-                return new DataTable
-                {
-                    Locale = CultureInfo.CurrentCulture
-                };
-            }
-
-            var table = new Table
-            {
-                UseFirstRowAsColumnHeaders = _useFirstRowAsColumnHeaders
+                Locale = CultureInfo.CurrentCulture
             };
 
-            var quotedModeHasPassed = false;
-            var quotedMode = false;
-            var newLineCharacterSequenceCount = 0;
-            var quoteCount = 0;
-
-            var buffer = new char[BufferSize];
-            char c;
-            int charCount;
-
-            while ((charCount = textReader.Read(buffer, 0, BufferSize)) > 0)
-            {
-                for (int i = 0; i < charCount; i++)
-                {
-                    c = buffer[i];
-
-                    if (newLineCharacterSequenceCount > 0)
-                    {
-                        if (newLineCharacterSequenceCount == 1 && (c == CarriageReturn || c == LineFeed))
-                        {
-                            newLineCharacterSequenceCount++;
-                            continue;
-                        }
-                        else
-                        {
-                            table.FlushCell();
-                            table.FlushRow();
-                            quotedModeHasPassed = false;
-                            newLineCharacterSequenceCount = 0;
-                        }
-                    }
-
-                    if (c == Quotes)
-                    {
-                        quoteCount++;
-                        continue;
-                    }
-
-                    if (quoteCount > 0)
-                    {
-                        HandleQuotes(table, quoteCount, ref quotedMode, ref quotedModeHasPassed);
-                    }
-
-                    quoteCount = 0;
-
-                    if (c == _fieldSeparator && !quotedMode)
-                    {
-                        // Handle Field Separator when not in quoted mode - End cell
-                        table.FlushCell();
-                        quotedModeHasPassed = false;
-                    }
-                    else if ((c == CarriageReturn || c == LineFeed) && !quotedMode)
-                    {
-                        // Handle new line when not in quoted mode - Start collecting new line char sequence
-                        newLineCharacterSequenceCount++;
-                    }
-                    else
-                    {
-                        // Cell content
-                        table.AddToCurrentCell(c);
-
-                        if (!quotedMode)
-                        {
-                            quotedModeHasPassed = true;
-                        }
-                    }
-                }
-            }
-
-            if (quoteCount > 0)
-            {
-                // Tidy up any quotes at end of last cell
-                HandleQuotes(table, quoteCount, ref quotedMode, ref quotedModeHasPassed);
-            }
-
-            var output = table.ToDataTable();
+            var reader = ParseReader(textReader);
+            output.Load(reader);
 
             if (_columnNamesAsText != null && _columnNamesAsText.Any())
             {
@@ -186,6 +107,24 @@ namespace DelimitedDataParser
             output.AcceptChanges();
 
             return output;
+        }
+
+        /// <summary>
+        /// Create a data reader that will read from the <paramref name="TextReader"/>.
+        /// </summary>
+        /// <param name="textReader">
+        /// The <see cref="TextReader"/> containing the delimited data to read.
+        /// </param>
+        /// <returns>A <see cref="DbDataReader"/> that will read rows of data.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="textReader"/> is null.</exception>
+        public virtual DbDataReader ParseReader(TextReader textReader)
+        {
+            if (textReader == null)
+            {
+                throw new ArgumentNullException("textReader");
+            }
+
+            return new DelimitedDataReader(textReader, _fieldSeparator, _useFirstRowAsColumnHeaders);
         }
 
         /// <summary>
@@ -202,59 +141,6 @@ namespace DelimitedDataParser
             if (columnNames != null)
             {
                 _columnNamesAsText = new HashSet<string>(columnNames);
-            }
-        }
-
-        /// <summary>
-        /// Handle quote characters that have been encountered whilst processing the character string.
-        /// </summary>
-        /// <param name="table">The <see cref="Table"/> to be used.</param>
-        /// <param name="quoteCount">How many repeated quote characters have been read.</param>
-        /// <param name="quotedMode">
-        /// A <see cref="bool"/> to identify whether the current operation is within a quoted string.
-        /// </param>
-        /// <param name="quotedModeHasPassed">
-        /// A <see cref="bool"/> specifying whether the current operation has finished parsing a
-        /// quoted value / just left 'Quoted Mode'.
-        /// </param>
-        /// <exception cref="ArgumentNullException"><paramref name="table"/> is null.</exception>
-        private static void HandleQuotes(Table table, int quoteCount, ref bool quotedMode, ref bool quotedModeHasPassed)
-        {
-            if (table == null)
-            {
-                throw new ArgumentNullException("table");
-            }
-
-            if (quotedModeHasPassed)
-            {
-                table.AddToCurrentCell('\"', quoteCount);
-            }
-            else
-            {
-                var escapedQuoteCount = quoteCount / 2;
-                var oddQuotes = quoteCount % 2 > 0;
-
-                if (quotedMode)
-                {
-                    if (oddQuotes)
-                    {
-                        quotedMode = false;
-                        quotedModeHasPassed = true;
-                    }
-                }
-                else
-                {
-                    if (oddQuotes)
-                    {
-                        quotedMode = true;
-                    }
-                    else
-                    {
-                        escapedQuoteCount--;
-                    }
-                }
-
-                table.AddToCurrentCell('\"', escapedQuoteCount);
             }
         }
 

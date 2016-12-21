@@ -15,6 +15,23 @@ using (DataTable myData = parser.Parse(myTextReader))
 	// Make use of `myData` here…
 }
 ```
+
+For processing a large amount of delimited data, the `Parser.ParseReader()` method takes a `TextReader` and returns `System.Data.Common.DbDataReader`, which provides a fast, forward-only stream of rows. This allows for processing each row in turn, rather than reading a whole file into memory.
+
+```c#
+var parser = new Parser();
+
+var reader =  parser.ParseReader(myTextReader))
+
+while (reader.Read())
+{
+	// Each field for the current row can be retrieved using the column index:
+	var field1 = reader[0];
+	var field2 = reader[1];
+	// etc…
+}
+```
+
 ### Configuration properties
 
 * `FieldSeparator` - the character used as field delimiter in the text file. Default: `,` (i.e., CSV).
@@ -30,9 +47,20 @@ using (var writer = new StringWriter())
 {
 	var exporter = new Exporter();
     exporter.Export(myData, writer);
-	myCsv = writer.ToString()
+    myCsv = writer.ToString();
 }
 ```
+
+For exporting a large amount of delimited data, the `Exporter.ExportReader()` method takes a `System.Data.Common.DbDataReader` instance and writes to a specified `TextWriter`, which provides a fast, streamed-based generation of row data. This allows for processing each row in turn, rather than needing to retain the whole data source in memory.
+
+```c#
+using (var fileWriter = File.CreateText("my.csv"))
+{
+    var exporter = new Exporter();
+    exporter.ExportReader(myDataReader, fileWriter);
+}
+```
+
 ### Configuration properties
 
 * `FieldSeparator` - the character used as field delimiter in the text file. Default: `,` (i.e., CSV).
