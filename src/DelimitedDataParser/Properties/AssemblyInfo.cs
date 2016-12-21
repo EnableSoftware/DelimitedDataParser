@@ -8,4 +8,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 [assembly: CLSCompliant(true)]
 [assembly: InternalsVisibleTo("DelimitedDataParser.Test")]
-[assembly: AssemblyVersion("3.3.*")]
+[assembly: AssemblyVersion("4.0.*")]
