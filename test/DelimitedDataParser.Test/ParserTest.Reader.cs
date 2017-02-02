@@ -1104,7 +1104,7 @@ namespace DelimitedDataParser
         [Theory]
         [InlineData("2016-05-31")]
         [InlineData("2016/05/31")]
-        [InlineData("May 31, 2016")]
+        [InlineData("May 31 2016")]
         [InlineData("31 May 2016")]
         public void ParseReader_GetDateTime_Can_Get(string input)
         {
