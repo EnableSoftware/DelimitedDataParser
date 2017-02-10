@@ -35,7 +35,7 @@ namespace DelimitedDataParser
         {
             if (textReader == null)
             {
-                throw new ArgumentNullException("textReader");
+                throw new ArgumentNullException(nameof(textReader));
             }
 
             _textReader = textReader;
@@ -150,19 +150,19 @@ namespace DelimitedDataParser
 
             if (ordinal < 0 || ordinal >= _currentRow.Count)
             {
-                throw new ArgumentOutOfRangeException("ordinal");
+                throw new ArgumentOutOfRangeException(nameof(ordinal));
             }
 
             if (bufferOffset < 0 || (bufferOffset > 0 && bufferOffset >= buffer.Length))
             {
-                throw new ArgumentOutOfRangeException("bufferOffset");
+                throw new ArgumentOutOfRangeException(nameof(bufferOffset));
             }
 
             var bytesToCopy = Math.Min(length, chars.Length);
 
             if (buffer.Length < bytesToCopy)
             {
-                throw new ArgumentException("Destination array not long enough.", "buffer");
+                throw new ArgumentException("Destination array not long enough.", nameof(buffer));
             }
 
             for (int i = 0; i < bytesToCopy; i++)
@@ -196,19 +196,19 @@ namespace DelimitedDataParser
 
             if (ordinal < 0 || ordinal >= _currentRow.Count)
             {
-                throw new ArgumentOutOfRangeException("ordinal");
+                throw new ArgumentOutOfRangeException(nameof(ordinal));
             }
 
             if (bufferOffset < 0 || (bufferOffset > 0 && bufferOffset >= buffer.Length))
             {
-                throw new ArgumentOutOfRangeException("bufferOffset");
+                throw new ArgumentOutOfRangeException(nameof(bufferOffset));
             }
 
             var charsToCopy = Math.Min(length, chars.Length);
 
             if (buffer.Length < charsToCopy)
             {
-                throw new ArgumentException("Destination array not long enough.", "buffer");
+                throw new ArgumentException("Destination array not long enough.", nameof(buffer));
             }
 
             for (int i = 0; i < charsToCopy; i++)
@@ -223,7 +223,7 @@ namespace DelimitedDataParser
         {
             if (ordinal < 0 || ordinal > _currentRow.Count - 1)
             {
-                throw new ArgumentOutOfRangeException("ordinal");
+                throw new ArgumentOutOfRangeException(nameof(ordinal));
             }
 
             return typeof(string).Name;
@@ -274,7 +274,7 @@ namespace DelimitedDataParser
         {
             if (ordinal < 0 || ordinal > _currentRow.Count - 1)
             {
-                throw new ArgumentOutOfRangeException("ordinal");
+                throw new ArgumentOutOfRangeException(nameof(ordinal));
             }
 
             return typeof(string);
@@ -349,7 +349,7 @@ namespace DelimitedDataParser
         {
             if (name == null)
             {
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
             }
 
             for (int i = 0; i < _fieldNameLookup.Count; i++)
@@ -360,7 +360,7 @@ namespace DelimitedDataParser
                 }
             }
 
-            throw new ArgumentOutOfRangeException("name");
+            throw new ArgumentOutOfRangeException(nameof(name));
         }
 
         public override DataTable GetSchemaTable()
@@ -466,7 +466,7 @@ namespace DelimitedDataParser
         {
             if (values == null)
             {
-                throw new ArgumentNullException("values");
+                throw new ArgumentNullException(nameof(values));
             }
 
             for (int i = 0; i < values.Length; i++)
@@ -518,7 +518,7 @@ namespace DelimitedDataParser
         {
             if (field == null)
             {
-                throw new ArgumentNullException("field");
+                throw new ArgumentNullException(nameof(field));
             }
 
             if (quotedModeHasPassed)

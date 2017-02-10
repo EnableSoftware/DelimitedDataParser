@@ -88,7 +88,7 @@ namespace DelimitedDataParser
         {
             if (textReader == null)
             {
-                throw new ArgumentNullException("textReader");
+                throw new ArgumentNullException(nameof(textReader));
             }
 
             var output = new DataTable
@@ -121,7 +121,7 @@ namespace DelimitedDataParser
         {
             if (textReader == null)
             {
-                throw new ArgumentNullException("textReader");
+                throw new ArgumentNullException(nameof(textReader));
             }
 
             return new DelimitedDataReader(textReader, _fieldSeparator, _useFirstRowAsColumnHeaders);

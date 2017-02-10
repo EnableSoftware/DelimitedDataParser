@@ -145,7 +145,7 @@ namespace DelimitedDataParser
         {
             if (string.IsNullOrEmpty(key))
             {
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
             }
 
             _useExtendedPropertyForColumnName = true;
@@ -164,12 +164,12 @@ namespace DelimitedDataParser
         {
             if (reader == null)
             {
-                throw new ArgumentNullException("reader");
+                throw new ArgumentNullException(nameof(reader));
             }
 
             if (writer == null)
             {
-                throw new ArgumentNullException("writer");
+                throw new ArgumentNullException(nameof(writer));
             }
 
             if (_outputColumnHeaders)
@@ -207,12 +207,12 @@ namespace DelimitedDataParser
         {
             if (dataTable == null)
             {
-                throw new ArgumentNullException("dataTable");
+                throw new ArgumentNullException(nameof(dataTable));
             }
 
             if (writer == null)
             {
-                throw new ArgumentNullException("writer");
+                throw new ArgumentNullException(nameof(writer));
             }
 
             if (dataTable.Columns.Count > 0)
@@ -320,7 +320,7 @@ namespace DelimitedDataParser
         {
             if (columnName == null)
             {
-                throw new ArgumentNullException("columnName");
+                throw new ArgumentNullException(nameof(columnName));
             }
 
             if (_columnNamesAsText == null)
