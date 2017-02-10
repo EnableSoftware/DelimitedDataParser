@@ -9,8 +9,6 @@ using System.Text;
 
 namespace DelimitedDataParser
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1010:CollectionsShouldImplementGenericInterface")]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     internal class DelimitedDataReader : DbDataReader
     {
         private const char CarriageReturn = '\r';
