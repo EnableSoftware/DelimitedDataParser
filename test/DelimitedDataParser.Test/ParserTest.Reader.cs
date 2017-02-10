@@ -379,7 +379,7 @@ namespace DelimitedDataParser
         public void ParseReader_Supports_Large_Cell_Content()
         {
             const int CellContentLength = 10000000;
-            string input = new string('a', CellContentLength);
+            var input = new string('a', CellContentLength);
 
             var parser = new Parser
             {
@@ -886,7 +886,7 @@ namespace DelimitedDataParser
                 + Environment.NewLine
                 + @"Data 3,Data 4,Data æ";
 
-            Encoding windows1252 = Encoding.GetEncoding(1252);
+            var windows1252 = Encoding.GetEncoding(1252);
 
             var parser = new Parser
             {

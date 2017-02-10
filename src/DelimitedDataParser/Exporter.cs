@@ -397,7 +397,7 @@ namespace DelimitedDataParser
 
                 if (!reader.IsDBNull(colIndex))
                 {
-                    object rawValue = reader.GetValue(colIndex);
+                    var rawValue = reader.GetValue(colIndex);
 
                     valueAsString = rawValue != null
                         ? rawValue.ToString()
