@@ -597,15 +597,27 @@ namespace DelimitedDataParser
 
             Stopwatch stopwatch;
             string output;
+            StringReader stringReader = null;
 
-            using (var stringReader = new StringReader(expected.ToString()))
-            using (var dataReader = new DelimitedDataReader(stringReader, ',', true))
+            try
             {
-                var sut = new Exporter();
+                stringReader = new StringReader(expected.ToString());
 
-                stopwatch = Stopwatch.StartNew();
-                output = sut.ExportToString(dataReader);
-                stopwatch.Stop();
+                using (var dataReader = new DelimitedDataReader(stringReader, ',', true))
+                {
+                    var sut = new Exporter();
+
+                    stopwatch = Stopwatch.StartNew();
+                    output = sut.ExportToString(dataReader);
+                    stopwatch.Stop();
+                }
+            }
+            finally
+            {
+                if (stringReader != null)
+                {
+                    stringReader.Dispose();
+                }
             }
 
             Assert.Equal(expected.ToString(), output);
