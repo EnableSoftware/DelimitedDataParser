@@ -22,12 +22,12 @@ namespace DelimitedDataParser
         private readonly bool _useFirstRowAsColumnHeaders;
         private readonly char[] _buffer = new char[4096];
 
-        private IReadOnlyList<string> _fieldNameLookup = null;
-        private IReadOnlyList<string> _currentRow = null;
+        private IReadOnlyList<string> _fieldNameLookup;
+        private IReadOnlyList<string> _currentRow;
 
-        private bool _isClosed = false;
-        private bool _firstRowRead = false;
-        private bool _yieldExistingRow = false;
+        private bool _isClosed;
+        private bool _firstRowRead;
+        private bool _yieldExistingRow;
         private int _charsInBuffer;
         private int _bufferIndex;
 

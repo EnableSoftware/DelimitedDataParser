@@ -24,9 +24,9 @@ namespace DelimitedDataParser
 
         private char _fieldSeparator = ',';
         private bool _includeEscapeCharacters = true;
-        private bool _sanitizeStrings = false;
+        private bool _sanitizeStrings;
         private bool _outputColumnHeaders = true;
-        private bool _useExtendedPropertyForColumnName = false;
+        private bool _useExtendedPropertyForColumnName;
         private string _extendedPropertyKey;
 
         /// <summary>
