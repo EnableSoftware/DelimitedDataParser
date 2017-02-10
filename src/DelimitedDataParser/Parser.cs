@@ -110,7 +110,7 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Create a data reader that will read from the <paramref name="TextReader"/>.
+        /// Create a data reader that will read from the <paramref name="textReader"/>.
         /// </summary>
         /// <param name="textReader">
         /// The <see cref="TextReader"/> containing the delimited data to read.
@@ -148,8 +148,8 @@ namespace DelimitedDataParser
         /// Parse the input <paramref name="value"/> where values may be wrapped in quotes and
         /// preceded with an equals sign.
         /// </summary>
-        /// <param name="value">The <see cref="String"/> value to be parsed.</param>
-        /// <returns>The parsed <see cref="String"/>.</returns>
+        /// <param name="value">The <see cref="string"/> value to be parsed.</param>
+        /// <returns>The parsed <see cref="string"/>.</returns>
         private static string ParseValueAsText(string value)
         {
             if (string.IsNullOrEmpty(value))
