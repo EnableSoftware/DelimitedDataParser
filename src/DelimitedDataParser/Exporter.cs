@@ -262,6 +262,21 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
+        /// Sanitize the input <paramref name="value"/> for use in a CSV.
+        /// </summary>
+        /// <param name="value">The <see cref="string"/> to be sanitized.</param>
+        /// <returns>The sanitized string</returns>
+        private static string Sanitize(string value)
+        {
+            if (value != null && UnsafeLeadingCharacters.Any(value.StartsWith))
+            {
+                return string.Concat("'", value);
+            }
+
+            return value;
+        }
+
+        /// <summary>
         /// Escape the input <paramref name="value"/> for use in a CSV.
         /// </summary>
         /// <param name="value">The <see cref="string"/> to be escaped.</param>
@@ -288,21 +303,6 @@ namespace DelimitedDataParser
             if (_sanitizeStrings)
             {
                 value = Sanitize(value);
-            }
-
-            return value;
-        }
-
-        /// <summary>
-        /// Sanitize the input <paramref name="value"/> for use in a CSV.
-        /// </summary>
-        /// <param name="value">The <see cref="string"/> to be sanitized.</param>
-        /// <returns>The sanitized string</returns>
-        private string Sanitize(string value)
-        {
-            if (value != null && UnsafeLeadingCharacters.Any(value.StartsWith))
-            {
-                return string.Concat("'", value);
             }
 
             return value;
@@ -390,7 +390,7 @@ namespace DelimitedDataParser
                 }
 
                 var columnName = reader.GetName(colIndex);
-                
+
                 var valueAsText = GetIsColumnAsText(columnName);
 
                 string valueAsString;
