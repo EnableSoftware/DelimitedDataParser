@@ -271,7 +271,7 @@ namespace DelimitedDataParser
         {
             if (encoding == null)
             {
-                throw new ArgumentNullException("encoding");
+                throw new ArgumentNullException(nameof(encoding));
             }
 
             if (input == null)

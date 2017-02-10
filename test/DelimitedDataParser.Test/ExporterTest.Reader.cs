@@ -876,12 +876,12 @@ namespace DelimitedDataParser
         {
             if (columns == null)
             {
-                throw new ArgumentNullException("columns");
+                throw new ArgumentNullException(nameof(columns));
             }
 
             if (rows == null)
             {
-                throw new ArgumentNullException("rows");
+                throw new ArgumentNullException(nameof(rows));
             }
 
             var reader = new Mock<DbDataReader>();
