@@ -84,11 +84,16 @@ namespace DelimitedDataParser
         /// <returns>The <see cref="DataTable"/> containing the parsed data.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="textReader"/> is null.</exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        public virtual DataTable Parse(TextReader textReader)
+        public virtual DataTable Parse(TextReader textReader, Encoding encoding = null)
         {
             if (textReader == null)
             {
                 throw new ArgumentNullException(nameof(textReader));
+            }
+
+            if (encoding == null)
+            {
+                encoding = Encoding.Default;
             }
 
             var output = new DataTable
@@ -96,7 +101,7 @@ namespace DelimitedDataParser
                 Locale = CultureInfo.CurrentCulture
             };
 
-            var reader = ParseReader(textReader);
+            var reader = ParseReader(textReader, encoding);
             output.Load(reader);
 
             if (_columnNamesAsText != null && _columnNamesAsText.Any())
@@ -117,14 +122,23 @@ namespace DelimitedDataParser
         /// </param>
         /// <returns>A <see cref="DbDataReader"/> that will read rows of data.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="textReader"/> is null.</exception>
-        public virtual DbDataReader ParseReader(TextReader textReader)
+        public virtual DbDataReader ParseReader(TextReader textReader, Encoding encoding = null)
         {
             if (textReader == null)
             {
                 throw new ArgumentNullException(nameof(textReader));
             }
 
-            return new DelimitedDataReader(textReader, _fieldSeparator, _useFirstRowAsColumnHeaders);
+            if (encoding == null)
+            {
+                encoding = Encoding.Default;
+            }
+
+            return new DelimitedDataReader(
+                textReader,
+                encoding,
+                _fieldSeparator, 
+                _useFirstRowAsColumnHeaders);
         }
 
         /// <summary>

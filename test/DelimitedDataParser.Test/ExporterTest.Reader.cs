@@ -603,7 +603,7 @@ namespace DelimitedDataParser
             {
                 stringReader = new StringReader(expected.ToString());
 
-                using (var dataReader = new DelimitedDataReader(stringReader, ',', true))
+                using (var dataReader = new DelimitedDataReader(stringReader, Encoding.UTF8, ',', true))
                 {
                     var sut = new Exporter();
 

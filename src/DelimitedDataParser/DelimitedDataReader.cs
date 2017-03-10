@@ -16,6 +16,7 @@ namespace DelimitedDataParser
         private const char Quote = '"';
 
         private readonly TextReader _textReader;
+        private readonly Encoding _encoding;
         private readonly char _fieldSeparator;
         private readonly bool _useFirstRowAsColumnHeaders;
         private readonly char[] _buffer = new char[4096];
@@ -29,14 +30,24 @@ namespace DelimitedDataParser
         private int _charsInBuffer;
         private int _bufferIndex;
 
-        public DelimitedDataReader(TextReader textReader, char fieldSeparator, bool useFirstRowAsColumnHeaders)
+        public DelimitedDataReader(
+            TextReader textReader,
+            Encoding encoding,
+            char fieldSeparator, 
+            bool useFirstRowAsColumnHeaders)
         {
             if (textReader == null)
             {
                 throw new ArgumentNullException(nameof(textReader));
             }
 
+            if (encoding == null)
+            {
+                throw new ArgumentException(nameof(encoding));
+            }
+
             _textReader = textReader;
+            _encoding = encoding;
             _fieldSeparator = fieldSeparator;
             _useFirstRowAsColumnHeaders = useFirstRowAsColumnHeaders;
         }
@@ -137,13 +148,26 @@ namespace DelimitedDataParser
             return value;
         }
 
-        public override long GetBytes(int ordinal, long dataOffset, byte[] buffer, int bufferOffset, int length)
+        public override long GetBytes(
+            int ordinal, 
+            long dataOffset, 
+            byte[] buffer, 
+            int bufferOffset, 
+            int length)
         {
+            EnsureInitialised();
+
             var chars = _currentRow[ordinal];
+            var charsAsBytes = _encoding.GetBytes(chars);
 
             if (buffer == null)
             {
-                return chars.Length;
+                return _encoding.GetMaxByteCount(chars.Length);
+            }
+
+            if (bufferOffset < 0 || bufferOffset >= buffer.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(bufferOffset));
             }
 
             if (ordinal < 0 || ordinal >= _currentRow.Count)
@@ -151,24 +175,28 @@ namespace DelimitedDataParser
                 throw new ArgumentOutOfRangeException(nameof(ordinal));
             }
 
-            if (bufferOffset < 0 || (bufferOffset > 0 && bufferOffset >= buffer.Length))
+            if (dataOffset < 0 || dataOffset >= chars.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(bufferOffset));
+                throw new ArgumentOutOfRangeException(nameof(dataOffset));
             }
 
-            var bytesToCopy = Math.Min(length, chars.Length);
+            // This cast should be safe as chars.length is an int and we know that dataOffset fits inside 0 - chars.length from the above. Is there any better way to handle this?
+            var dataOffsetInt = (int)dataOffset;
+            var sourceLengthInBytes = charsAsBytes.Length - dataOffsetInt;
+            var destLengthInBytes = buffer.Length - bufferOffset;
 
-            if (buffer.Length < bytesToCopy)
-            {
-                throw new ArgumentException("Destination array not long enough.", nameof(buffer));
-            }
+            int copyLength;
+            copyLength = Math.Min(sourceLengthInBytes, destLengthInBytes);
+            copyLength = Math.Min(copyLength, length);
 
-            for (int i = 0; i < bytesToCopy; i++)
-            {
-                buffer[i] = (byte)chars[i];
-            }
+            Buffer.BlockCopy(
+                charsAsBytes,
+                dataOffsetInt,
+                buffer,
+                bufferOffset,
+                copyLength);
 
-            return bytesToCopy;
+            return copyLength;
         }
 
         public override char GetChar(int ordinal)

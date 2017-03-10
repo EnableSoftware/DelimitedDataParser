@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -1738,6 +1740,66 @@ namespace DelimitedDataParser
             {
                 Assert.Equal(expected[i], buffer[i]);
             }
+        }
+
+        [Theory]
+        [InlineData("田中さんにあげて下さい", 65001)]
+        [InlineData("パーティーへ行かないか", 65001)]
+        [InlineData("田中さんにあげて下さい", 12000)]
+        [InlineData("パーティーへ行かないか", 12000)]
+        [InlineData("田中さんにあげて下さい", 1200)]
+        [InlineData("パーティーへ行かないか", 1200)]
+        public void ParseReader_GetBytes_RoundTripsBytes(string input, int codepage)
+        {
+            var encoding = Encoding.GetEncoding(codepage);
+            byte[] inputBytes = encoding.GetBytes(input);
+            byte[] outputBytes = new byte[inputBytes.Length];
+
+            using (var ms = new MemoryStream(inputBytes))
+            using (var sr = new StreamReader(ms, encoding))
+            {
+                var parser = new Parser();
+                using (var reader = parser.ParseReader(sr, encoding))
+                {
+                    reader.GetBytes(0, 0, outputBytes, 0, outputBytes.Length);
+                }
+            }
+
+            Assert.Equal<byte>(inputBytes, outputBytes);
+        }
+
+        [Theory]
+        [InlineData(0, new[] { 97, 98, 99 }, new[] { 97, 98, 99 })]
+        [InlineData(1, new[] { 97, 98, 99 }, new[] { 98, 99 })]
+        [InlineData(2, new[] { 227, 129, 149 }, new[] { 149 })]
+        public void ParseReader_GetBytes_CopiesFromOffset(
+            int offset,
+            int[] inputInts,
+            int[] outputInts)
+        {
+            var encoding = Encoding.UTF8;
+            var inputBytes = inputInts.Select(x => (byte)x).ToArray();
+            var outputBytes = outputInts.Select(x => (byte)x).ToArray();
+            var inputString = new string(encoding.GetChars(inputBytes));
+
+            var readerLength = 0L;
+            var readerOutput = new byte[outputBytes.Length];
+            using (var sr = new StringReader(inputString))
+            {
+                var parser = new Parser();
+                using (var reader = parser.ParseReader(sr, encoding))
+                {
+                    readerLength = reader.GetBytes(
+                        0,
+                        offset,
+                        readerOutput,
+                        0,
+                        outputBytes.Length);
+                }
+            }
+
+            Assert.Equal(outputBytes.Length, readerLength);
+            Assert.Equal<byte>(outputBytes, readerOutput);
         }
     }
 }
