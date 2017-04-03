@@ -267,7 +267,7 @@ namespace DelimitedDataParser
             return new StringReader(input);
         }
 
-        private static TextReader GetTextReader(string input, Encoding encoding)
+        private static StreamReader GetTextReader(string input, Encoding encoding)
         {
             if (encoding == null)
             {

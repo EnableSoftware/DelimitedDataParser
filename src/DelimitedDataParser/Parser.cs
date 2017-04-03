@@ -120,6 +120,9 @@ namespace DelimitedDataParser
         /// <param name="textReader">
         /// The <see cref="TextReader"/> containing the delimited data to read.
         /// </param>
+        /// <param name="encoding">
+        /// The <see cref="Encoding"/> used to read data. The <see cref="Encoding.Default"/> value is used if a null value is supplied.
+        /// </param>
         /// <returns>A <see cref="DbDataReader"/> that will read rows of data.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="textReader"/> is null.</exception>
         public virtual DbDataReader ParseReader(TextReader textReader, Encoding encoding = null)
@@ -138,6 +141,28 @@ namespace DelimitedDataParser
                 textReader,
                 encoding,
                 _fieldSeparator, 
+                _useFirstRowAsColumnHeaders);
+        }
+
+        /// <summary>
+        /// Create a data reader that will read from the <paramref name="streamReader"/>.
+        /// </summary>
+        /// <param name="streamReader">
+        /// The <see cref="StreamReader"/> containing the delimited data to read. The stream encoding is used to read this data.
+        /// </param>
+        /// <returns>A <see cref="DbDataReader"/> that will read rows of data.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="streamReader"/> is null.</exception>
+        public virtual DbDataReader ParseReader(StreamReader streamReader)
+        {
+            if (streamReader == null)
+            {
+                throw new ArgumentNullException(nameof(streamReader));
+            }
+
+            return new DelimitedDataReader(
+                streamReader,
+                streamReader.CurrentEncoding,
+                _fieldSeparator,
                 _useFirstRowAsColumnHeaders);
         }
 

@@ -1500,49 +1500,6 @@ namespace DelimitedDataParser
         }
 
         [Theory]
-        [InlineData(1, -1)]
-        [InlineData(1, 1)]
-        [InlineData(1, 2)]
-        [InlineData(2, 2)]
-        public void ParseReader_GetBytes_BufferOffsetOutOfRange_Throws(int bufferLength, int bufferOffset)
-        {
-            var input = "Data 1";
-
-            var parser = new Parser
-            {
-                UseFirstRowAsColumnHeaders = false
-            };
-
-            var reader = parser.ParseReader(GetTextReader(input));
-            reader.Read();
-
-            var buffer = new byte[bufferLength];
-            Assert.Throws<ArgumentOutOfRangeException>(() => reader.GetBytes(0, 0, buffer, bufferOffset, 1));
-        }
-
-        [Theory]
-        [InlineData(0, 1)]
-        [InlineData(0, 2)]
-        [InlineData(1, 2)]
-        [InlineData(2, 3)]
-        [InlineData(2, 4)]
-        public void ParseReader_GetBytes_BufferNotLongEnough_Throws(int bufferLength, int length)
-        {
-            var input = "Data 1";
-
-            var parser = new Parser
-            {
-                UseFirstRowAsColumnHeaders = false
-            };
-
-            var reader = parser.ParseReader(GetTextReader(input));
-            reader.Read();
-
-            var buffer = new byte[bufferLength];
-            Assert.Throws<ArgumentException>(() => reader.GetBytes(0, 0, buffer, 0, length));
-        }
-
-        [Theory]
         [InlineData("Data 1", 6, 6)]
         [InlineData("Foo", 3, 3)]
         public void ParseReader_GetBytes_ReturnsExpectedCountWithNullBuffer(string input, int length, int expected)
@@ -1800,6 +1757,32 @@ namespace DelimitedDataParser
 
             Assert.Equal(outputBytes.Length, readerLength);
             Assert.Equal<byte>(outputBytes, readerOutput);
+        }
+
+        [Theory]
+        [InlineData(1, "123")]
+        [InlineData(1, "xy")]
+        [InlineData(3, "xy1234,z")]
+        public void ParseReader_GetBytes_ReadsUpToBufferLength(int bufferLength, string inputText)
+        {
+            var parser = new Parser();
+            var buffer = new byte[bufferLength];
+            var bytesRead = 0L;
+
+            using (var sr = new StringReader(inputText))
+            {
+                using (var reader = parser.ParseReader(sr))
+                {
+                    bytesRead = reader.GetBytes(
+                        0,
+                        0,
+                        buffer,
+                        0,
+                        inputText.Length);
+                }
+            }
+
+            Assert.Equal(bufferLength, bytesRead);
         }
     }
 }

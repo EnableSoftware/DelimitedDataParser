@@ -162,7 +162,7 @@ namespace DelimitedDataParser
 
             if (buffer == null)
             {
-                return _encoding.GetMaxByteCount(chars.Length);
+                return charsAsBytes.Length;
             }
 
             if (bufferOffset < 0 || bufferOffset >= buffer.Length)
@@ -175,12 +175,12 @@ namespace DelimitedDataParser
                 throw new ArgumentOutOfRangeException(nameof(ordinal));
             }
 
-            if (dataOffset < 0 || dataOffset >= chars.Length)
+            if (dataOffset < 0 || dataOffset >= charsAsBytes.Length)
             {
                 throw new ArgumentOutOfRangeException(nameof(dataOffset));
             }
 
-            // This cast should be safe as chars.length is an int and we know that dataOffset fits inside 0 - chars.length from the above. Is there any better way to handle this?
+            // This cast should be safe as dataOffset is between 0 and charsAsBytes.length from the above.
             var dataOffsetInt = (int)dataOffset;
             var sourceLengthInBytes = charsAsBytes.Length - dataOffsetInt;
             var destLengthInBytes = buffer.Length - bufferOffset;
