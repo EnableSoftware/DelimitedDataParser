@@ -10,7 +10,7 @@ namespace DelimitedDataParser
         public void Supports_Use_ExtendedProperty()
         {
             var input = CreateDataTable();
-            
+
             var exporter = new Exporter();
 
             exporter.UseExtendedPropertyForColumnName("ColumnKey");
@@ -28,7 +28,7 @@ namespace DelimitedDataParser
             dataColumn.ColumnName = "One";
             dataColumn.ExtendedProperties.Add("ColumnKey", "Two");
             input.Columns.Add(dataColumn);
-            
+
             var exporter = new Exporter();
 
             exporter.UseExtendedPropertyForColumnName("ColumnKey");

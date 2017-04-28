@@ -30,7 +30,7 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// The character used as the field delimiter in the text file. The default value is
+        /// Gets or sets the character used as the field delimiter in the text file. The default value is
         /// '<c>,</c>', i.e. CSV input.
         /// </summary>
         public virtual char FieldSeparator
@@ -47,8 +47,8 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Specifies whether the first row of the text file should be treated as a header row. The
-        /// default value is <c>true</c>.
+        /// Gets or sets a value indicating whether the first row of the text file should be treated as a header row.
+        /// The default value is <c>true</c>.
         /// </summary>
         public virtual bool UseFirstRowAsColumnHeaders
         {
@@ -86,7 +86,6 @@ namespace DelimitedDataParser
         /// </param>
         /// <returns>The <see cref="DataTable"/> containing the parsed data.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="textReader"/> is null.</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public virtual DataTable Parse(TextReader textReader)
         {
             return Parse(textReader, Encoding.Default);
@@ -103,7 +102,6 @@ namespace DelimitedDataParser
         /// </param>
         /// <returns>The <see cref="DataTable"/> containing the parsed data.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="textReader"/> or <paramref name="encoding"/> is null.</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public virtual DataTable Parse(TextReader textReader, Encoding encoding)
         {
             if (textReader == null)
@@ -176,7 +174,7 @@ namespace DelimitedDataParser
             return new DelimitedDataReader(
                 textReader,
                 encoding,
-                _fieldSeparator, 
+                _fieldSeparator,
                 _useFirstRowAsColumnHeaders);
         }
 

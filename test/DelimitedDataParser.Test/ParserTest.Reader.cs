@@ -1542,7 +1542,7 @@ namespace DelimitedDataParser
             reader.Read();
 
             var buffer = new byte[length];
-            var bytesCopied  = reader.GetBytes(0, 0, buffer, 0, length);
+            var bytesCopied = reader.GetBytes(0, 0, buffer, 0, length);
 
             Assert.Equal(expected.Length, bytesCopied);
 
@@ -1714,6 +1714,7 @@ namespace DelimitedDataParser
         [InlineData("パーティーへ行かないか", 12000)]
         [InlineData("田中さんにあげて下さい", 1200)]
         [InlineData("パーティーへ行かないか", 1200)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Nested using statements")]
         public void ParseReader_GetBytes_RoundTripsBytes(string input, int codepage)
         {
             var encoding = Encoding.GetEncoding(codepage);

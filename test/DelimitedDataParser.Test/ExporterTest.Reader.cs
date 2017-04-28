@@ -161,7 +161,7 @@ namespace DelimitedDataParser
                 "Field 2 ",
                 " Field 3 "
             };
-            
+
             var reader = CreateDbDataReader(columns);
 
             var sut = new Exporter();
@@ -605,6 +605,8 @@ namespace DelimitedDataParser
 
                 using (var dataReader = new DelimitedDataReader(stringReader, Encoding.UTF8, ',', true))
                 {
+                    stringReader = null;
+
                     var sut = new Exporter();
 
                     stopwatch = Stopwatch.StartNew();
@@ -732,7 +734,7 @@ namespace DelimitedDataParser
 
             Assert.Equal(@"""Field 1"",""Column2"",""Field 3""", output);
         }
-        
+
         [Fact]
         public void ExportReader_Supports_Quoted_Column_Name()
         {

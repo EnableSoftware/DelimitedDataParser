@@ -222,7 +222,7 @@ namespace DelimitedDataParser
 
             var parser = new Parser();
             var output = parser.Parse(GetTextReader(input));
-            
+
             Assert.Equal(3, output.Columns.Count);
             Assert.Equal(2, output.Rows.Count);
             Assert.Equal("Field 1", output.Columns[0].ColumnName);
