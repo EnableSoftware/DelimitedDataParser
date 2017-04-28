@@ -533,10 +533,10 @@ namespace DelimitedDataParser
         /// <param name="field">The <see cref="StringBuilder"/> to be used.</param>
         /// <param name="quoteCount">How many repeated quote characters have been read.</param>
         /// <param name="quotedMode">
-        /// A <see cref="boolean"/> to identify whether the current operation is within a quoted string.
+        /// A <see cref="bool"/> to identify whether the current operation is within a quoted string.
         /// </param>
         /// <param name="quotedModeHasPassed">
-        /// A <see cref="boolean"/> specifying whether the current operation has finished parsing a
+        /// A <see cref="bool"/> specifying whether the current operation has finished parsing a
         /// quoted value or has just left 'Quoted Mode'.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="field"/> is null.</exception>

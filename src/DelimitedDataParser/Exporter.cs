@@ -37,7 +37,7 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// The character used as the field delimiter in the output. The default value is
+        /// Gets or sets the character used as the field delimiter in the output. The default value is
         /// '<c>,</c>', i.e. CSV input.
         /// </summary>
         public virtual char FieldSeparator
@@ -54,7 +54,7 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Specifies whether each value should be escaped by wrapping in quotation marks. The
+        /// Gets or sets a value indicating whether each value should be escaped by wrapping in quotation marks. The
         /// default value is <c>true</c>.
         /// </summary>
         /// <remarks>
@@ -74,8 +74,8 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Specifies whether strings should be sanitized, prepending blacklisted characters at the
-        /// start of the string with a single quote "'". The default value is <c>false</c>.
+        /// Gets or sets a value indicating whether strings should be sanitized, prepending blacklisted characters at
+        /// the start of the string with a single quote "'". The default value is <c>false</c>.
         /// </summary>
         public virtual bool SanitizeStrings
         {
@@ -91,7 +91,7 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Specifies whether an initial row containing column names should be written to the
+        /// Gets or sets a value indicating whether an initial row containing column names should be written to the
         /// output. The default value is <c>true</c>.
         /// </summary>
         public virtual bool OutputColumnHeaders
