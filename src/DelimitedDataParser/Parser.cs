@@ -78,6 +78,9 @@ namespace DelimitedDataParser
         /// <summary>
         /// Parse the input <see cref="TextReader"/> as a <see cref="DataTable"/>.
         /// </summary>
+        /// <remarks>
+        /// This method assumes an encoding of <see cref="Encoding.Default"/>.
+        /// </remarks>
         /// <param name="textReader">
         /// The <see cref="TextReader"/> containing the delimited data to read.
         /// </param>
@@ -86,9 +89,31 @@ namespace DelimitedDataParser
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public virtual DataTable Parse(TextReader textReader)
         {
+            return Parse(textReader, Encoding.Default);
+        }
+
+        /// <summary>
+        /// Parse the input <see cref="TextReader"/> as a <see cref="DataTable"/>.
+        /// </summary>
+        /// <param name="textReader">
+        /// The <see cref="TextReader"/> containing the delimited data to read.
+        /// </param>
+        /// <param name="encoding">
+        /// The character encoding to use.
+        /// </param>
+        /// <returns>The <see cref="DataTable"/> containing the parsed data.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="textReader"/> or <paramref name="encoding"/> is null.</exception>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        public virtual DataTable Parse(TextReader textReader, Encoding encoding)
+        {
             if (textReader == null)
             {
                 throw new ArgumentNullException(nameof(textReader));
+            }
+
+            if (encoding == null)
+            {
+                throw new ArgumentNullException(nameof(encoding));
             }
 
             var output = new DataTable
@@ -96,7 +121,7 @@ namespace DelimitedDataParser
                 Locale = CultureInfo.CurrentCulture
             };
 
-            var reader = ParseReader(textReader);
+            var reader = ParseReader(textReader, encoding);
             output.Load(reader);
 
             if (_columnNamesAsText != null && _columnNamesAsText.Any())
@@ -112,6 +137,9 @@ namespace DelimitedDataParser
         /// <summary>
         /// Create a data reader that will read from the <paramref name="textReader"/>.
         /// </summary>
+        /// <remarks>
+        /// This method assumes an encoding of <see cref="Encoding.Default"/>.
+        /// </remarks>
         /// <param name="textReader">
         /// The <see cref="TextReader"/> containing the delimited data to read.
         /// </param>
@@ -119,12 +147,59 @@ namespace DelimitedDataParser
         /// <exception cref="ArgumentNullException"><paramref name="textReader"/> is null.</exception>
         public virtual DbDataReader ParseReader(TextReader textReader)
         {
+            return ParseReader(textReader, Encoding.Default);
+        }
+
+        /// <summary>
+        /// Create a data reader that will read from the <paramref name="textReader"/>.
+        /// </summary>
+        /// <param name="textReader">
+        /// The <see cref="TextReader"/> containing the delimited data to read.
+        /// </param>
+        /// <param name="encoding">
+        /// The character encoding to use.
+        /// </param>
+        /// <returns>A <see cref="DbDataReader"/> that will read rows of data.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="textReader"/> or <paramref name="encoding"/> is null.</exception>
+        public virtual DbDataReader ParseReader(TextReader textReader, Encoding encoding)
+        {
             if (textReader == null)
             {
                 throw new ArgumentNullException(nameof(textReader));
             }
 
-            return new DelimitedDataReader(textReader, _fieldSeparator, _useFirstRowAsColumnHeaders);
+            if (encoding == null)
+            {
+                throw new ArgumentNullException(nameof(encoding));
+            }
+
+            return new DelimitedDataReader(
+                textReader,
+                encoding,
+                _fieldSeparator, 
+                _useFirstRowAsColumnHeaders);
+        }
+
+        /// <summary>
+        /// Create a data reader that will read from the <paramref name="streamReader"/>.
+        /// </summary>
+        /// <param name="streamReader">
+        /// The <see cref="StreamReader"/> containing the delimited data to read. The stream encoding is used to read this data.
+        /// </param>
+        /// <returns>A <see cref="DbDataReader"/> that will read rows of data.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="streamReader"/> is null.</exception>
+        public virtual DbDataReader ParseReader(StreamReader streamReader)
+        {
+            if (streamReader == null)
+            {
+                throw new ArgumentNullException(nameof(streamReader));
+            }
+
+            return new DelimitedDataReader(
+                streamReader,
+                streamReader.CurrentEncoding,
+                _fieldSeparator,
+                _useFirstRowAsColumnHeaders);
         }
 
         /// <summary>

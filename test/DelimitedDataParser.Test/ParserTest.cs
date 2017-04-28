@@ -35,6 +35,14 @@ namespace DelimitedDataParser
         }
 
         [Fact]
+        public void Fails_Without_Valid_Encoding()
+        {
+            var parser = new Parser();
+
+            Assert.Throws<ArgumentNullException>(() => parser.Parse(GetTextReader(string.Empty), null));
+        }
+
+        [Fact]
         public void Can_Parse_Column_Names_From_First_Row()
         {
             string input = @"Field 1,Field 2,Field 3";
@@ -267,7 +275,7 @@ namespace DelimitedDataParser
             return new StringReader(input);
         }
 
-        private static TextReader GetTextReader(string input, Encoding encoding)
+        private static StreamReader GetTextReader(string input, Encoding encoding)
         {
             if (encoding == null)
             {

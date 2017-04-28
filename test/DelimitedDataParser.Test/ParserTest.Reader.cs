@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -12,6 +14,14 @@ namespace DelimitedDataParser
             var parser = new Parser();
 
             Assert.Throws<ArgumentNullException>(() => parser.ParseReader(null));
+        }
+
+        [Fact]
+        public void ParseReader_Without_Valid_Encoding()
+        {
+            var parser = new Parser();
+
+            Assert.Throws<ArgumentNullException>(() => parser.ParseReader(GetTextReader(string.Empty), null));
         }
 
         [Fact]
@@ -1498,49 +1508,6 @@ namespace DelimitedDataParser
         }
 
         [Theory]
-        [InlineData(1, -1)]
-        [InlineData(1, 1)]
-        [InlineData(1, 2)]
-        [InlineData(2, 2)]
-        public void ParseReader_GetBytes_BufferOffsetOutOfRange_Throws(int bufferLength, int bufferOffset)
-        {
-            var input = "Data 1";
-
-            var parser = new Parser
-            {
-                UseFirstRowAsColumnHeaders = false
-            };
-
-            var reader = parser.ParseReader(GetTextReader(input));
-            reader.Read();
-
-            var buffer = new byte[bufferLength];
-            Assert.Throws<ArgumentOutOfRangeException>(() => reader.GetBytes(0, 0, buffer, bufferOffset, 1));
-        }
-
-        [Theory]
-        [InlineData(0, 1)]
-        [InlineData(0, 2)]
-        [InlineData(1, 2)]
-        [InlineData(2, 3)]
-        [InlineData(2, 4)]
-        public void ParseReader_GetBytes_BufferNotLongEnough_Throws(int bufferLength, int length)
-        {
-            var input = "Data 1";
-
-            var parser = new Parser
-            {
-                UseFirstRowAsColumnHeaders = false
-            };
-
-            var reader = parser.ParseReader(GetTextReader(input));
-            reader.Read();
-
-            var buffer = new byte[bufferLength];
-            Assert.Throws<ArgumentException>(() => reader.GetBytes(0, 0, buffer, 0, length));
-        }
-
-        [Theory]
         [InlineData("Data 1", 6, 6)]
         [InlineData("Foo", 3, 3)]
         public void ParseReader_GetBytes_ReturnsExpectedCountWithNullBuffer(string input, int length, int expected)
@@ -1738,6 +1705,92 @@ namespace DelimitedDataParser
             {
                 Assert.Equal(expected[i], buffer[i]);
             }
+        }
+
+        [Theory]
+        [InlineData("田中さんにあげて下さい", 65001)]
+        [InlineData("パーティーへ行かないか", 65001)]
+        [InlineData("田中さんにあげて下さい", 12000)]
+        [InlineData("パーティーへ行かないか", 12000)]
+        [InlineData("田中さんにあげて下さい", 1200)]
+        [InlineData("パーティーへ行かないか", 1200)]
+        public void ParseReader_GetBytes_RoundTripsBytes(string input, int codepage)
+        {
+            var encoding = Encoding.GetEncoding(codepage);
+            byte[] inputBytes = encoding.GetBytes(input);
+            byte[] outputBytes = new byte[inputBytes.Length];
+
+            using (var ms = new MemoryStream(inputBytes))
+            using (var sr = new StreamReader(ms, encoding))
+            {
+                var parser = new Parser();
+                using (var reader = parser.ParseReader(sr, encoding))
+                {
+                    reader.GetBytes(0, 0, outputBytes, 0, outputBytes.Length);
+                }
+            }
+
+            Assert.Equal<byte>(inputBytes, outputBytes);
+        }
+
+        [Theory]
+        [InlineData(0, new[] { 97, 98, 99 }, new[] { 97, 98, 99 })]
+        [InlineData(1, new[] { 97, 98, 99 }, new[] { 98, 99 })]
+        [InlineData(2, new[] { 227, 129, 149 }, new[] { 149 })]
+        public void ParseReader_GetBytes_CopiesFromOffset(
+            int offset,
+            int[] inputInts,
+            int[] outputInts)
+        {
+            var encoding = Encoding.UTF8;
+            var inputBytes = inputInts.Select(x => (byte)x).ToArray();
+            var outputBytes = outputInts.Select(x => (byte)x).ToArray();
+            var inputString = new string(encoding.GetChars(inputBytes));
+
+            var readerLength = 0L;
+            var readerOutput = new byte[outputBytes.Length];
+            using (var sr = new StringReader(inputString))
+            {
+                var parser = new Parser();
+                using (var reader = parser.ParseReader(sr, encoding))
+                {
+                    readerLength = reader.GetBytes(
+                        0,
+                        offset,
+                        readerOutput,
+                        0,
+                        outputBytes.Length);
+                }
+            }
+
+            Assert.Equal(outputBytes.Length, readerLength);
+            Assert.Equal<byte>(outputBytes, readerOutput);
+        }
+
+        [Theory]
+        [InlineData(1, "123")]
+        [InlineData(1, "xy")]
+        [InlineData(3, "xy1234,z")]
+        public void ParseReader_GetBytes_ReadsUpToBufferLength(int bufferLength, string inputText)
+        {
+            var parser = new Parser();
+            var buffer = new byte[bufferLength];
+            var bytesRead = 0L;
+
+            using (var sr = new StringReader(inputText))
+            {
+                using (var reader = parser.ParseReader(sr))
+                {
+                    bytesRead = reader.GetBytes(
+                        0,
+                        0,
+                        buffer,
+                        0,
+                        inputText.Length);
+                }
+            }
+
+            Assert.Equal(bufferLength, bytesRead);
         }
     }
 }

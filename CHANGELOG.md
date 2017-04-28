@@ -5,7 +5,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
-+## [4.0.0] — 2016-12-21
+### Added
+
+- Add support for specifying encoding of input data.
+
+## [4.0.0] — 2016-12-21
 
 ### Added
 
