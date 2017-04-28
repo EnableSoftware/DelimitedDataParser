@@ -17,6 +17,14 @@ namespace DelimitedDataParser
         }
 
         [Fact]
+        public void ParseReader_Without_Valid_Encoding()
+        {
+            var parser = new Parser();
+
+            Assert.Throws<ArgumentNullException>(() => parser.ParseReader(GetTextReader(string.Empty), null));
+        }
+
+        [Fact]
         public void ParseReader_Can_Parse_Empty_Stream()
         {
             var parser = new Parser();
