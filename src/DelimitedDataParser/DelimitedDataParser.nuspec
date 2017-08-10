@@ -14,8 +14,4 @@
         <copyright>Copyright 2016</copyright>
         <tags>CSV parser exporter delimited</tags>
     </metadata>
-    <files>
-        <file src="lib\DelimitedDataParser.dll" target="lib\DelimitedDataParser.dll" />
-        <file src="lib\DelimitedDataParser.xml" target="lib\DelimitedDataParser.xml" />
-    </files>
 </package>
