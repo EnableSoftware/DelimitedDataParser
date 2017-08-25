@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [4.0.1] — 2017-08-10
+
 ### Added
 
 - Add support for specifying encoding of input data.
@@ -94,7 +96,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Initial public release.
 
-[unreleased]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v4.0.0...HEAD
+[unreleased]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v4.0.1...HEAD
+[4.0.1]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v4.0.0...v4.0.1
 [4.0.0]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.3.2...v4.0.0
 [3.3.2]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.3.1...v3.3.2
 [3.3.1]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.2.0...v3.3.1
