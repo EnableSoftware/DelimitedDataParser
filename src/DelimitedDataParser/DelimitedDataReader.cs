@@ -66,6 +66,12 @@ namespace DelimitedDataParser
             {
                 EnsureInitialised();
 
+                // If a row has not yet been read, return the count of header fields.
+                if (_yieldExistingRow)
+                {
+                    return _fieldNameLookup.Count;
+                }
+
                 // If we are not on a valid row, return -1.
                 if (_currentRow == null)
                 {
@@ -582,6 +588,7 @@ namespace DelimitedDataParser
 
         private void EnsureInitialised()
         {
+            // Attempt to advance to the first row of data.
             if (!_firstRowRead)
             {
                 if (ReadInternal())
@@ -589,11 +596,18 @@ namespace DelimitedDataParser
                     if (_useFirstRowAsColumnHeaders)
                     {
                         GenerateFieldLookup();
+
+                        // If using the first row as column headers, attempt to advance
+                        // to the next row. This is so that `_currentRow` points to the
+                        // first row of data and not the header row.
+                        ReadInternal();
                     }
                     else
                     {
                         GenerateDefaultFieldNameLookup();
                     }
+
+                    _yieldExistingRow = true;
                 }
                 else
                 {
@@ -601,7 +615,6 @@ namespace DelimitedDataParser
                 }
 
                 _firstRowRead = true;
-                _yieldExistingRow = !_useFirstRowAsColumnHeaders;
             }
         }
 

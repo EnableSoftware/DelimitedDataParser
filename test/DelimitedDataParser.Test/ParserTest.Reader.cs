@@ -1811,5 +1811,60 @@ namespace DelimitedDataParser
 
             Assert.Equal(bufferLength, bytesRead);
         }
+
+        [Fact]
+        public void ParseReader_HasRows_ReturnsFalseForEmptyInput()
+        {
+            var parser = new Parser();
+            var reader = parser.ParseReader(GetTextReader(string.Empty));
+
+            Assert.False(reader.HasRows);
+        }
+
+        [Fact]
+        public void ParseReader_HasRows_ReturnsFalseForHeaderOnlyInput()
+        {
+            string input = @"Field 1,Field 2,Field 3";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = true
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+
+            Assert.False(reader.HasRows);
+        }
+
+        [Fact]
+        public void ParseReader_HasRows_ReturnsTrueForDataOnlyInput()
+        {
+            string input = @"Data 1,Data 2,Data 3";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+
+            Assert.True(reader.HasRows);
+        }
+
+        [Fact]
+        public void ParseReader_HasRows_ReturnsTrueForHeaderAndDataRows()
+        {
+            string input = @"Field 1,Field 2,Field 3" + Environment.NewLine
+    + @"Data 1,Data 2,Data 3" + Environment.NewLine;
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = true
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+
+            Assert.True(reader.HasRows);
+        }
     }
 }
