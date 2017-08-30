@@ -1724,9 +1724,15 @@ namespace DelimitedDataParser
             using (var ms = new MemoryStream(inputBytes))
             using (var sr = new StreamReader(ms, encoding))
             {
-                var parser = new Parser();
+                var parser = new Parser
+                {
+                    UseFirstRowAsColumnHeaders = false
+                };
+
                 using (var reader = parser.ParseReader(sr, encoding))
                 {
+                    reader.Read();
+
                     reader.GetBytes(0, 0, outputBytes, 0, outputBytes.Length);
                 }
             }
@@ -1752,9 +1758,15 @@ namespace DelimitedDataParser
             var readerOutput = new byte[outputBytes.Length];
             using (var sr = new StringReader(inputString))
             {
-                var parser = new Parser();
+                var parser = new Parser
+                {
+                    UseFirstRowAsColumnHeaders = false
+                };
+
                 using (var reader = parser.ParseReader(sr, encoding))
                 {
+                    reader.Read();
+
                     readerLength = reader.GetBytes(
                         0,
                         offset,
@@ -1774,14 +1786,20 @@ namespace DelimitedDataParser
         [InlineData(3, "xy1234,z")]
         public void ParseReader_GetBytes_ReadsUpToBufferLength(int bufferLength, string inputText)
         {
-            var parser = new Parser();
             var buffer = new byte[bufferLength];
             var bytesRead = 0L;
 
             using (var sr = new StringReader(inputText))
             {
+                var parser = new Parser
+                {
+                    UseFirstRowAsColumnHeaders = false
+                };
+
                 using (var reader = parser.ParseReader(sr))
                 {
+                    reader.Read();
+
                     bytesRead = reader.GetBytes(
                         0,
                         0,
