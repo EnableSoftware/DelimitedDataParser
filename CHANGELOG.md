@@ -5,6 +5,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [4.0.2] — 2017-08-30
+
+### Fixed
+
+- Fix a bug with the `HasData` property on the reader returned by
+  `Parser.ParseReader()`. Previously this property incorrectly reported that
+  there was data when a header row was present, even if there were no
+  subsequent data rows.
+
 ## [4.0.1] — 2017-08-10
 
 ### Added
@@ -96,7 +105,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Initial public release.
 
-[unreleased]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v4.0.1...HEAD
+[unreleased]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v4.0.2...HEAD
+[4.0.2]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v4.0.1...v4.0.2
 [4.0.1]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v4.0.0...v4.0.1
 [4.0.0]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.3.2...v4.0.0
 [3.3.2]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.3.1...v3.3.2
