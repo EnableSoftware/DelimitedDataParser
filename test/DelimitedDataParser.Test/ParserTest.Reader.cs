@@ -533,6 +533,36 @@ namespace DelimitedDataParser
             Assert.Equal("Data 6", reader[2]);
         }
 
+        [Theory]
+        [InlineData("\r\r", 1)]
+        [InlineData("\n\n", 1)]
+        [InlineData("\r\r\r", 2)]
+        [InlineData("\n\n\n", 2)]
+        public void ParseReader_Treats_MultipleIndividualNewLineChars_AsNewLines(string newLineSequence, int expectedEmptyRowCount)
+        {
+            string input = "Foo" + newLineSequence + "Bar";
+
+            var parser = new Parser
+            {
+                UseFirstRowAsColumnHeaders = false
+            };
+
+            var reader = parser.ParseReader(GetTextReader(input));
+
+            reader.Read();
+            Assert.Equal(1, reader.FieldCount);
+            Assert.Equal("Foo", reader[0]);
+
+            for (int i = 0; i < expectedEmptyRowCount; i++)
+            {
+                reader.Read();
+                Assert.Equal(0, reader.FieldCount);
+            }
+
+            reader.Read();
+            Assert.Equal("Bar", reader[0]);
+        }
+
         [Fact]
         public void ParseReader_Supports_Quoted_Column_Name_Containing_Carriage_Return()
         {
