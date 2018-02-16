@@ -9,9 +9,9 @@ install:
 assembly_info:
   patch: true
   file: '**\AssemblyInfo.*'
-  version: $(GitVersion_SemVer)
-  assembly_version: $(GitVersion_MajorMinorPatch)
-  informational_version: $(GitVersion_InformationalVersion)
+  version: '$(GitVersion_SemVer)'
+  assembly_version: '$(GitVersion_MajorMinorPatch)'
+  informational_version: '$(GitVersion_InformationalVersion)'
 
 build:
   publish_nuget: true
