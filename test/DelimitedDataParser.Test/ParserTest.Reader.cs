@@ -507,60 +507,51 @@ namespace DelimitedDataParser
             Assert.Equal("Data 6", reader[2]);
         }
 
-        [Fact]
-        public void ParseReader_Supports_New_Row_By_Reverse_New_Line()
-        {
-            string input = @"Data 1,Data 2,Data 3"
-                + '\n' + '\r'
-                + @"Data 4,Data 5,Data 6";
-
-            var parser = new Parser
-            {
-                UseFirstRowAsColumnHeaders = false
-            };
-
-            var reader = parser.ParseReader(GetTextReader(input));
-
-            reader.Read();
-            Assert.Equal(3, reader.FieldCount);
-            Assert.Equal("Data 1", reader[0]);
-            Assert.Equal("Data 2", reader[1]);
-            Assert.Equal("Data 3", reader[2]);
-
-            reader.Read();
-            Assert.Equal("Data 4", reader[0]);
-            Assert.Equal("Data 5", reader[1]);
-            Assert.Equal("Data 6", reader[2]);
-        }
-
         [Theory]
-        [InlineData("\r\r", 1)]
-        [InlineData("\n\n", 1)]
-        [InlineData("\r\r\r", 2)]
-        [InlineData("\n\n\n", 2)]
-        public void ParseReader_Treats_MultipleIndividualNewLineChars_AsNewLines(string newLineSequence, int expectedEmptyRowCount)
+        [InlineData("\r", 1)]
+        [InlineData("\n", 1)]
+        [InlineData("\r\n", 1)] // CRLF is an expected newline character sequence.
+        [InlineData("\n\r", 2)] // LFCR is not expected as a newline sequence so treat this as two newlines.
+        [InlineData("\r\r", 2)]
+        [InlineData("\n\n", 2)]
+        [InlineData("\r\n\r", 2)]
+        [InlineData("\r\n\n", 2)]
+        [InlineData("\r\r\r", 3)]
+        [InlineData("\n\n\n", 3)]
+        public void ParseReader_HandlesMultipleNewLineCharactersCorrectly(string newLineSequence, int expectedNewLineCount)
         {
-            string input = "Foo" + newLineSequence + "Bar";
+            // Arrange
+            var input = "Foo" + newLineSequence + "Bar";
 
             var parser = new Parser
             {
                 UseFirstRowAsColumnHeaders = false
             };
 
+            // Act
             var reader = parser.ParseReader(GetTextReader(input));
 
             reader.Read();
-            Assert.Equal(1, reader.FieldCount);
-            Assert.Equal("Foo", reader[0]);
+            var firstColCount = reader.FieldCount;
+            var firstValue = reader[0];
 
-            for (int i = 0; i < expectedEmptyRowCount; i++)
+            reader.Read();
+            var blankLineCount = 0;
+            while (reader.FieldCount == 0)
             {
+                blankLineCount++;
                 reader.Read();
-                Assert.Equal(0, reader.FieldCount);
             }
 
-            reader.Read();
-            Assert.Equal("Bar", reader[0]);
+            var secondColCount = reader.FieldCount;
+            var secondValue = reader[0];
+
+            // Assert
+            Assert.Equal(1, firstColCount);
+            Assert.Equal("Foo", firstValue);
+            Assert.Equal(expectedNewLineCount - 1, blankLineCount);
+            Assert.Equal(1, secondColCount);
+            Assert.Equal("Bar", secondValue);
         }
 
         [Fact]
