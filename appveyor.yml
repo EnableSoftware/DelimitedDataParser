@@ -1,20 +1,26 @@
-version: 4.0.{build}
-image: Visual Studio 2015
+version: 0.{build}
+image: Visual Studio 2017
 configuration: Release
+
+install:
+  - cmd: nuget restore -verbosity quiet
+  - ps: gitversion /l console /output buildserver
+
 assembly_info:
   patch: true
   file: '**\AssemblyInfo.*'
-  assembly_version: '{version}'
-  assembly_file_version: '{version}'
-  assembly_informational_version: '{version}'
-before_build:
-- cmd: nuget restore -verbosity quiet
+  version: $(GitVersion_SemVer)
+  assembly_version: $(GitVersion_MajorMinorPatch)
+  informational_version: $(GitVersion_InformationalVersion)
+
 build:
   publish_nuget: true
   parallel: true
   verbosity: minimal
+
 test:
   assemblies:
     only:
     - '**\*.Test.dll'
+
 deploy: off
