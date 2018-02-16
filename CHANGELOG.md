@@ -112,7 +112,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Initial public release.
 
-[unreleased]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v4.0.2...HEAD
+[unreleased]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v4.0.3...HEAD
+[4.0.3]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v4.0.2...v4.0.3
 [4.0.2]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v4.0.1...v4.0.2
 [4.0.1]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v4.0.0...v4.0.1
 [4.0.0]: https://github.com/EnableSoftware/DelimitedDataParser/compare/v3.3.2...v4.0.0
