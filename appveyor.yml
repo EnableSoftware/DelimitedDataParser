@@ -11,7 +11,7 @@ assembly_info:
   file: '**\AssemblyInfo.*'
   assembly_version: $(GitVersion_MajorMinorPatch)
   assembly_file_version: $(GitVersion_MajorMinorPatch)
-  informational_version: $(GitVersion_InformationalVersion)
+  assembly_informational_version: $(GitVersion_InformationalVersion)
 
 build:
   publish_nuget: true
