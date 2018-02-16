@@ -597,9 +597,9 @@ namespace DelimitedDataParser
                     {
                         GenerateFieldLookup();
 
-                        // If using the first row as column headers, attempt to advance
-                        // to the next row. This is so that `_currentRow` points to the
-                        // first row of data and not the header row.
+                        // If using the first row as column headers, attempt to advance to the next
+                        // row. This is so that `_currentRow` points to the first row of data and not
+                        // the header row.
                         ReadInternal();
                     }
                     else
@@ -640,8 +640,8 @@ namespace DelimitedDataParser
         {
             var quotedMode = false;
             var quotedModeHasPassed = false;
-            var newLineCharacterSequenceCount = 0;
             var quoteCount = 0;
+            var newLineCharacterBuffer = new List<char>(2);
             var currentCell = new StringBuilder();
             var row = new List<string>(_currentRow != null ? _currentRow.Count : 4);
             char c;
@@ -649,11 +649,13 @@ namespace DelimitedDataParser
 
             while (ReadNextChar(out c))
             {
-                if (newLineCharacterSequenceCount > 0)
+                if (newLineCharacterBuffer.Count != 0)
                 {
-                    if (newLineCharacterSequenceCount == 1 && (c == CarriageReturn || c == LineFeed))
+                    if (c == LineFeed
+                        && newLineCharacterBuffer.Count == 1
+                        && newLineCharacterBuffer[0] == CarriageReturn)
                     {
-                        newLineCharacterSequenceCount++;
+                        newLineCharacterBuffer.Add(c);
                         continue;
                     }
 
@@ -661,8 +663,6 @@ namespace DelimitedDataParser
                     {
                         row.Add(currentCell.ToString());
                     }
-
-                    currentCell.Clear();
 
                     _bufferIndex--;
 
@@ -696,7 +696,7 @@ namespace DelimitedDataParser
                 else if ((c == CarriageReturn || c == LineFeed) && !quotedMode)
                 {
                     // Handle new line when not in quoted mode - Start collecting new line char sequence
-                    newLineCharacterSequenceCount++;
+                    newLineCharacterBuffer.Add(c);
                 }
                 else
                 {
