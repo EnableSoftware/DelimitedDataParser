@@ -5,6 +5,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [4.0.3] - 2018-02-16
+
+### Fixed
+
+- Fix a bug in the handling of newline characters wherein any pair of newline characters
+  (as opposed to just `\r\n`) would be treated as a single newline.
+
 ## [4.0.2] — 2017-08-30
 
 ### Fixed
