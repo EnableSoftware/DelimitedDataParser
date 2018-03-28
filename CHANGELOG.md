@@ -5,6 +5,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [4.1.0] - 2018-03-28
+
+### Changed
+
+- Migrate `DelimitedDataParser` project file to .NET Core `.csproj` project system.
+
+### Added
+
+- Add multi-targeting support for `net45` and `netstandard2.0`.
+
 ## [4.0.3] - 2018-02-16
 
 ### Fixed
