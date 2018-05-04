@@ -911,6 +911,8 @@ namespace DelimitedDataParser
             Assert.Equal("Data 10", reader[4]);
         }
 
+#if NET452
+
         [Fact]
         public void ParseReader_Supports_Windows_1252_Text()
         {
@@ -937,6 +939,8 @@ namespace DelimitedDataParser
             Assert.Equal("Data 4", reader[1]);
             Assert.Equal("Data æ", reader[2]);
         }
+
+#endif
 
         [Theory]
         [InlineData(4093, "\r\n")]
