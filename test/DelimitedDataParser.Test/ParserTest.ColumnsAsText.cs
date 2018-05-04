@@ -56,7 +56,7 @@ namespace DelimitedDataParser
 
             var output = parser.Parse(GetTextReader(input));
 
-            Assert.Equal(1, output.Columns.Count);
+            Assert.Single(output.Columns);
             Assert.Equal(@"=""Data 1""", output.Rows[0][0]);
         }
 

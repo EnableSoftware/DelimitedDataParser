@@ -90,8 +90,8 @@ namespace DelimitedDataParser
             var parser = new Parser();
             var output = parser.Parse(GetTextReader(input));
 
-            Assert.Equal(1, output.Columns.Count);
-            Assert.Equal(1, output.Rows.Count);
+            Assert.Single(output.Columns);
+            Assert.Single(output.Rows);
 
             var col = output.Columns[0];
             var row = output.Rows[0];

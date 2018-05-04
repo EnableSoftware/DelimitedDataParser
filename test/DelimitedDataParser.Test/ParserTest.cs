@@ -22,8 +22,8 @@ namespace DelimitedDataParser
             var parser = new Parser();
             var output = parser.Parse(GetTextReader(string.Empty));
 
-            Assert.Equal(0, output.Rows.Count);
-            Assert.Equal(0, output.Columns.Count);
+            Assert.Empty(output.Rows);
+            Assert.Empty(output.Columns);
         }
 
         [Fact]
@@ -188,8 +188,8 @@ namespace DelimitedDataParser
 
             var output = parser.Parse(GetTextReader(input));
 
-            Assert.Equal(1, output.Columns.Count);
-            Assert.Equal(1, output.Rows.Count);
+            Assert.Single(output.Columns);
+            Assert.Single(output.Rows);
             Assert.Equal(cellContentLength, ((string)output.Rows[0][0]).Length);
         }
 

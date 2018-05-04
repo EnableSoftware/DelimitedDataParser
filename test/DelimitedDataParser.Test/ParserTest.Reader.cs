@@ -200,6 +200,7 @@ namespace DelimitedDataParser
             Assert.Equal("Iñtërnâtiônàlizætiøn☃", reader[0]);
         }
 
+        [Fact]
         public void ParseReader_Supports_Cell_Containing_Quotes_After_Quoted_Content()
         {
             string input = "\"Data 1\",\"Data\"2\"data,\"Data 3\"";
