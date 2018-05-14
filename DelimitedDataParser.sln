@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2000
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EC756DF8-CC07-44B7-A843-F331B2F7A9BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DelimitedDataParser", "src\DelimitedDataParser\DelimitedDataParser.csproj", "{D5BDA0F7-7465-4317-80D3-04C50F04619A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DelimitedDataParser", "src\DelimitedDataParser\DelimitedDataParser.csproj", "{D5BDA0F7-7465-4317-80D3-04C50F04619A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{6A1C2C78-F0E8-435D-BB25-9B5F78A9D89C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DelimitedDataParser.Test", "test\DelimitedDataParser.Test\DelimitedDataParser.Test.csproj", "{F4EFED54-7F24-44B2-8C18-C8544B390437}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DelimitedDataParser.Test", "test\DelimitedDataParser.Test\DelimitedDataParser.Test.csproj", "{F4EFED54-7F24-44B2-8C18-C8544B390437}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0A5FE047-6075-4341-A445-D3AC708A5D59}"
 	ProjectSection(SolutionItems) = preProject
@@ -25,6 +25,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Settings.StyleCop = Settings.StyleCop
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{E2169461-1216-49F0-B320-AEEF3EF04D09}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCoreWindowsEncoding", "samples\NetCoreWindowsEncoding\NetCoreWindowsEncoding.csproj", "{E84146B8-B34A-460D-944B-06F45D72EA54}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,10 @@ Global
 		{F4EFED54-7F24-44B2-8C18-C8544B390437}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4EFED54-7F24-44B2-8C18-C8544B390437}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4EFED54-7F24-44B2-8C18-C8544B390437}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E84146B8-B34A-460D-944B-06F45D72EA54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E84146B8-B34A-460D-944B-06F45D72EA54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E84146B8-B34A-460D-944B-06F45D72EA54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E84146B8-B34A-460D-944B-06F45D72EA54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,5 +54,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{D5BDA0F7-7465-4317-80D3-04C50F04619A} = {EC756DF8-CC07-44B7-A843-F331B2F7A9BF}
 		{F4EFED54-7F24-44B2-8C18-C8544B390437} = {6A1C2C78-F0E8-435D-BB25-9B5F78A9D89C}
+		{E84146B8-B34A-460D-944B-06F45D72EA54} = {E2169461-1216-49F0-B320-AEEF3EF04D09}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {38E43D49-62DB-4DE9-A673-2DCF01EAB091}
 	EndGlobalSection
 EndGlobal
