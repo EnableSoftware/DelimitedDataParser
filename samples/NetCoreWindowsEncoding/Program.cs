@@ -9,12 +9,13 @@ namespace WindowsEncoding
     {
         private static void Main()
         {
-            // When using DelimitedDataParser in a .NET Core app,
-            // be sure to include the NuGet package System.Text.Encoding.CodePages.
+            // If code page based character encodings are required when using
+            // DelimitedDataParser in a .NET Core app, be sure to include the
+            // NuGet package System.Text.Encoding.CodePages.
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             // Attempting to obtain the Windows-1252 encoding will fail on .NET Core
-            // if the required // code page is not correctly registered.
+            // if the required code page based encoding is not correctly registered.
             var windows1252 = Encoding.GetEncoding(1252);
 
             // Try and ensure the console's encoding matches the character encoding
