@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace DelimitedDataParser
 {
@@ -157,10 +158,11 @@ namespace DelimitedDataParser
         /// </summary>
         /// <param name="reader">The <see cref="DbDataReader"/> containing the data to export.</param>
         /// <param name="writer">The <see cref="TextWriter"/> to be written to.</param>
+        /// <param name="cancellationToken">The cancellation instruction, which propagates a notification that operations should be canceled.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="reader"/> is <c>null</c> or <paramref name="writer"/> is <c>null</c>.
         /// </exception>
-        public virtual void ExportReader(DbDataReader reader, TextWriter writer)
+        public virtual void ExportReader(DbDataReader reader, TextWriter writer, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (reader == null)
             {
@@ -183,6 +185,8 @@ namespace DelimitedDataParser
 
                 while (reader.Read())
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     if (rowIndex != 0 || _outputColumnHeaders)
                     {
                         writer.Write(Environment.NewLine);
@@ -200,10 +204,11 @@ namespace DelimitedDataParser
         /// </summary>
         /// <param name="dataTable">The <see cref="DataTable"/> containing the data to export.</param>
         /// <param name="writer">The <see cref="TextWriter"/> to be written to.</param>
+        /// <param name="cancellationToken">The cancellation instruction, which propagates a notification that operations should be canceled.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="dataTable"/> is <c>null</c> or <paramref name="writer"/> is <c>null</c>.
         /// </exception>
-        public virtual void Export(DataTable dataTable, TextWriter writer)
+        public virtual void Export(DataTable dataTable, TextWriter writer, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (dataTable == null)
             {
@@ -238,9 +243,10 @@ namespace DelimitedDataParser
                     }
                 }
 
-                var reader = dataTable.CreateDataReader();
-
-                ExportReader(reader, writer);
+                using (var reader = dataTable.CreateDataReader())
+                {
+                    ExportReader(reader, writer, cancellationToken);
+                }
             }
         }
 

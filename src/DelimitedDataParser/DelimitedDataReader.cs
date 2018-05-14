@@ -6,6 +6,7 @@ using System.Data.Common;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace DelimitedDataParser
 {
@@ -19,6 +20,7 @@ namespace DelimitedDataParser
         private readonly Encoding _encoding;
         private readonly char _fieldSeparator;
         private readonly bool _useFirstRowAsColumnHeaders;
+        private readonly CancellationToken _cancellationToken;
         private readonly char[] _buffer = new char[4096];
 
         private IReadOnlyList<string> _fieldNameLookup;
@@ -34,22 +36,14 @@ namespace DelimitedDataParser
             TextReader textReader,
             Encoding encoding,
             char fieldSeparator,
-            bool useFirstRowAsColumnHeaders)
+            bool useFirstRowAsColumnHeaders,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (textReader == null)
-            {
-                throw new ArgumentNullException(nameof(textReader));
-            }
-
-            if (encoding == null)
-            {
-                throw new ArgumentException(nameof(encoding));
-            }
-
-            _textReader = textReader;
-            _encoding = encoding;
+            _textReader = textReader ?? throw new ArgumentNullException(nameof(textReader));
+            _encoding = encoding ?? throw new ArgumentException(nameof(encoding));
             _fieldSeparator = fieldSeparator;
             _useFirstRowAsColumnHeaders = useFirstRowAsColumnHeaders;
+            _cancellationToken = cancellationToken;
         }
 
         public override int Depth
@@ -132,9 +126,7 @@ namespace DelimitedDataParser
 
         public override bool GetBoolean(int ordinal)
         {
-            bool value;
-
-            if (!bool.TryParse(_currentRow[ordinal], out value))
+            if (!bool.TryParse(_currentRow[ordinal], out bool value))
             {
                 throw new InvalidCastException();
             }
@@ -144,9 +136,7 @@ namespace DelimitedDataParser
 
         public override byte GetByte(int ordinal)
         {
-            byte value;
-
-            if (!byte.TryParse(_currentRow[ordinal], NumberStyles.Any, CultureInfo.InvariantCulture, out value))
+            if (!byte.TryParse(_currentRow[ordinal], NumberStyles.Any, CultureInfo.InvariantCulture, out byte value))
             {
                 throw new InvalidCastException();
             }
@@ -263,9 +253,7 @@ namespace DelimitedDataParser
 
         public override DateTime GetDateTime(int ordinal)
         {
-            DateTime value;
-
-            if (!DateTime.TryParse(_currentRow[ordinal], CultureInfo.InvariantCulture, DateTimeStyles.None, out value))
+            if (!DateTime.TryParse(_currentRow[ordinal], CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime value))
             {
                 throw new InvalidCastException();
             }
@@ -275,9 +263,7 @@ namespace DelimitedDataParser
 
         public override decimal GetDecimal(int ordinal)
         {
-            decimal value;
-
-            if (!decimal.TryParse(_currentRow[ordinal], NumberStyles.Number, CultureInfo.InvariantCulture, out value))
+            if (!decimal.TryParse(_currentRow[ordinal], NumberStyles.Number, CultureInfo.InvariantCulture, out decimal value))
             {
                 throw new InvalidCastException();
             }
@@ -287,9 +273,7 @@ namespace DelimitedDataParser
 
         public override double GetDouble(int ordinal)
         {
-            double value;
-
-            if (!double.TryParse(_currentRow[ordinal], NumberStyles.Number, CultureInfo.InvariantCulture, out value))
+            if (!double.TryParse(_currentRow[ordinal], NumberStyles.Number, CultureInfo.InvariantCulture, out double value))
             {
                 throw new InvalidCastException();
             }
@@ -314,9 +298,7 @@ namespace DelimitedDataParser
 
         public override float GetFloat(int ordinal)
         {
-            float value;
-
-            if (!float.TryParse(_currentRow[ordinal], NumberStyles.Float, CultureInfo.InvariantCulture, out value))
+            if (!float.TryParse(_currentRow[ordinal], NumberStyles.Float, CultureInfo.InvariantCulture, out float value))
             {
                 throw new InvalidCastException();
             }
@@ -326,9 +308,7 @@ namespace DelimitedDataParser
 
         public override Guid GetGuid(int ordinal)
         {
-            Guid value;
-
-            if (!Guid.TryParse(_currentRow[ordinal], out value))
+            if (!Guid.TryParse(_currentRow[ordinal], out Guid value))
             {
                 throw new InvalidCastException();
             }
@@ -338,9 +318,7 @@ namespace DelimitedDataParser
 
         public override short GetInt16(int ordinal)
         {
-            short value;
-
-            if (!short.TryParse(_currentRow[ordinal], NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
+            if (!short.TryParse(_currentRow[ordinal], NumberStyles.Integer, CultureInfo.InvariantCulture, out short value))
             {
                 throw new InvalidCastException();
             }
@@ -350,9 +328,7 @@ namespace DelimitedDataParser
 
         public override int GetInt32(int ordinal)
         {
-            int value;
-
-            if (!int.TryParse(_currentRow[ordinal], NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
+            if (!int.TryParse(_currentRow[ordinal], NumberStyles.Integer, CultureInfo.InvariantCulture, out int value))
             {
                 throw new InvalidCastException();
             }
@@ -362,9 +338,7 @@ namespace DelimitedDataParser
 
         public override long GetInt64(int ordinal)
         {
-            long value;
-
-            if (!long.TryParse(_currentRow[ordinal], NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
+            if (!long.TryParse(_currentRow[ordinal], NumberStyles.Integer, CultureInfo.InvariantCulture, out long value))
             {
                 throw new InvalidCastException();
             }
@@ -638,16 +612,17 @@ namespace DelimitedDataParser
 
         private bool ReadInternal()
         {
+            _cancellationToken.ThrowIfCancellationRequested();
+
             var quotedMode = false;
             var quotedModeHasPassed = false;
             var quoteCount = 0;
             var newLineCharacterBuffer = new List<char>(2);
             var currentCell = new StringBuilder();
             var row = new List<string>(_currentRow != null ? _currentRow.Count : 4);
-            char c;
             var readAnyChar = false;
 
-            while (ReadNextChar(out c))
+            while (ReadNextChar(out char c))
             {
                 if (newLineCharacterBuffer.Count != 0)
                 {
