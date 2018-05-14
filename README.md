@@ -86,3 +86,7 @@ To clear any columns previously set as text, call the `ClearColumnsAsText` metho
 parser.ClearColumnsAsText();
 exporter.ClearColumnsAsText();
 ```
+
+## Samples
+
+- Console application demonstrating the use of [Windows-1252 encoding on .NET Core](https://github.com/EnableSoftware/DelimitedDataParser/tree/master/samples/NetCoreWindowsEncoding).
