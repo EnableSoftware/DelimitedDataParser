@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -1891,6 +1892,88 @@ namespace DelimitedDataParser
             var reader = parser.ParseReader(GetTextReader(input));
 
             Assert.True(reader.HasRows);
+        }
+
+        [Fact]
+        public void Supports_Varying_Column_Counts_In_Enumerator_With_Column_Headers()
+        {
+            var content = @"Field 1,Field 2,Field 3" + Environment.NewLine
+                + @"Data 1,Data 2" + Environment.NewLine
+                + @"Data 5" + Environment.NewLine
+                + @"Data 6,Data 7,Data 8, data 9";
+
+            using (var stringReader = new StringReader(content))
+            {
+                var parser = new Parser
+                {
+                    UseFirstRowAsColumnHeaders = true
+                };
+
+                var reader = parser.ParseReader(stringReader);
+                var enumerator = reader.GetEnumerator();
+
+                enumerator.MoveNext();
+                var current = enumerator.Current as IDataRecord;
+                Assert.Equal("Data 1", current[0]);
+                Assert.Equal("Data 2", current[1]);
+                Assert.Null(current[2]);
+
+                enumerator.MoveNext();
+                current = enumerator.Current as IDataRecord;
+                Assert.Equal("Data 5", current[0]);
+                Assert.Null(current[1]);
+                Assert.Null(current[2]);
+
+                enumerator.MoveNext();
+                current = enumerator.Current as IDataRecord;
+                Assert.Equal("Data 6", current[0]);
+                Assert.Equal("Data 7", current[1]);
+                Assert.Equal("Data 8", current[2]);
+            }
+        }
+
+        [Fact]
+        public void Supports_Varying_Column_Counts_In_Enumerator_Without_Column_Headers()
+        {
+            var content = @"Field 1,Field 2,Field 3" + Environment.NewLine
+                + @"Data 1,Data 2" + Environment.NewLine
+                + @"Data 5" + Environment.NewLine
+                + @"Data 6,Data 7,Data 8, data 9";
+
+            using (var stringReader = new StringReader(content))
+            {
+                var parser = new Parser
+                {
+                    UseFirstRowAsColumnHeaders = false
+                };
+
+                var reader = parser.ParseReader(stringReader);
+                var enumerator = reader.GetEnumerator();
+
+                enumerator.MoveNext();
+                var current = enumerator.Current as IDataRecord;
+                Assert.Equal("Field 1", current[0]);
+                Assert.Equal("Field 2", current[1]);
+                Assert.Equal("Field 3", current[2]);
+
+                enumerator.MoveNext();
+                current = enumerator.Current as IDataRecord;
+                Assert.Equal("Data 1", current[0]);
+                Assert.Equal("Data 2", current[1]);
+                Assert.Null(current[2]);
+
+                enumerator.MoveNext();
+                current = enumerator.Current as IDataRecord;
+                Assert.Equal("Data 5", current[0]);
+                Assert.Null(current[1]);
+                Assert.Null(current[2]);
+
+                enumerator.MoveNext();
+                current = enumerator.Current as IDataRecord;
+                Assert.Equal("Data 6", current[0]);
+                Assert.Equal("Data 7", current[1]);
+                Assert.Equal("Data 8", current[2]);
+            }
         }
     }
 }
