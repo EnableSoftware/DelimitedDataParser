@@ -253,6 +253,11 @@ namespace DelimitedDataParser
 
         public override string GetDataTypeName(int ordinal)
         {
+            if (!_yieldExistingRow && (ordinal < 0 || ordinal > _currentRow.Count - 1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(ordinal));
+            }
+
             return typeof(string).Name;
         }
 
@@ -299,6 +304,11 @@ namespace DelimitedDataParser
 
         public override Type GetFieldType(int ordinal)
         {
+            if (!_yieldExistingRow && (ordinal < 0 || ordinal > _currentRow.Count - 1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(ordinal));
+            }
+
             return typeof(string);
         }
 
