@@ -253,7 +253,10 @@ namespace DelimitedDataParser
 
         public override string GetDataTypeName(int ordinal)
         {
-            if (!_yieldExistingRow && (ordinal < 0 || ordinal > _currentRow.Count - 1))
+            var upperOrdinalBound = _yieldExistingRow ?
+                _fieldNameLookup.Count : _currentRow.Count;
+
+            if (ordinal < 0 || ordinal > upperOrdinalBound - 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(ordinal));
             }
@@ -304,7 +307,10 @@ namespace DelimitedDataParser
 
         public override Type GetFieldType(int ordinal)
         {
-            if (!_yieldExistingRow && (ordinal < 0 || ordinal > _currentRow.Count - 1))
+            var upperOrdinalBound = _yieldExistingRow ?
+                _fieldNameLookup.Count : _currentRow.Count;
+
+            if (ordinal < 0 || ordinal > upperOrdinalBound - 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(ordinal));
             }
