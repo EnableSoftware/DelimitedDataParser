@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -1891,6 +1892,52 @@ namespace DelimitedDataParser
             var reader = parser.ParseReader(GetTextReader(input));
 
             Assert.True(reader.HasRows);
+        }
+
+        [Fact]
+        public void Supports_Varying_Column_Counts_In_Enumerator_With_Column_Headers()
+        {
+            var input = @"Col1,Col2,Col3" + Environment.NewLine
+                + @"val1,val2" + Environment.NewLine
+                + @"val3,val4,val5";
+
+            using (var stringReader = GetTextReader(input))
+            {
+                var parser = new Parser
+                {
+                    UseFirstRowAsColumnHeaders = true
+                };
+
+                var reader = parser.ParseReader(stringReader);
+                var enumerator = reader.GetEnumerator();
+
+                while (enumerator.MoveNext())
+                {
+                }
+            }
+        }
+
+        [Fact]
+        public void Supports_Varying_Column_Counts_In_Enumerator_Without_Column_Headers()
+        {
+            var input = @"Col1,Col2,Col3" + Environment.NewLine
+                + @"val1,val2" + Environment.NewLine
+                + @"val3,val4,val5";
+
+            using (var stringReader = GetTextReader(input))
+            {
+                var parser = new Parser
+                {
+                    UseFirstRowAsColumnHeaders = false
+                };
+
+                var reader = parser.ParseReader(stringReader);
+                var enumerator = reader.GetEnumerator();
+
+                while (enumerator.MoveNext())
+                {
+                }
+            }
         }
     }
 }
