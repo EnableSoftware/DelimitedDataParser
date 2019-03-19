@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace DelimitedDataParser
 {
@@ -84,11 +85,12 @@ namespace DelimitedDataParser
         /// <param name="textReader">
         /// The <see cref="TextReader"/> containing the delimited data to read.
         /// </param>
+        /// <param name="cancellationToken">The cancellation instruction, which propagates a notification that operations should be canceled.</param>
         /// <returns>The <see cref="DataTable"/> containing the parsed data.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="textReader"/> is null.</exception>
-        public virtual DataTable Parse(TextReader textReader)
+        public virtual DataTable Parse(TextReader textReader, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return Parse(textReader, Encoding.Default);
+            return Parse(textReader, Encoding.Default, cancellationToken);
         }
 
         /// <summary>
@@ -100,9 +102,10 @@ namespace DelimitedDataParser
         /// <param name="encoding">
         /// The character encoding to use.
         /// </param>
+        /// <param name="cancellationToken">The cancellation instruction, which propagates a notification that operations should be canceled.</param>
         /// <returns>The <see cref="DataTable"/> containing the parsed data.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="textReader"/> or <paramref name="encoding"/> is null.</exception>
-        public virtual DataTable Parse(TextReader textReader, Encoding encoding)
+        public virtual DataTable Parse(TextReader textReader, Encoding encoding, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (textReader == null)
             {
@@ -119,8 +122,10 @@ namespace DelimitedDataParser
                 Locale = CultureInfo.CurrentCulture
             };
 
-            var reader = ParseReader(textReader, encoding);
-            output.Load(reader);
+            using (var reader = ParseReader(textReader, encoding, cancellationToken))
+            {
+                output.Load(reader);
+            }
 
             if (_columnNamesAsText != null && _columnNamesAsText.Any())
             {
@@ -141,11 +146,12 @@ namespace DelimitedDataParser
         /// <param name="textReader">
         /// The <see cref="TextReader"/> containing the delimited data to read.
         /// </param>
+        /// <param name="cancellationToken">The cancellation instruction, which propagates a notification that operations should be canceled.</param>
         /// <returns>A <see cref="DbDataReader"/> that will read rows of data.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="textReader"/> is null.</exception>
-        public virtual DbDataReader ParseReader(TextReader textReader)
+        public virtual DbDataReader ParseReader(TextReader textReader, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return ParseReader(textReader, Encoding.Default);
+            return ParseReader(textReader, Encoding.Default, cancellationToken);
         }
 
         /// <summary>
@@ -157,9 +163,10 @@ namespace DelimitedDataParser
         /// <param name="encoding">
         /// The character encoding to use.
         /// </param>
+        /// <param name="cancellationToken">The cancellation instruction, which propagates a notification that operations should be canceled.</param>
         /// <returns>A <see cref="DbDataReader"/> that will read rows of data.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="textReader"/> or <paramref name="encoding"/> is null.</exception>
-        public virtual DbDataReader ParseReader(TextReader textReader, Encoding encoding)
+        public virtual DbDataReader ParseReader(TextReader textReader, Encoding encoding, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (textReader == null)
             {
@@ -175,7 +182,8 @@ namespace DelimitedDataParser
                 textReader,
                 encoding,
                 _fieldSeparator,
-                _useFirstRowAsColumnHeaders);
+                _useFirstRowAsColumnHeaders,
+                cancellationToken);
         }
 
         /// <summary>
@@ -184,9 +192,10 @@ namespace DelimitedDataParser
         /// <param name="streamReader">
         /// The <see cref="StreamReader"/> containing the delimited data to read. The stream encoding is used to read this data.
         /// </param>
+        /// <param name="cancellationToken">The cancellation instruction, which propagates a notification that operations should be canceled.</param>
         /// <returns>A <see cref="DbDataReader"/> that will read rows of data.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="streamReader"/> is null.</exception>
-        public virtual DbDataReader ParseReader(StreamReader streamReader)
+        public virtual DbDataReader ParseReader(StreamReader streamReader, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (streamReader == null)
             {
@@ -197,7 +206,8 @@ namespace DelimitedDataParser
                 streamReader,
                 streamReader.CurrentEncoding,
                 _fieldSeparator,
-                _useFirstRowAsColumnHeaders);
+                _useFirstRowAsColumnHeaders,
+                cancellationToken);
         }
 
         /// <summary>
