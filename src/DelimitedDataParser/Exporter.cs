@@ -30,11 +30,17 @@ namespace DelimitedDataParser
         private bool _useExtendedPropertyForColumnName;
         private string _extendedPropertyKey;
 
+        private IProgress<int> _progress;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Exporter"/> class.
         /// </summary>
-        public Exporter()
+        /// <param name="progress">
+        /// The provider for receiving progress updates.
+        /// </param>
+        public Exporter(IProgress<int> progress = null)
         {
+            _progress = progress;
         }
 
         /// <summary>
@@ -195,6 +201,8 @@ namespace DelimitedDataParser
                     RenderRow(reader, writer);
 
                     rowIndex++;
+
+                    _progress?.Report(rowIndex);
                 }
             }
         }
