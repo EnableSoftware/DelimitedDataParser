@@ -736,6 +736,25 @@ namespace DelimitedDataParser
         }
 
         [Fact]
+        public void ExportReader_Supports_Quoted_Column_Name()
+        {
+            var columns = new[]
+            {
+                "Field 1",
+                @"""Field 2""",
+                "Field 3"
+            };
+
+            var reader = CreateDbDataReader(columns);
+
+            var sut = new Exporter();
+
+            var output = sut.ExportToString(reader.Object);
+
+            Assert.Equal(@"""Field 1"",""""""Field 2"""""",""Field 3""", output);
+        }
+
+        [Fact]
         public void ExportReader_Supports_Progress_Report()
         {
             var columns = new[]
@@ -763,25 +782,6 @@ namespace DelimitedDataParser
 
             Assert.Equal(1, progressReports[0]);
             Assert.Equal(2, progressReports[1]);
-        }
-
-        [Fact]
-        public void ExportReader_Supports_Quoted_Column_Name()
-        {
-            var columns = new[]
-            {
-                "Field 1",
-                @"""Field 2""",
-                "Field 3"
-            };
-
-            var reader = CreateDbDataReader(columns);
-
-            var sut = new Exporter();
-
-            var output = sut.ExportToString(reader.Object);
-
-            Assert.Equal(@"""Field 1"",""""""Field 2"""""",""Field 3""", output);
         }
 
         [Fact]

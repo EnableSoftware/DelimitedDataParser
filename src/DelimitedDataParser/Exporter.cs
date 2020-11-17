@@ -19,6 +19,8 @@ namespace DelimitedDataParser
         public static readonly char TabSeparator = '\t';
 
         private static readonly string[] UnsafeLeadingCharacters = { "=", "+", "-", "@" };
+        
+        private readonly IProgress<int> _progress;
 
         private ISet<string> _columnNamesAsText;
         private IDictionary<string, string> _extendedPropertyValueLookup;
@@ -30,7 +32,12 @@ namespace DelimitedDataParser
         private bool _useExtendedPropertyForColumnName;
         private string _extendedPropertyKey;
 
-        private IProgress<int> _progress;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Exporter"/> class.
+        /// </summary>
+        public Exporter()
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Exporter"/> class.
