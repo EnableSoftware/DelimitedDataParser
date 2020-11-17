@@ -5,6 +5,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [4.2.1] - 2020-11-17
+
+### Added
+
+- Add support for progress reports in `Exporter`.
+
 ## [4.2.0] - 2019-03-19
 
 ### Added
