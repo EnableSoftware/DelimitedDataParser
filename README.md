@@ -71,7 +71,7 @@ using (var fileWriter = File.CreateText("my.csv"))
 
 ### Progress reports
 
-The `Exporter` class constructor has an overload that takes an `IProgress<int>`. If supplied, the `Exporter` will report the current iteration of the export process as an `int` using the progress provider.
+The `Exporter` class constructor has an overload that takes an `IProgress<int>`. If supplied, the `Exporter` will use the progress provider to report the current row number as an `int` after each row is written to the output file.
 
 ## Columns as text
 
