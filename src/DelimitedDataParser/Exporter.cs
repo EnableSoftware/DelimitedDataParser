@@ -45,7 +45,7 @@ namespace DelimitedDataParser
         /// <param name="progress">
         /// The provider for receiving progress updates.
         /// </param>
-        public Exporter(IProgress<int> progress = null)
+        public Exporter(IProgress<int> progress)
         {
             _progress = progress;
         }
