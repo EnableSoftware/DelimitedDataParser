@@ -755,6 +755,36 @@ namespace DelimitedDataParser
         }
 
         [Fact]
+        public void ExportReader_Supports_Progress_Report()
+        {
+            var columns = new[]
+            {
+                "One"
+            };
+
+            var rows = new[]
+            {
+                new[] { "One" },
+                new[] { "Two" }
+            };
+
+            var reader = CreateDbDataReader(columns, rows);
+
+            var progressReports = new List<int>();
+            var progressMock = new Mock<IProgress<int>>();
+            progressMock
+                .Setup(m => m.Report(It.IsAny<int>()))
+                .Callback<int>(p => progressReports.Add(p));
+
+            var sut = new Exporter(progressMock.Object);
+
+            _ = sut.ExportToString(reader.Object);
+
+            Assert.Equal(1, progressReports[0]);
+            Assert.Equal(2, progressReports[1]);
+        }
+
+        [Fact]
         public void ExportReader_Exports_Unquoted_Data()
         {
             var columns = new[]

@@ -19,6 +19,8 @@ namespace DelimitedDataParser
         public static readonly char TabSeparator = '\t';
 
         private static readonly string[] UnsafeLeadingCharacters = { "=", "+", "-", "@" };
+        
+        private readonly IProgress<int> _progress;
 
         private ISet<string> _columnNamesAsText;
         private IDictionary<string, string> _extendedPropertyValueLookup;
@@ -35,6 +37,17 @@ namespace DelimitedDataParser
         /// </summary>
         public Exporter()
         {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Exporter"/> class.
+        /// </summary>
+        /// <param name="progress">
+        /// The provider for receiving progress updates.
+        /// </param>
+        public Exporter(IProgress<int> progress)
+        {
+            _progress = progress;
         }
 
         /// <summary>
@@ -195,6 +208,8 @@ namespace DelimitedDataParser
                     RenderRow(reader, writer);
 
                     rowIndex++;
+
+                    _progress?.Report(rowIndex);
                 }
             }
         }
