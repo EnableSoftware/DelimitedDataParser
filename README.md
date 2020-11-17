@@ -69,6 +69,10 @@ using (var fileWriter = File.CreateText("my.csv"))
 * `OutputColumnHeaders` - specifies whether an initial row containing column names should be written to the output. Default: `true`.
 * `UseExtendedPropertyForColumnName(string key)` - specifies a key that is used to search on the ExtendedProperties of a DataColumn. If it finds a value this will be used as the column header, if no match is found it will default to the column's ColumnName. This should be used if you are required to output a different column header to what is stored on the column's ColumnName.
 
+### Progress reports
+
+The `Exporter` class constructor has an overload that takes an `IProgress<int>`. If supplied, the `Exporter` will report the current iteration of the export process as an `int` using the progress provider.
+
 ## Columns as text
 
 The `Parser` and `Exporter` support setting columns (identified by column name) as "text" wherein data is wrapped in quotes and preceded with an equals sign, as follows: `="1337"`
