@@ -22,6 +22,7 @@ namespace DelimitedDataParser
         private ISet<string> _columnNamesAsText;
         private char _fieldSeparator = ',';
         private bool _useFirstRowAsColumnHeaders = true;
+        private bool _trimColumnHeaders = true;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Parser"/> class.
@@ -61,6 +62,23 @@ namespace DelimitedDataParser
             set
             {
                 _useFirstRowAsColumnHeaders = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the column headers, if present, should have whitespace trimmed.
+        /// The default value is <c>true</c>.
+        /// </summary>
+        public virtual bool TrimcolumnHeaders
+        {
+            get
+            {
+                return _trimColumnHeaders;
+            }
+
+            set
+            {
+                _trimColumnHeaders = value;
             }
         }
 
@@ -183,6 +201,7 @@ namespace DelimitedDataParser
                 encoding,
                 _fieldSeparator,
                 _useFirstRowAsColumnHeaders,
+                _trimColumnHeaders,
                 cancellationToken);
         }
 
@@ -207,6 +226,7 @@ namespace DelimitedDataParser
                 streamReader.CurrentEncoding,
                 _fieldSeparator,
                 _useFirstRowAsColumnHeaders,
+                _trimColumnHeaders,
                 cancellationToken);
         }
 
