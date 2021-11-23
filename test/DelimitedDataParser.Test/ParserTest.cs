@@ -76,7 +76,7 @@ namespace DelimitedDataParser
             string input = @"Field 1 , Field 2, Field 3 ";
 
             var parser = new Parser();
-            parser.TrimcolumnHeaders = false;
+            parser.TrimColumnHeaders = false;
 
             var output = parser.Parse(GetTextReader(input));
 

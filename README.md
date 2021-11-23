@@ -36,6 +36,7 @@ while (reader.Read())
 
 * `FieldSeparator` - the character used as field delimiter in the text file. Default: `,` (i.e., CSV).
 * `UseFirstRowAsColumnHeaders` - specifies whether the first row of the text file should be treated as a header row. Default: `true`.
+* `TrimColumnHeaders` - specifies whether the column headers, if present, should have whitespace trimmed before being used as a key.
 
 ## Exporter
 

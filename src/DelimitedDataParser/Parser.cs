@@ -66,10 +66,10 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the column headers, if present, should have whitespace trimmed.
+        /// Gets or sets a value indicating whether the column headers, if present, should have whitespace trimmed before being used as a key
         /// The default value is <c>true</c>.
         /// </summary>
-        public virtual bool TrimcolumnHeaders
+        public virtual bool TrimColumnHeaders
         {
             get
             {
