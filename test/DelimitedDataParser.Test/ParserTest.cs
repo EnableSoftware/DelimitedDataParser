@@ -57,6 +57,36 @@ namespace DelimitedDataParser
         }
 
         [Fact]
+        public void Will_Trim_Column_Names_By_Default()
+        {
+            string input = @"Field 1 , Field 2, Field 3 ";
+
+            var parser = new Parser();
+            var output = parser.Parse(GetTextReader(input));
+
+            Assert.Equal(3, output.Columns.Count);
+            Assert.Equal("Field 1", output.Columns[0].ColumnName);
+            Assert.Equal("Field 2", output.Columns[1].ColumnName);
+            Assert.Equal("Field 3", output.Columns[2].ColumnName);
+        }
+
+        [Fact]
+        public void Will_Not_Trim_Column_Names_If_Prevented()
+        {
+            string input = @"Field 1 , Field 2, Field 3 ";
+
+            var parser = new Parser();
+            parser.TrimColumnHeaders = false;
+
+            var output = parser.Parse(GetTextReader(input));
+
+            Assert.Equal(3, output.Columns.Count);
+            Assert.Equal("Field 1 ", output.Columns[0].ColumnName);
+            Assert.Equal(" Field 2", output.Columns[1].ColumnName);
+            Assert.Equal(" Field 3 ", output.Columns[2].ColumnName);
+        }
+
+        [Fact]
         public void Can_Parse_Empty_Column_Names()
         {
             string input = @",";

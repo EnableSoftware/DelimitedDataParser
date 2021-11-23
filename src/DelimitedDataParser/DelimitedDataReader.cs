@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.Common;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 
@@ -20,6 +21,7 @@ namespace DelimitedDataParser
         private readonly Encoding _encoding;
         private readonly char _fieldSeparator;
         private readonly bool _useFirstRowAsColumnHeaders;
+        private readonly bool _trimColumnHeaders;
         private readonly CancellationToken _cancellationToken;
         private readonly char[] _buffer = new char[4096];
 
@@ -37,12 +39,14 @@ namespace DelimitedDataParser
             Encoding encoding,
             char fieldSeparator,
             bool useFirstRowAsColumnHeaders,
+            bool trimColumnHeaders,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             _textReader = textReader ?? throw new ArgumentNullException(nameof(textReader));
             _encoding = encoding ?? throw new ArgumentException(nameof(encoding));
             _fieldSeparator = fieldSeparator;
             _useFirstRowAsColumnHeaders = useFirstRowAsColumnHeaders;
+            _trimColumnHeaders = trimColumnHeaders;
             _cancellationToken = cancellationToken;
         }
 
@@ -601,7 +605,14 @@ namespace DelimitedDataParser
         private void GenerateFieldLookup()
         {
             // Here we assume that the current row is the header row.
-            _fieldNameLookup = new List<string>(_currentRow).AsReadOnly();
+            if (_trimColumnHeaders)
+            {
+                _fieldNameLookup = _currentRow.Select(o => o?.Trim()).ToList().AsReadOnly();
+            }
+            else
+            {
+                _fieldNameLookup = new List<string>(_currentRow).AsReadOnly();
+            }
         }
 
         private void GenerateDefaultFieldNameLookup()
