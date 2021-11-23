@@ -607,7 +607,7 @@ namespace DelimitedDataParser
             // Here we assume that the current row is the header row.
             if (_trimColumnHeaders)
             {
-                _fieldNameLookup = _currentRow.Select(o => o == null ? o : o.Trim()).ToList().AsReadOnly();
+                _fieldNameLookup = _currentRow.Select(o => o?.Trim()).ToList().AsReadOnly();
             }
             else
             {
