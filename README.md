@@ -65,7 +65,7 @@ using (var fileWriter = File.CreateText("my.csv"))
 ### Configuration properties
 
 * `FieldSeparator` - the character used as field delimiter in the text file. Default: `,` (i.e., CSV).
-* `SanitizeStrings` - specifies whether strings should be sanitized, prepending blacklisted characters at the start of the string with a single quote `'`. The default value is `false`.
+* `SanitizeStrings` - specifies whether strings should be sanitized, prepending blacklisted characters at the start of the string with a single quote `'`. Default: `true`.
 * `IncludeEscapeCharacters` - specifies whether each value should be escaped by wrapping in quotation marks. Default: `true`.
 * `OutputColumnHeaders` - specifies whether an initial row containing column names should be written to the output. Default: `true`.
 * `UseExtendedPropertyForColumnName(string key)` - specifies a key that is used to search on the ExtendedProperties of a DataColumn. If it finds a value this will be used as the column header, if no match is found it will default to the column's ColumnName. This should be used if you are required to output a different column header to what is stored on the column's ColumnName.

@@ -19,7 +19,7 @@ namespace DelimitedDataParser
         public static readonly char TabSeparator = '\t';
 
         private static readonly string[] UnsafeLeadingCharacters = { "=", "+", "-", "@" };
-        
+
         private readonly IProgress<int> _progress;
 
         private ISet<string> _columnNamesAsText;
@@ -27,7 +27,7 @@ namespace DelimitedDataParser
 
         private char _fieldSeparator = ',';
         private bool _includeEscapeCharacters = true;
-        private bool _sanitizeStrings;
+        private bool _sanitizeStrings = true;
         private bool _outputColumnHeaders = true;
         private bool _useExtendedPropertyForColumnName;
         private string _extendedPropertyKey;
@@ -307,6 +307,11 @@ namespace DelimitedDataParser
         /// <returns>The escaped string</returns>
         private string CsvEscape(string value, bool valueAsText)
         {
+            if (_sanitizeStrings)
+            {
+                value = Sanitize(value);
+            }
+
             if (_includeEscapeCharacters)
             {
                 value = value.Replace(@"""", @"""""");
@@ -319,11 +324,6 @@ namespace DelimitedDataParser
                 {
                     value = string.Concat(@"""", value, @"""");
                 }
-            }
-
-            if (_sanitizeStrings)
-            {
-                value = Sanitize(value);
             }
 
             return value;

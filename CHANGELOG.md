@@ -5,6 +5,19 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [6.0.0] - 2021-12-13
+
+### Added
+
+- Update _sanitizeStrings default to `true`.
+- Sanitize strings will now also take effect when escape characters are used.
+
+## [5.0.0] - 2021-11-23
+
+### Added
+
+- Add the option to trim column headers when reading from the input text, and make it the default.
+
 ## [4.2.1] - 2020-11-17
 
 ### Added
