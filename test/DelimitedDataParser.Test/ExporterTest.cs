@@ -424,6 +424,7 @@ namespace DelimitedDataParser
             }
 
             var exporter = new Exporter();
+            exporter.SanitizeStrings = false;
 
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
