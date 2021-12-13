@@ -608,6 +608,7 @@ namespace DelimitedDataParser
                     stringReader = null;
 
                     var sut = new Exporter();
+                    sut.SanitizeStrings = false;
 
                     stopwatch = Stopwatch.StartNew();
                     output = sut.ExportToString(dataReader);
