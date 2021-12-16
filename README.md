@@ -2,7 +2,7 @@
 
 C# library for parsing and exporting tabular data in delimited format (e.g. CSV).
 
-[![Build status](https://ci.appveyor.com/api/projects/status/133w3oawii8m2qap/branch/master?svg=true)](https://ci.appveyor.com/project/EnableSoftware/delimiteddataparser) [![NuGet Downloads](https://buildstats.info/nuget/DelimitedDataParser)](https://www.nuget.org/packages/DelimitedDataParser/)
+[![Build status](https://ci.appveyor.com/api/projects/status/133w3oawii8m2qap/branch/main?svg=true)](https://ci.appveyor.com/project/EnableSoftware/delimiteddataparser) [![NuGet Downloads](https://buildstats.info/nuget/DelimitedDataParser)](https://www.nuget.org/packages/DelimitedDataParser/)
 
 ## Parser
 
@@ -94,4 +94,5 @@ exporter.ClearColumnsAsText();
 
 ## Samples
 
-- Console application demonstrating the use of [Windows-1252 encoding on .NET Core](https://github.com/EnableSoftware/DelimitedDataParser/tree/master/samples/NetCoreWindowsEncoding).
+- Console application demonstrating the use of [Windows-1252 encoding on .NET Core](https://github.com/EnableSoftware/DelimitedDataParser/tree/main/samples/NetCoreWindowsEncoding).
+
