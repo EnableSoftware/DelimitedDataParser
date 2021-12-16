@@ -18,6 +18,6 @@ If you spot a bug or a mistake in the documentation, you can help us by [raising
 
 # Submitting Pull Requests
 
-If you would like to contribute a fix or improvement to DelimitedDataParser, please submit a [pull request](https://github.com/EnableSoftware/DelimitedDataParser/pull/new/master) containing your change (read more about [pull requests on GitHub Help](http://help.github.com/pull-requests/)).
+If you would like to contribute a fix or improvement to DelimitedDataParser, please submit a [pull request](https://github.com/EnableSoftware/DelimitedDataParser/pull/new/main) containing your change (read more about [pull requests on GitHub Help](http://help.github.com/pull-requests/)).
 
 Please ensure that *all tests pass* before submitting your request. If adding new features, please add tests to cover and describe any new code.

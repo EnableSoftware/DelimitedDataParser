@@ -11,7 +11,7 @@
         <Copyright>Copyright © 2018</Copyright>
         <PackageIconUrl>https://github.com/EnableSoftware.png</PackageIconUrl>
         <PackageProjectUrl>https://github.com/EnableSoftware/DelimitedDataParser</PackageProjectUrl>
-        <PackageLicenseUrl>https://raw.githubusercontent.com/EnableSoftware/DelimitedDataParser/master/LICENSE</PackageLicenseUrl>
+        <PackageLicenseUrl>https://raw.githubusercontent.com/EnableSoftware/DelimitedDataParser/main/LICENSE</PackageLicenseUrl>
         <PackageTags>CSV parser exporter delimited</PackageTags>
     </PropertyGroup>
     <ItemGroup>
