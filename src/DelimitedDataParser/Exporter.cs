@@ -18,7 +18,7 @@ namespace DelimitedDataParser
         /// </summary>
         public static readonly char TabSeparator = '\t';
 
-        private static readonly string[] UnsafeLeadingCharacters = { "=", "+", "-", "@" };
+        private static readonly string[] UnsafeLeadingCharacters = { "=", "+", "-", "@", "|" };
 
         private readonly IProgress<int> _progress;
 

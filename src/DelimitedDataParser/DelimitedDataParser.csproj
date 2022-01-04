@@ -6,7 +6,7 @@
         <CodeAnalysisRuleSet>..\..\CustomExtendedCorrectnessRules.ruleset</CodeAnalysisRuleSet>
         <Authors>Enable · enable.com</Authors>
         <Company>Enable</Company>
-        <Version>6.0.0</Version>
+        <Version>6.1.0</Version>
         <Description>C# library for parsing and exporting tabular data in delimited format (e.g. CSV).</Description>
         <Copyright>Copyright © 2018</Copyright>
         <PackageIconUrl>https://github.com/EnableSoftware.png</PackageIconUrl>
