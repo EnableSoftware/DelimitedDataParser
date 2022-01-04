@@ -92,6 +92,22 @@ parser.ClearColumnsAsText();
 exporter.ClearColumnsAsText();
 ```
 
+## Allow unsanitized columns
+
+The `Exporter` supports preventing specific columns from being sanitized. This is primarily to aid numerical columns with negative signs e.g. `-1.23`, but can be used for any column.
+
+To prevent columns from being sanitized, call the `SetColumnsAsSanitizationPrevented` method on the `Exporter`.
+
+```c#
+exporter.SetColumnsAsSanitizationPrevented(new[] { "Foo", "Bar" });
+```
+
+To clear any columns previously set to be not sanitization, call the `ClearColumnsSanitizationPrevented` method on the `Exporter`.
+
+```c#
+exporter.ClearColumnsSanitizationPrevented();
+```
+
 ## Samples
 
 - Console application demonstrating the use of [Windows-1252 encoding on .NET Core](https://github.com/EnableSoftware/DelimitedDataParser/tree/main/samples/NetCoreWindowsEncoding).
